@@ -19,34 +19,17 @@ namespace Flow.Launcher.Plugin.Obsidian
 
         public List<Result> Query(Query query)
         {
-            var helloWorldResult = new Result
-            {
-                Title = "Hello World",
-                SubTitle = "This is a subtitle",
-                IcoPath = "Images\\app.png",
-                Action = e =>
-                {
-                    _context?.API.ShowMsg("Hello World");
-                    return true;
-                }
-            };
-            
-            List<string> allFiles = new();
-            foreach (Vault vault in VaultManager.Vaults)
-            {
-                if (vault.Files != null) allFiles.AddRange(vault.Files);
-            }
-            
+            Console.WriteLine($"Query received: {query.Search}");
+            var allFiles = VaultManager.GetAllFiles();
             var resultsMatches = StringMatcher.FindClosestMatches(allFiles, query.Search, maxDistance: 2);
 
-            string? debug = ""; 
-            resultsMatches = resultsMatches.Take(10).ToList();
-            foreach ((string? text, int distance) in resultsMatches)
+            List<Result> resultList = new();
+            foreach ((File file, int distance) in resultsMatches)
             {
-                debug += text + " \n";
+                Console.WriteLine($"{file} - {distance}");
+                resultList.Add(file.ToResult());
             }
-            _context?.API.ShowMsg(debug);
-            return resultsMatches.Select(variable => new Result { Title = variable.Text, }).ToList();
+            return resultList;
         }
     }
 }

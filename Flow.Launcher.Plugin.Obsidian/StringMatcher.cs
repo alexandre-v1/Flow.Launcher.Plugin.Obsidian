@@ -6,12 +6,12 @@ namespace Flow.Launcher.Plugin.Obsidian;
 
 public static class StringMatcher
 {
-    public static List<(string Text, int Distance)> FindClosestMatches(List<string> sourceList, string searchTerm, int maxDistance = 3)
+    public static List<(File File, int Distance)> FindClosestMatches(List<File> sourceList, string searchTerm, int maxDistance = 3)
     {
         return sourceList
-            .Select(item => (
-                Text: item,
-                Distance: CalculateLevenshteinDistance(item.ToLower(), searchTerm.ToLower())
+            .Select(file => (
+                Text: file,
+                Distance: CalculateLevenshteinDistance(file.Title.ToLower(), searchTerm.ToLower())
             ))
             .Where(result => result.Distance <= maxDistance)
             .OrderBy(result => result.Distance)
@@ -26,7 +26,7 @@ public static class StringMatcher
         if (string.IsNullOrEmpty(target))
             return source.Length;
 
-        var matrix = new int[source.Length + 1, target.Length + 1];
+        int[,] matrix = new int[source.Length + 1, target.Length + 1];
 
         for (int i = 0; i <= source.Length; i++)
             matrix[i, 0] = i;
