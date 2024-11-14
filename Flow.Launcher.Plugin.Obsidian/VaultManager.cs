@@ -10,21 +10,20 @@ public static class VaultManager
     //Todo : Check the Path before use
     private static readonly string VaultListJsonPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "obsidian", "obsidian.json");
 
-    public static List<Vault> Vaults { get; set; } = new();
+    private static List<Vault> Vaults { get; set; } = new();
     
-    public static void UpdateVaultList(IPublicAPI publicApi)
+    public static void UpdateVaultList()
     {
-        Vaults = GetVault();
+        Vaults = GetVaults();
         foreach (Vault vault in Vaults)
         {
-            if (vault.VaultPath != null) 
-                vault.Files = Vault.GetMdFiles(vault.VaultPath);
+            vault.Files = vault.GetMdFiles();
         }
     }
 
-    private static List<Vault> GetVault()
+    private static List<Vault> GetVaults()
     {
-        string jsonString = File.ReadAllText(VaultListJsonPath);
+        string jsonString = System.IO.File.ReadAllText(VaultListJsonPath);
         using JsonDocument document = JsonDocument.Parse(jsonString);
         
         JsonElement root = document.RootElement;
@@ -34,9 +33,19 @@ public static class VaultManager
         {
             string vaultId = vault.Name;
             string? path = vault.Value.GetProperty("path").GetString();
-            
-            Vaults.Add(new Vault(vaultId, path));
+
+            if (path != null) Vaults.Add(new Vault(vaultId, path));
         }
         return Vaults;
+    }
+
+    public static List<File> GetAllFiles()
+    {
+        var files = new List<File>();
+        foreach (Vault vault in Vaults)
+        {
+            files.AddRange(vault.Files);
+        }
+        return files;
     }
 }

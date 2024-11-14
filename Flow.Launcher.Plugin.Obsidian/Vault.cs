@@ -1,38 +1,39 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Flow.Launcher.Plugin.Obsidian;
 
 public class Vault
 {
-    public string ID;
-    public string? VaultPath;
+    public string Id;
+    public string Name  => System.IO.Path.GetFileName(Path);
+    public readonly string Path;
+    
     public VaultSetting? Setting;
-    public string? Name  => Path.GetFileName(VaultPath);
-    public List<string>? Files;
+    public List<File> Files = new();
 
-    public Vault(string id, string? vaultPath)
+    public Vault(string id, string path)
     {
-        ID = id;
-        VaultPath = vaultPath;
+        Id = id;
+        Path = path;
     }
 
-    public static List<string> GetMdFiles(string rootPath)
+    public List<File> GetMdFiles()
     {
-        var files = new List<string>();
+        var files = new List<File>();
         var directories = new Stack<string>();
-        directories.Push(rootPath);
+        directories.Push(Path);
 
         while (directories.Count > 0)
         {
             string currentDir = directories.Pop();
             try
             {
-                // Add all .md files in current directory
-                files.AddRange(Directory.GetFiles(currentDir, "*.md"));
-            
-                // Add subdirectories to stack
+                files.AddRange(Directory.GetFiles(currentDir, "*.md")
+                    .Select(file => new File(this, file)));
+                
                 foreach (string dir in Directory.GetDirectories(currentDir))
                 {
                     directories.Push(dir);
@@ -41,12 +42,10 @@ public class Vault
             catch (UnauthorizedAccessException) 
             {
                 // Skip directories we can't access
-                continue;
             }
             catch (PathTooLongException)
             {
                 // Skip paths that are too long
-                continue;
             }
         }
         return files;

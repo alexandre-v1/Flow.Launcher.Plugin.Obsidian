@@ -1,6 +1,5 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using Flow.Launcher.Plugin;
 
 namespace Flow.Launcher.Plugin.Obsidian
 {
@@ -15,6 +14,8 @@ namespace Flow.Launcher.Plugin.Obsidian
             _publicApi = context.API;
             VaultManager.UpdateVaultList(_publicApi);
             
+            _publicApi = context.API;       
+            VaultManager.UpdateVaultList();
         }
 
         public List<Result> Query(Query query)
