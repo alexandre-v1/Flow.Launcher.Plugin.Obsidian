@@ -21,13 +21,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Flow.Launcher.Plugin" Version="4.4.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <Content Include="plugin.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Update="Icons\obsidian-logo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Flow.Launcher.Plugin" Version="4.4.0" />
-  </ItemGroup>
-
 </Project>

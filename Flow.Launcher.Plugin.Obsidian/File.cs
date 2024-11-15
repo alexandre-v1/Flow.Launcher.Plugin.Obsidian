@@ -1,10 +1,12 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace Flow.Launcher.Plugin.Obsidian;
 
 public class File
 {
+    private static readonly string ObsidianLogoPath = Path.Combine("Icons", "obsidian-logo.png");
     public readonly string Title;
     private readonly string _path;
     private readonly string _relativePath;
@@ -14,7 +16,7 @@ public class File
     {
         _vault = vault;
         _path = path;
-        Title = System.IO.Path.GetFileNameWithoutExtension(path);
+        Title = Path.GetFileNameWithoutExtension(path);
         _relativePath = path.Replace(_vault.Path, "");
     }
 
@@ -29,7 +31,8 @@ public class File
                 OpenNote();
                 return true;
             },
-            ContextData = _vault
+            ContextData = _vault,
+            IcoPath = ObsidianLogoPath
         };
         return result;
     }
