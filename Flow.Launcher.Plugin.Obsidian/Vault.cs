@@ -8,23 +8,24 @@ namespace Flow.Launcher.Plugin.Obsidian;
 public class Vault
 {
     public string Id;
-    public string Name  => System.IO.Path.GetFileName(Path);
-    public readonly string Path;
+    public readonly string VaultPath;
+    public string Name;
     
     public VaultSetting? Setting;
     public List<File> Files = new();
 
-    public Vault(string id, string path)
+    public Vault(string id, string vaultPath)
     {
         Id = id;
-        Path = path;
+        VaultPath = vaultPath;
+        Name = Path.GetFileName(VaultPath);
     }
 
     public List<File> GetMdFiles()
     {
         var files = new List<File>();
         var directories = new Stack<string>();
-        directories.Push(Path);
+        directories.Push(VaultPath);
 
         while (directories.Count > 0)
         {

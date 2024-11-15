@@ -11,9 +11,6 @@ namespace Flow.Launcher.Plugin.Obsidian
         public void Init(PluginInitContext context)
         {
             _context = context;
-            _publicApi = context.API;
-            VaultManager.UpdateVaultList(_publicApi);
-            
             _publicApi = context.API;       
             VaultManager.UpdateVaultList();
         }

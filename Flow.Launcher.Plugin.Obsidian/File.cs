@@ -17,7 +17,7 @@ public class File
         _vault = vault;
         _path = path;
         Title = Path.GetFileNameWithoutExtension(path);
-        _relativePath = path.Replace(_vault.Path, "");
+        _relativePath = path.Replace(_vault.VaultPath, "").TrimStart('\\');
     }
 
     public Result ToResult()
@@ -25,7 +25,7 @@ public class File
         var result = new Result
         {
             Title = Title,
-            SubTitle = _path,
+            SubTitle = Path.Combine(_vault.Name, _relativePath),
             Action = c =>
             {
                 OpenNote();
