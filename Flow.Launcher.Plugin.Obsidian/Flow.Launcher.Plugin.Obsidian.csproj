@@ -9,6 +9,7 @@
     <RepositoryUrl>https://github.com/alexandre-v1/Flow.Launcher.Plugin.Obsidian</RepositoryUrl>
     <PackageTags>flow-launcher flow-plugin</PackageTags>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <UseWPF>true</UseWPF>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <Nullable>enable</Nullable>
