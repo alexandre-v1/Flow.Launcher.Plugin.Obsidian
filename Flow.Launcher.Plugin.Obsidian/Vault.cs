@@ -11,13 +11,14 @@ public class Vault
     public readonly string VaultPath;
     public string Name;
     
-    public VaultSetting? Setting;
+    public readonly VaultSetting Setting;
     public List<File> Files = new();
 
-    public Vault(string id, string vaultPath)
+    public Vault(string id, string vaultPath, VaultSetting? setting = null)
     {
         Id = id;
         VaultPath = vaultPath;
+        Setting = setting ?? new VaultSetting();
         Name = Path.GetFileName(VaultPath);
     }
 

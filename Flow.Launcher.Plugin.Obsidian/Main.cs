@@ -1,18 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.Windows.Controls;
 
 namespace Flow.Launcher.Plugin.Obsidian
 {
-    public class Obsidian : IPlugin
+    public class Obsidian : IPlugin, ISettingProvider
     {
-        private PluginInitContext? _context;
         private IPublicAPI? _publicApi;
+        private Settings? _settings;
 
         public void Init(PluginInitContext context)
         {
-            _context = context;
             _publicApi = context.API;       
             VaultManager.UpdateVaultList();
+            _settings = _publicApi.LoadSettingJsonStorage<Settings>();
+            VaultManager.UpdateVaultList(_settings);
         }
 
         public List<Result> Query(Query query)
@@ -28,6 +30,11 @@ namespace Flow.Launcher.Plugin.Obsidian
                 resultList.Add(file.ToResult());
             }
             return resultList;
+        }
+
+        public Control CreateSettingPanel()
+        {
+            return new SettingsView(_publicApi);
         }
     }
 }

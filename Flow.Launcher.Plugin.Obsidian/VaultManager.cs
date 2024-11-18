@@ -7,21 +7,22 @@ namespace Flow.Launcher.Plugin.Obsidian;
 
 public static class VaultManager
 {
+    public static GlobalVaultSetting GlobalSetting { get; set; } = new();
     //Todo : Check the Path before use
     private static readonly string VaultListJsonPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "obsidian", "obsidian.json");
 
-    private static List<Vault> Vaults { get; set; } = new();
+    public static List<Vault> Vaults { get; set; } = new();
     
-    public static void UpdateVaultList()
+    public static void UpdateVaultList(Settings settings)
     {
-        Vaults = GetVaults();
+        Vaults = GetVaults(settings);
         foreach (Vault vault in Vaults)
         {
             vault.Files = vault.GetMdFiles();
         }
     }
 
-    private static List<Vault> GetVaults()
+    private static List<Vault> GetVaults(Settings settings)
     {
         string jsonString = System.IO.File.ReadAllText(VaultListJsonPath);
         using JsonDocument document = JsonDocument.Parse(jsonString);
@@ -33,8 +34,8 @@ public static class VaultManager
         {
             string vaultId = vault.Name;
             string? path = vault.Value.GetProperty("path").GetString();
-
-            if (path != null) Vaults.Add(new Vault(vaultId, path));
+            if (path is null) continue;
+             Vaults.Add(new Vault(vaultId, path));
         }
         return Vaults;
     }
