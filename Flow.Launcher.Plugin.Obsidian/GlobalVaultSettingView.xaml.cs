@@ -3,41 +3,41 @@ using System.Windows.Controls;
 
 namespace Flow.Launcher.Plugin.Obsidian;
 
-public partial class GlobalVaultSettingView : UserControl
+public partial class GlobalVaultSettingView
 {
-    public GlobalVaultSetting Setting { get; set; }
+    private GlobalVaultSetting GlobalVaultSetting { get; set; }
     
-    public GlobalVaultSettingView(GlobalVaultSetting setting)
+    public GlobalVaultSettingView(GlobalVaultSetting globalVaultSetting)
     {
-        Setting = setting;
+        GlobalVaultSetting = globalVaultSetting;
         InitializeComponent();
     }
     
     private void GlobalVaultSettingViewOnLoaded(object sender, RoutedEventArgs e)
     {
-        SearchMarkdown.IsChecked = Setting.SearchMarkdown;
-        SearchCanvas.IsChecked = Setting.SearchCanvas;
-        SearchImages.IsChecked = Setting.SearchImages;
-        SearchExcalidraw.IsChecked = Setting.SearchExcalidraw;
-        SearchOther.IsChecked = Setting.SearchOther;
-        SearchContent.IsChecked = Setting.SearchContent;
+        SearchMarkdown.IsChecked = GlobalVaultSetting.SearchMarkdown;
+        SearchCanvas.IsChecked = GlobalVaultSetting.SearchCanvas;
+        SearchImages.IsChecked = GlobalVaultSetting.SearchImages;
+        SearchExcalidraw.IsChecked = GlobalVaultSetting.SearchExcalidraw;
+        SearchOther.IsChecked = GlobalVaultSetting.SearchOther;
+        SearchContent.IsChecked = GlobalVaultSetting.SearchContent;
         
-        SearchMarkdown.Checked += (_, _) => { Setting.SearchMarkdown = true; };
-        SearchMarkdown.Unchecked += (_, _) => { Setting.SearchMarkdown = false; }; 
+        SearchMarkdown.Checked += (_, _) => { GlobalVaultSetting.SearchMarkdown = true; };
+        SearchMarkdown.Unchecked += (_, _) => { GlobalVaultSetting.SearchMarkdown = false; }; 
         
-        SearchCanvas.Checked += (_, _) => { Setting.SearchCanvas = true; }; 
-        SearchCanvas.Unchecked += (_, _) => { Setting.SearchCanvas = false; }; 
+        SearchCanvas.Checked += (_, _) => { GlobalVaultSetting.SearchCanvas = true; }; 
+        SearchCanvas.Unchecked += (_, _) => { GlobalVaultSetting.SearchCanvas = false; }; 
         
-        SearchImages.Checked += (_, _) => { Setting.SearchImages = true; }; 
-        SearchImages.Unchecked += (_, _) => { Setting.SearchImages = false; }; 
+        SearchImages.Checked += (_, _) => { GlobalVaultSetting.SearchImages = true; }; 
+        SearchImages.Unchecked += (_, _) => { GlobalVaultSetting.SearchImages = false; }; 
         
-        SearchExcalidraw.Checked += (_, _) => { Setting.SearchExcalidraw = true; }; 
-        SearchExcalidraw.Unchecked += (_, _) => { Setting.SearchExcalidraw = false; }; 
+        SearchExcalidraw.Checked += (_, _) => { GlobalVaultSetting.SearchExcalidraw = true; }; 
+        SearchExcalidraw.Unchecked += (_, _) => { GlobalVaultSetting.SearchExcalidraw = false; }; 
         
-        SearchOther.Checked += (_, _) => { Setting.SearchOther = true; }; 
-        SearchOther.Unchecked += (_, _) => { Setting.SearchOther = false; }; 
+        SearchOther.Checked += (_, _) => { GlobalVaultSetting.SearchOther = true; }; 
+        SearchOther.Unchecked += (_, _) => { GlobalVaultSetting.SearchOther = false; }; 
         
-        SearchContent.Checked += (_, _) => { Setting.SearchContent = true; }; 
-        SearchContent.Unchecked += (_, _) => { Setting.SearchContent = false; }; 
+        SearchContent.Checked += (_, _) => { GlobalVaultSetting.SearchContent = true; }; 
+        SearchContent.Unchecked += (_, _) => { GlobalVaultSetting.SearchContent = false; }; 
     }
 }
