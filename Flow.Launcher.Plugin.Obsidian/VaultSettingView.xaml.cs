@@ -1,24 +1,23 @@
 using System.Windows;
-using System.Windows.Controls;
 
 namespace Flow.Launcher.Plugin.Obsidian;
 
-public partial class VaultSettingView : UserControl
+public partial class VaultSettingView
 {
-    private Vault Vault { get; set; }
-    private VaultSetting Setting { get; set; }
+    private Vault Vault { get; }
+    private VaultSetting VaultSetting { get; set; }
     
     public VaultSettingView(Vault vault)
     {
         Vault = vault;
-        Setting = vault.Setting;
+        VaultSetting = vault.VaultSetting;
         InitializeComponent();
         InitializeControls();
     }
 
     private void InitializeControls()
     {
-        var globalVaultSettingControl = new GlobalVaultSettingView(Setting);
+        var globalVaultSettingControl = new GlobalVaultSettingView(VaultSetting);
         GlobalVaultSettingPanel.Children.Add(globalVaultSettingControl);
     }
 
@@ -26,23 +25,23 @@ public partial class VaultSettingView : UserControl
     {
         VaultName.Text = Vault.Name;
         
-        UseGlobalSetting.IsChecked = Setting.UseGlobalSetting;
-        UpdateGlobalVaultSettingVisibility(!Setting.UseGlobalSetting);
-        UseGlobalExcludedPaths.IsChecked = Setting.UseGlobalExcludedPaths;
+        UseGlobalSetting.IsChecked = VaultSetting.UseGlobalSetting;
+        UpdateGlobalVaultSettingVisibility(!VaultSetting.UseGlobalSetting);
+        UseGlobalExcludedPaths.IsChecked = VaultSetting.UseGlobalExcludedPaths;
         
         UseGlobalSetting.Checked += (_, _) =>
         {
-            Setting.UseGlobalSetting = true;
+            VaultSetting.UseGlobalSetting = true;
             UpdateGlobalVaultSettingVisibility(false);
         };
         UseGlobalSetting.Unchecked += (_, _) =>
         {
-            Setting.UseGlobalSetting = false;
+            VaultSetting.UseGlobalSetting = false;
             UpdateGlobalVaultSettingVisibility(true);
         };
         
-        UseGlobalExcludedPaths.Checked += (_, _) => { Setting.UseGlobalExcludedPaths = true; };
-        UseGlobalExcludedPaths.Unchecked += (_, _) => { Setting.UseGlobalExcludedPaths = false; };
+        UseGlobalExcludedPaths.Checked += (_, _) => { VaultSetting.UseGlobalExcludedPaths = true; };
+        UseGlobalExcludedPaths.Unchecked += (_, _) => { VaultSetting.UseGlobalExcludedPaths = false; };
     }
     
 

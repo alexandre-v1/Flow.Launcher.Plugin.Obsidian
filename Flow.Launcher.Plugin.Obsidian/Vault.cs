@@ -7,18 +7,18 @@ namespace Flow.Launcher.Plugin.Obsidian;
 
 public class Vault
 {
-    public string Id;
+    public readonly string Id;
+    public readonly string Name;
     public readonly string VaultPath;
-    public string Name;
     
-    public readonly VaultSetting Setting;
+    public readonly VaultSetting VaultSetting;
     public List<File> Files = new();
 
-    public Vault(string id, string vaultPath, VaultSetting? setting = null)
+    public Vault(string id, string vaultPath, VaultSetting vaultSetting)
     {
         Id = id;
         VaultPath = vaultPath;
-        Setting = setting ?? new VaultSetting();
+        VaultSetting = vaultSetting;
         Name = Path.GetFileName(VaultPath);
     }
 
