@@ -12,14 +12,12 @@ namespace Flow.Launcher.Plugin.Obsidian
         public void Init(PluginInitContext context)
         {
             _publicApi = context.API;       
-            VaultManager.UpdateVaultList();
             _settings = _publicApi.LoadSettingJsonStorage<Settings>();
             VaultManager.UpdateVaultList(_settings);
         }
 
         public List<Result> Query(Query query)
         {
-            Console.WriteLine($"Query received: {query.Search}");
             var allFiles = VaultManager.GetAllFiles();
             var resultsMatches = StringMatcher.FindClosestMatches(allFiles, query.Search, maxDistance: 2);
 
@@ -34,7 +32,8 @@ namespace Flow.Launcher.Plugin.Obsidian
 
         public Control CreateSettingPanel()
         {
-            return new SettingsView(_publicApi);
+            if (_settings == null) throw new Exception("Settings not initialized");
+            return new SettingsView(_settings);
         }
     }
 }
