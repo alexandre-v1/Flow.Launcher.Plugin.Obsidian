@@ -8,6 +8,7 @@ public class Settings
     public bool OldLogos { get; set; }
     public bool ShowFilesExtension { get; set; }
     
-    public GlobalVaultSetting GlobalVaultSetting { get; } = new();
-    public Dictionary<string, VaultSetting> VaultsSetting { get; } = new();
+    // Keep setters to allow JSON deserialization
+    public GlobalVaultSetting GlobalVaultSetting { get; set; } = new();
+    public Dictionary<string, VaultSetting> VaultsSetting { get; set; } = new();
 }
