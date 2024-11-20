@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Flow.Launcher.Plugin.Obsidian;
 
@@ -26,6 +27,8 @@ public partial class GlobalVaultSettingView : INotifyPropertyChanged
     {
         GlobalVaultSetting = globalVaultSetting;
         InitializeComponent();
+        DataContext = this;
+        RefreshExcludedPaths();
     }
     
     private void GlobalVaultSettingViewOnLoaded(object sender, RoutedEventArgs e)
@@ -56,8 +59,39 @@ public partial class GlobalVaultSettingView : INotifyPropertyChanged
         SearchContent.Unchecked += (_, _) => { GlobalVaultSetting.SearchContent = false; }; 
     }
 
+    private void AddExcludePath_Click(object sender, RoutedEventArgs e)
+    {
+        if (string.IsNullOrWhiteSpace(NewExcludePathText.Text)) return;
+        GlobalVaultSetting.ExcludedPaths.Add(NewExcludePathText.Text);
+        RefreshExcludedPaths();
+        NewExcludePathText.Clear();
+        
+        ScrollViewer? scrollViewer = ScrollViewerHelper.FindScrollViewer(ExcludedPathsListBox);
+        scrollViewer?.ScrollToBottom();
+    }
+
+    private void RemoveExcludePath_Click(object sender, RoutedEventArgs e)
+    {
+        var button = sender as Button;
+        if (button?.DataContext is not string path) return;
+        GlobalVaultSetting.ExcludedPaths.Remove(path);
+        RefreshExcludedPaths();
+    }
+
+    private void RefreshExcludedPaths()
+    {
+        // Force the ListBox to refresh
+        ExcludedPathsListBox.ItemsSource = null;
+        ExcludedPathsListBox.ItemsSource = GlobalVaultSetting.ExcludedPaths;
+    }
+
     private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+    
+    private void HandlePreviewMouseWheel(object sender, MouseWheelEventArgs e)
+    {
+        ScrollViewerHelper.HandlePreviewMouseWheel(sender, e, ExcludedPathsListBox);
     }
 }

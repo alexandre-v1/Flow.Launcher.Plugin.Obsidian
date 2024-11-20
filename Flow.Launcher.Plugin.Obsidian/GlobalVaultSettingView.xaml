@@ -14,6 +14,7 @@
             <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
+            <RowDefinition />
         </Grid.RowDefinitions>
         
         <CheckBox
@@ -56,8 +57,46 @@
             Grid.Row="5"
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
-            Content="Search Content" />
             Content="Search Content" 
             Visibility="{Binding GlobalSettingVisibility}"/>
+        
+        <StackPanel Grid.Row="6" Margin="10,5,5,5">
+            <TextBlock
+                HorizontalAlignment="Left"
+                FontSize="15" 
+                Text="Excluded Paths"/>
+            <ListBox x:Name="ExcludedPathsListBox"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     ScrollViewer.CanContentScroll="False"
+                     MaxHeight="400"
+                     Margin="0,5"
+                     PreviewMouseWheel="HandlePreviewMouseWheel">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel>
+                            <Button Content="X" 
+                                    DockPanel.Dock="Left"
+                                    Click="RemoveExcludePath_Click"
+                                    Margin="0,0,10,0"
+                                    Width="30"
+                                    Height="30"/>
+                            <TextBlock Text="{Binding}"
+                                       DockPanel.Dock="Right"
+                                       TextTrimming="CharacterEllipsis"
+                                       Margin="0,5,5,0"/>
+                        </DockPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            
+            <DockPanel Margin="0,5">
+                <Button Content="Add Path" 
+                        DockPanel.Dock="Right"
+                        Click="AddExcludePath_Click"
+                        Margin="5,0,0,0"/>
+                <TextBox x:Name="NewExcludePathText"/>
+            </DockPanel>
+        </StackPanel>
     </Grid>
 </UserControl>
