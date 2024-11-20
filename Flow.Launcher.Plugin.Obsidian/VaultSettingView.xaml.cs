@@ -6,6 +6,7 @@ public partial class VaultSettingView
 {
     private Vault Vault { get; }
     private VaultSetting VaultSetting { get; set; }
+    private GlobalVaultSettingView? GlobalVaultSettingView { get; set; }
     
     public VaultSettingView(Vault vault)
     {
@@ -17,8 +18,8 @@ public partial class VaultSettingView
 
     private void InitializeControls()
     {
-        var globalVaultSettingControl = new GlobalVaultSettingView(VaultSetting);
-        GlobalVaultSettingPanel.Children.Add(globalVaultSettingControl);
+        GlobalVaultSettingView = new GlobalVaultSettingView(VaultSetting);
+        GlobalVaultSettingPanel.Children.Add(GlobalVaultSettingView);
     }
 
     private void VaultSettingViewOnLoaded(object sender, RoutedEventArgs e)
@@ -47,6 +48,7 @@ public partial class VaultSettingView
 
     private void UpdateGlobalVaultSettingVisibility(bool isVisible)
     {
-        GlobalVaultSettingPanel.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+        if (GlobalVaultSettingView != null)
+            GlobalVaultSettingView.GlobalSettingVisibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
     }
 }

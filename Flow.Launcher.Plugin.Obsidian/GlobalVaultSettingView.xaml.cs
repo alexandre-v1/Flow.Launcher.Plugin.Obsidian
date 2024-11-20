@@ -1,11 +1,26 @@
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 
 namespace Flow.Launcher.Plugin.Obsidian;
 
-public partial class GlobalVaultSettingView
+public partial class GlobalVaultSettingView : INotifyPropertyChanged
 {
     private GlobalVaultSetting GlobalVaultSetting { get; set; }
+    
+    public event PropertyChangedEventHandler? PropertyChanged;
+    private Visibility _globalSettingVisibility = Visibility.Visible;
+    public Visibility GlobalSettingVisibility
+    {
+        get => _globalSettingVisibility;
+        set
+        {
+            if (_globalSettingVisibility == value) return;
+            _globalSettingVisibility = value;
+            OnPropertyChanged();
+        }
+    }
     
     public GlobalVaultSettingView(GlobalVaultSetting globalVaultSetting)
     {
@@ -39,5 +54,10 @@ public partial class GlobalVaultSettingView
         
         SearchContent.Checked += (_, _) => { GlobalVaultSetting.SearchContent = true; }; 
         SearchContent.Unchecked += (_, _) => { GlobalVaultSetting.SearchContent = false; }; 
+    }
+
+    private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }
