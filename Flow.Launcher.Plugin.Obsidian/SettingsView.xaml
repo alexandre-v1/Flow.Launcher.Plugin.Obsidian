@@ -50,7 +50,7 @@
             Grid.Row="3"
             Margin="10,20,5,5"
             HorizontalAlignment="Left"
-            FontSize="16" 
+            FontSize="18" 
             FontWeight="Bold"
             Text="Global Setting" />
         <StackPanel Grid.Row="4" x:Name="GlobalVaultSettingPanel" />
@@ -59,7 +59,7 @@
             Grid.Row="5"
             Margin="10,20,5,5"
             HorizontalAlignment="Left"
-            FontSize="16" 
+            FontSize="18" 
             FontWeight="Bold"
             Text="Per Vault Setting" />
         <StackPanel Grid.Row="6" x:Name="VaultsSettingPanel" />

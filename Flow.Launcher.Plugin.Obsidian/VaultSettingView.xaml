@@ -21,7 +21,7 @@
             Grid.Row="0"
             Margin="10,10,5,5"
             HorizontalAlignment="Left"
-            FontSize="14" 
+            FontSize="16" 
             FontWeight="DemiBold"
             Text="VaultName" />
         <CheckBox
