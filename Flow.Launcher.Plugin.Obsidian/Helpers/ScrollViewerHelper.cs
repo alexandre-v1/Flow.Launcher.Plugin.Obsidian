@@ -3,7 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace Flow.Launcher.Plugin.Obsidian;
+namespace Flow.Launcher.Plugin.Obsidian.Helpers;
 
 public static class ScrollViewerHelper
 {
