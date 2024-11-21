@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Flow.Launcher.Plugin.Obsidian.Models;
 
 namespace Flow.Launcher.Plugin.Obsidian.Views;
 

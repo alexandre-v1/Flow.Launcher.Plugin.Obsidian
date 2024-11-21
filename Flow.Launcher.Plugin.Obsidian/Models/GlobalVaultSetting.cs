@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Flow.Launcher.Plugin.Obsidian;
+namespace Flow.Launcher.Plugin.Obsidian.Models;
 
 public class GlobalVaultSetting
 {

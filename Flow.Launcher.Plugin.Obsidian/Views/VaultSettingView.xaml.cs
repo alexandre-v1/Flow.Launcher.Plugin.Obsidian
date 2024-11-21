@@ -1,4 +1,5 @@
 using System.Windows;
+using Flow.Launcher.Plugin.Obsidian.Models;
 
 namespace Flow.Launcher.Plugin.Obsidian.Views;
 

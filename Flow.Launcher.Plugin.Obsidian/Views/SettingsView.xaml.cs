@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using Flow.Launcher.Plugin.Obsidian.Models;
 
 namespace Flow.Launcher.Plugin.Obsidian.Views;
 

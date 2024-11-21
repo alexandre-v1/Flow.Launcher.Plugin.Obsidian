@@ -1,4 +1,4 @@
-namespace Flow.Launcher.Plugin.Obsidian;
+namespace Flow.Launcher.Plugin.Obsidian.Models;
 
 public class VaultSetting : GlobalVaultSetting
 {
