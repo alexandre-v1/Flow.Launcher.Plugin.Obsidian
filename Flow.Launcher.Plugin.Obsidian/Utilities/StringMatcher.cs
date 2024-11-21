@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Flow.Launcher.Plugin.Obsidian.Models;
 
-namespace Flow.Launcher.Plugin.Obsidian;
+namespace Flow.Launcher.Plugin.Obsidian.Utilities;
 
 public static class StringMatcher
 {
