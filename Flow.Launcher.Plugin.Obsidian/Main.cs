@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using Flow.Launcher.Plugin.Obsidian.Models;
+using Flow.Launcher.Plugin.Obsidian.Services;
 using Flow.Launcher.Plugin.Obsidian.Views;
 
 namespace Flow.Launcher.Plugin.Obsidian

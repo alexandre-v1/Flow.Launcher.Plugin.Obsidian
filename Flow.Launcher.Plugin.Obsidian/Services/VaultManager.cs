@@ -5,7 +5,7 @@ using System.Text.Json;
 using Flow.Launcher.Plugin.Obsidian.Models;
 using File = Flow.Launcher.Plugin.Obsidian.Models.File;
 
-namespace Flow.Launcher.Plugin.Obsidian;
+namespace Flow.Launcher.Plugin.Obsidian.Services;
 
 public static class VaultManager
 {
