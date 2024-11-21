@@ -1,6 +1,6 @@
 using System.Windows;
 
-namespace Flow.Launcher.Plugin.Obsidian;
+namespace Flow.Launcher.Plugin.Obsidian.Views;
 
 public partial class VaultSettingView
 {

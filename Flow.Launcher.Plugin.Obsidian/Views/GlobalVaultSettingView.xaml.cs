@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace Flow.Launcher.Plugin.Obsidian;
+namespace Flow.Launcher.Plugin.Obsidian.Views;
 
 public partial class GlobalVaultSettingView : INotifyPropertyChanged
 {

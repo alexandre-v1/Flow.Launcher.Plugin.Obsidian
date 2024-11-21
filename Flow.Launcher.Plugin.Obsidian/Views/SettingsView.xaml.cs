@@ -3,7 +3,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 
-namespace Flow.Launcher.Plugin.Obsidian;
+namespace Flow.Launcher.Plugin.Obsidian.Views;
 
 public partial class SettingsView : INotifyPropertyChanged
 {
