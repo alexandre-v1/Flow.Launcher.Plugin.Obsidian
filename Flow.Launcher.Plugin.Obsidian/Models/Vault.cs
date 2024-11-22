@@ -24,10 +24,10 @@ public class Vault
     public IEnumerable<File> GetFiles(Settings settings)
     {
         var extensions = VaultSetting.GetSearchableExtensions(settings);
-
+        bool useExtensions = settings.UseFilesExtension;
         var files = Directory.EnumerateFiles(VaultPath, "*", SearchOption.AllDirectories)
             .Where(file => extensions.Contains(Path.GetExtension(file)))
-            .Select(filePath => new File(this, filePath));
+            .Select(filePath => new File(this, filePath, useExtensions));
 
         return files;
     }

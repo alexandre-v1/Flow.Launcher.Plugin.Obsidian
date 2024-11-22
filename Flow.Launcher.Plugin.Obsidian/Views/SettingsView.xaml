@@ -41,11 +41,11 @@
             HorizontalAlignment="Left"
             Content="Use old Obsidian logo" />
         <CheckBox
-            x:Name="ShowFileExtension"
+            x:Name="UseFileExtension"
             Grid.Row="2"
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
-            Content="Show file extension" />
+            Content="Use file extension" />
         
         <TextBlock
             Grid.Row="3"

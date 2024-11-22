@@ -38,13 +38,13 @@ public partial class SettingsView : INotifyPropertyChanged
     {
         MaxResults = Settings.MaxResult;
         OldLogo.IsChecked = Settings.OldLogos;
-        ShowFileExtension.IsChecked = Settings.ShowFilesExtension;
+        UseFileExtension.IsChecked = Settings.UseFilesExtension;
         
         OldLogo.Checked += (_, _) => { Settings.OldLogos = true; };
         OldLogo.Unchecked += (_, _) => { Settings.OldLogos = false; };
         
-        ShowFileExtension.Checked += (_, _) => { Settings.ShowFilesExtension = true; };
-        ShowFileExtension.Unchecked += (_, _) => { Settings.ShowFilesExtension = false; };
+        UseFileExtension.Checked += (_, _) => { Settings.UseFilesExtension = true; };
+        UseFileExtension.Unchecked += (_, _) => { Settings.UseFilesExtension = false; };
     }
     
     private void SettingsView_OnUnloaded(object sender, RoutedEventArgs e)

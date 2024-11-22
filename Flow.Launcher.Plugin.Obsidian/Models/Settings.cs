@@ -6,7 +6,7 @@ public class Settings
 {
     public int MaxResult { get; set; }
     public bool OldLogos { get; set; }
-    public bool ShowFilesExtension { get; set; }
+    public bool UseFilesExtension { get; set; }
     
     // Keep setters to allow JSON deserialization
     public GlobalVaultSetting GlobalVaultSetting { get; set; } = new();

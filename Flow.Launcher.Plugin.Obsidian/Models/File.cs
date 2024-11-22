@@ -10,12 +10,13 @@ public class File : Result
     private static readonly string ObsidianLogoPath = Path.Combine("Icons", "obsidian-logo.png");
     private readonly string _relativePath;
     
-    public File(Vault vault, string path)
+    public File(Vault vault, string path, bool useExtension )
     {
-        Title = Path.GetFileNameWithoutExtension(path);
+        Title = useExtension ? Path.GetFileName(path) : Path.GetFileNameWithoutExtension(path);
         _relativePath = path.Replace(vault.VaultPath, "").TrimStart('\\');
         SubTitle = Path.Combine(vault.Name, _relativePath);
-        Action = c =>
+        CopyText = Path.Combine(vault.VaultPath, _relativePath);
+        Action = _ =>
         {
             OpenNote();
             return true;
