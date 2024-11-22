@@ -18,7 +18,7 @@ public static class VaultManager
         Vaults = GetVaults(settings);
         foreach (Vault vault in Vaults)
         {
-            vault.Files = vault.GetMdFiles();
+            vault.Files = vault.GetFiles(settings);
         }
     }
 
@@ -29,6 +29,8 @@ public static class VaultManager
         
         JsonElement root = document.RootElement;
         JsonElement vaults = root.GetProperty("vaults");
+        
+        var vaultsList = new List<Vault>();
         
         foreach (JsonProperty vault in vaults.EnumerateObject())
         {
@@ -43,9 +45,9 @@ public static class VaultManager
                 settings.VaultsSetting.Add(vaultId, vaultSetting);
             }
             
-            Vaults.Add(new Vault(vaultId, path, vaultSetting));
+            vaultsList.Add(new Vault(vaultId, path, vaultSetting));
         }
-        return Vaults;
+        return vaultsList;
     }
 
     public static List<File> GetAllFiles()
@@ -56,5 +58,10 @@ public static class VaultManager
             files.AddRange(vault.Files);
         }
         return files;
+    }
+
+    public static Vault? GetVault(string vaultId)
+    {
+        return Vaults.Find(vault => vault.Id == vaultId);
     }
 }

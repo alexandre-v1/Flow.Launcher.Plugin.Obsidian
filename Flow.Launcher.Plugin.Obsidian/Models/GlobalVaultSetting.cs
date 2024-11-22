@@ -11,4 +11,30 @@ public class GlobalVaultSetting
     public bool SearchOther { get; set; }
     public bool SearchContent { get; set; }
     public List<string> ExcludedPaths { get; set; } = new();
+
+    public virtual HashSet<string> GetSearchableExtensions(Settings settings)
+    {
+        var searchPattern = new HashSet<string>();
+        if (SearchMarkdown)
+            searchPattern.Add(".md");
+        if (SearchCanvas)
+            searchPattern.Add(".canvas");
+        if (SearchImages)
+        {
+            searchPattern.Add(".png");
+            searchPattern.Add(".jpg");
+            searchPattern.Add(".jpeg");
+            searchPattern.Add(".gif");
+            searchPattern.Add(".bmp");
+        }
+        if (SearchExcalidraw)
+            searchPattern.Add(".excalidraw");
+        if (SearchOther)
+        {
+            searchPattern.Add(".json");
+            searchPattern.Add(".csv");
+        }
+
+        return searchPattern;
+    }
 }

@@ -1,45 +1,36 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using Flow.Launcher.Plugin.Obsidian.Services;
 
 namespace Flow.Launcher.Plugin.Obsidian.Models;
 
-public class File
+public class File : Result
 {
     private static readonly string ObsidianLogoPath = Path.Combine("Icons", "obsidian-logo.png");
-    public readonly string Title;
-    private readonly string _path;
     private readonly string _relativePath;
-    private readonly Vault _vault;
     
     public File(Vault vault, string path)
     {
-        _vault = vault;
-        _path = path;
         Title = Path.GetFileNameWithoutExtension(path);
-        _relativePath = path.Replace(_vault.VaultPath, "").TrimStart('\\');
-    }
-
-    public Result ToResult()
-    {
-        var result = new Result
+        _relativePath = path.Replace(vault.VaultPath, "").TrimStart('\\');
+        SubTitle = Path.Combine(vault.Name, _relativePath);
+        Action = c =>
         {
-            Title = Title,
-            SubTitle = Path.Combine(_vault.Name, _relativePath),
-            Action = c =>
-            {
-                OpenNote();
-                return true;
-            },
-            ContextData = _vault,
-            IcoPath = ObsidianLogoPath
+            OpenNote();
+            return true;
         };
-        return result;
+        ContextData = vault.Id;
+        IcoPath = ObsidianLogoPath;
     }
 
     private void OpenNote()
     {
-        string encodedVault = Uri.EscapeDataString(_vault.Name);
+        string vaultId = (string)ContextData;
+        Vault? vault = VaultManager.GetVault(vaultId);
+        if (vault == null) return;
+        
+        string encodedVault = Uri.EscapeDataString(vault.Name);
         string encodedPath = Uri.EscapeDataString(_relativePath);
         
         string uri = $"obsidian://open?vault={encodedVault}&file={encodedPath}";

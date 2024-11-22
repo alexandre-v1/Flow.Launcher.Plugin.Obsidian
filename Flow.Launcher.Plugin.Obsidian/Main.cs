@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Windows.Controls;
 using Flow.Launcher.Plugin.Obsidian.Models;
 using Flow.Launcher.Plugin.Obsidian.Services;
-using Flow.Launcher.Plugin.Obsidian.Utilities;
 using Flow.Launcher.Plugin.Obsidian.Views;
 
 namespace Flow.Launcher.Plugin.Obsidian
@@ -22,16 +21,17 @@ namespace Flow.Launcher.Plugin.Obsidian
 
         public List<Result> Query(Query query)
         {
-            var allFiles = VaultManager.GetAllFiles();
-            var resultsMatches = StringMatcher.FindClosestMatches(allFiles, query.Search, maxDistance: 2);
+            string search = query.Search.Trim();
+            if (string.IsNullOrEmpty(search))
+                return new List<Result>();
 
-            List<Result> resultList = new();
-            foreach ((File file, int distance) in resultsMatches)
-            {
-                Console.WriteLine($"{file} - {distance}");
-                resultList.Add(file.ToResult());
-            }
-            return resultList;
+            var files = VaultManager.GetAllFiles();
+            var results = SearchService.GetSearchResults(files, search);
+
+            if (_settings?.MaxResult > 0)
+                results = SearchService.SortAndTruncateResults(results, _settings.MaxResult);
+            
+            return results;
         }
 
         public Control CreateSettingPanel()

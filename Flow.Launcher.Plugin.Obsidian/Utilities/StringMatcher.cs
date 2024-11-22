@@ -19,7 +19,7 @@ public static class StringMatcher
             .ToList();
     }
 
-    private static int CalculateLevenshteinDistance(string source, string target)
+    public static int CalculateLevenshteinDistance(string source, string target)
     {
         if (string.IsNullOrEmpty(source))
             return string.IsNullOrEmpty(target) ? 0 : target.Length;
@@ -39,7 +39,7 @@ public static class StringMatcher
         {
             for (int j = 1; j <= target.Length; j++)
             {
-                int cost = (source[i - 1] == target[j - 1]) ? 0 : 1;
+                int cost = source[i - 1] == target[j - 1] ? 0 : 1;
                 matrix[i, j] = Math.Min(
                     Math.Min(matrix[i - 1, j] + 1, matrix[i, j - 1] + 1),
                     matrix[i - 1, j - 1] + cost
