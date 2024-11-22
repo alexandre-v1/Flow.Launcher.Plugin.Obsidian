@@ -9,6 +9,7 @@ namespace Flow.Launcher.Plugin.Obsidian.Views;
 
 public partial class SettingsView : INotifyPropertyChanged
 {
+    private Obsidian Obsidian { get; }
     private Settings Settings { get; }
     
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -25,8 +26,9 @@ public partial class SettingsView : INotifyPropertyChanged
         }
     }
 
-    public SettingsView(Settings settings)
+    public SettingsView(Settings settings, Obsidian obsidian)
     {
+        Obsidian = obsidian;
         Settings = settings;
         InitializeComponent();
         CreateVaultSettingControls(settings);
@@ -45,6 +47,11 @@ public partial class SettingsView : INotifyPropertyChanged
         ShowFileExtension.Unchecked += (_, _) => { Settings.ShowFilesExtension = false; };
     }
     
+    private void SettingsView_OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        Obsidian.ReloadData();
+    }
+    
     private void CreateVaultSettingControls(Settings settings)
     {
         var globalVaultSettingControl = new GlobalVaultSettingView(settings.GlobalVaultSetting);
@@ -55,7 +62,6 @@ public partial class SettingsView : INotifyPropertyChanged
             VaultsSettingPanel.Children.Add(vaultSettingControl);
         }
     }
-
     private void OnIncrease(object sender, RoutedEventArgs e)
     {
         MaxResults++;

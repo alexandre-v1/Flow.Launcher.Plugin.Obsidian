@@ -6,6 +6,7 @@
              d:DesignHeight="500"
              d:DesignWidth="300"
              Loaded="SettingsView_OnLoaded"
+             Unloaded="SettingsView_OnUnloaded"
              DataContext="{Binding RelativeSource={RelativeSource Self}}"
              mc:Ignorable="d">
 

@@ -8,7 +8,7 @@ using Flow.Launcher.Plugin.Obsidian.Views;
 
 namespace Flow.Launcher.Plugin.Obsidian
 {
-    public class Obsidian : IPlugin, ISettingProvider
+    public class Obsidian : IPlugin, ISettingProvider, IReloadable
     {
         private IPublicAPI? _publicApi;
         private Settings? _settings;
@@ -17,7 +17,7 @@ namespace Flow.Launcher.Plugin.Obsidian
         {
             _publicApi = context.API;       
             _settings = _publicApi.LoadSettingJsonStorage<Settings>();
-            VaultManager.UpdateVaultList(_settings);
+            ReloadData();
         }
 
         public List<Result> Query(Query query)
@@ -37,7 +37,12 @@ namespace Flow.Launcher.Plugin.Obsidian
         public Control CreateSettingPanel()
         {
             if (_settings == null) throw new Exception("Settings not initialized");
-            return new SettingsView(_settings);
+            return new SettingsView(_settings, this);
+        }
+
+        public void ReloadData()
+        {
+            if (_settings != null) VaultManager.UpdateVaultList(_settings);
         }
     }
 }
