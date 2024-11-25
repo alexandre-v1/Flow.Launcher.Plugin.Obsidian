@@ -37,4 +37,9 @@ public class GlobalVaultSetting
 
         return searchPattern;
     }
+    
+    public virtual List<string> GetExcludedPaths(Settings settings)
+    {
+        return new List<string>(ExcludedPaths);
+    }
 }
