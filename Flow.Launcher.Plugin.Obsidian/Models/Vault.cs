@@ -23,10 +23,15 @@ public class Vault
 
     public IEnumerable<File> GetFiles(Settings settings)
     {
-        var extensions = VaultSetting.GetSearchableExtensions(settings);
         bool useExtensions = settings.UseFilesExtension;
+        var extensions = VaultSetting.GetSearchableExtensions(settings);
+        var excludedPaths = VaultSetting.GetExcludedPaths(settings)
+            .Select(excludedPath => Path.Combine(VaultPath, excludedPath))
+            .ToList();
+
         var files = Directory.EnumerateFiles(VaultPath, "*", SearchOption.AllDirectories)
-            .Where(file => extensions.Contains(Path.GetExtension(file)))
+            .Where(file => extensions.Contains(Path.GetExtension(file)) 
+                           && !excludedPaths.Any(file.StartsWith))
             .Select(filePath => new File(this, filePath, useExtensions));
 
         return files;
