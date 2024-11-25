@@ -5,7 +5,7 @@ namespace Flow.Launcher.Plugin.Obsidian.Models;
 public class Settings
 {
     public int MaxResult { get; set; }
-    public bool OldLogos { get; set; }
+    public bool UseAliases { get; set; }
     public bool UseFilesExtension { get; set; }
     
     // Keep setters to allow JSON deserialization

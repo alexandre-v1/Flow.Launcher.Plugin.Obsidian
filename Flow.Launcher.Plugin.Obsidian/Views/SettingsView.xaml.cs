@@ -37,11 +37,11 @@ public partial class SettingsView : INotifyPropertyChanged
     private void SettingsView_OnLoaded(object sender, RoutedEventArgs e)
     {
         MaxResults = Settings.MaxResult;
-        OldLogo.IsChecked = Settings.OldLogos;
+        UseAliases.IsChecked = Settings.UseAliases;
         UseFileExtension.IsChecked = Settings.UseFilesExtension;
         
-        OldLogo.Checked += (_, _) => { Settings.OldLogos = true; };
-        OldLogo.Unchecked += (_, _) => { Settings.OldLogos = false; };
+        UseAliases.Checked += (_, _) => { Settings.UseAliases = true; };
+        UseAliases.Unchecked += (_, _) => { Settings.UseAliases = false; };
         
         UseFileExtension.Checked += (_, _) => { Settings.UseFilesExtension = true; };
         UseFileExtension.Unchecked += (_, _) => { Settings.UseFilesExtension = false; };
