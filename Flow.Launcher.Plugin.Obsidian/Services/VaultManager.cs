@@ -15,22 +15,13 @@ public static class VaultManager
     
     public static void UpdateVaultList(Settings settings)
     {
-        Vaults = GetVaults(settings);
-        foreach (Vault vault in Vaults)
-        {
-            vault.Files = vault.GetFiles(settings);
-        }
-    }
-
-    private static List<Vault> GetVaults(Settings settings)
-    {
+        Vaults = new List<Vault>();
         string jsonString = System.IO.File.ReadAllText(VaultListJsonPath);
         using JsonDocument document = JsonDocument.Parse(jsonString);
         
         JsonElement root = document.RootElement;
         JsonElement vaults = root.GetProperty("vaults");
         
-        var vaultsList = new List<Vault>();
         
         foreach (JsonProperty vault in vaults.EnumerateObject())
         {
@@ -45,9 +36,8 @@ public static class VaultManager
                 settings.VaultsSetting.Add(vaultId, vaultSetting);
             }
             
-            vaultsList.Add(new Vault(vaultId, path, vaultSetting));
+            Vaults.Add(new Vault(vaultId, path, vaultSetting, settings));
         }
-        return vaultsList;
     }
 
     public static List<File> GetAllFiles()

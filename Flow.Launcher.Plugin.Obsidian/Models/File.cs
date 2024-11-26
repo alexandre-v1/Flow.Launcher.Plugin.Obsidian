@@ -9,10 +9,15 @@ public class File : Result
 {
     private static readonly string ObsidianLogoPath = Path.Combine("Icons", "obsidian-logo.png");
     private readonly string _relativePath;
+    public string Name { get; }
+    public string Extension { get; }
+    public string[]? Aliases { get; private set; }
     
-    public File(Vault vault, string path, bool useExtension )
+    public File(Vault vault, string path, bool useExtension , string[]? alias)
     {
-        Title = useExtension ? Path.GetFileName(path) : Path.GetFileNameWithoutExtension(path);
+        Name = Path.GetFileNameWithoutExtension(path);
+        Extension = Path.GetExtension(path);
+        Title = useExtension ? Name + Extension : Name;
         _relativePath = path.Replace(vault.VaultPath, "").TrimStart('\\');
         SubTitle = Path.Combine(vault.Name, _relativePath);
         CopyText = Path.Combine(vault.VaultPath, _relativePath);
@@ -23,6 +28,7 @@ public class File : Result
         };
         ContextData = vault.Id;
         IcoPath = ObsidianLogoPath;
+        Aliases = alias;
     }
 
     private void OpenNote()

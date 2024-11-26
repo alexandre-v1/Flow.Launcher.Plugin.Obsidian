@@ -1,6 +1,8 @@
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Flow.Launcher.Plugin.Obsidian.Models;
 using Flow.Launcher.Plugin.Obsidian.Utilities;
 
@@ -8,45 +10,66 @@ namespace Flow.Launcher.Plugin.Obsidian.Services;
 
 public static class SearchService
 {
-    public static List<Result> GetSearchResults(List<File> files, string search)
+    public static List<Result> GetSearchResults(List<File> files, string search, bool useAliases)
     {
-        var results = new List<Result>();
+        var results = new ConcurrentBag<Result>();
         string searchLower = search.ToLower();
         string pattern = $@"[_\s\-\.]{Regex.Escape(searchLower)}";
         
-        
-        foreach (File file in files)
+        Parallel.ForEach(files, file =>
         {
-            string fileTitleLower = file.Title.ToLower();
-            
-            if (fileTitleLower == searchLower)
-            {
-                file.Score = 100;
-                results.Add(file);
-                continue;
-            }
-            
-            int distance = StringMatcher.CalculateLevenshteinDistance(fileTitleLower, searchLower);
-    
-            if (fileTitleLower.StartsWith(searchLower))
-                file.Score = 80;
-            else if (fileTitleLower.Contains(searchLower))
-            {
-                file.Score = 50;
-                if (Regex.IsMatch(fileTitleLower, pattern)) // Preceded by special char
-                    file.Score += 20;
-            }
-            else
-            {
-                continue;
-            }
+            int maxScore = CalculateScore(file.Name, searchLower, pattern);
+            string bestMatchTitle = file.Name;
 
-            file.Score += 2 - distance;
-            if (file.Score >= 0)
-                results.Add(file);
+            if (useAliases && file.Aliases != null)
+            {
+                foreach (string alias in file.Aliases)
+                {
+                    int score = CalculateScore(alias, searchLower, pattern);
+                    
+                    if (score <= maxScore) continue;
+                    maxScore = score;
+                    bestMatchTitle = alias;
+                    if (score == 100) break;
+                }
+            }
+            
+            if (maxScore <= 0) return;
+            file.Score = maxScore;
+            file.Title = bestMatchTitle;
+            results.Add(file);
+        });
+
+        return results.ToList();
+    }
+
+    private static int CalculateScore(string name, string searchLower, string pattern)
+    {
+        int score = 0;
+        string fileTitleLower = name.ToLower();
+            
+        if (fileTitleLower == searchLower)
+        {
+            return 100;
+        }
+            
+        int distance = StringMatcher.CalculateLevenshteinDistance(fileTitleLower, searchLower);
+    
+        if (fileTitleLower.StartsWith(searchLower))
+            score = 80;
+        else if (fileTitleLower.Contains(searchLower))
+        {
+            score = 50;
+            if (Regex.IsMatch(fileTitleLower, pattern)) // Preceded by special char
+                score += 20;
+        }
+        else
+        {
+            return score;
         }
 
-        return results;
+        score += 2 - distance;
+        return score;
     }
 
     public static List<Result> SortAndTruncateResults(List<Result> results, int maxResult)

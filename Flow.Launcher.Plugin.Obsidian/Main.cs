@@ -22,13 +22,12 @@ namespace Flow.Launcher.Plugin.Obsidian
         public List<Result> Query(Query query)
         {
             string search = query.Search.Trim();
-            if (string.IsNullOrEmpty(search))
+            if (string.IsNullOrEmpty(search) || _settings == null)
                 return new List<Result>();
 
             var files = VaultManager.GetAllFiles();
-            var results = SearchService.GetSearchResults(files, search);
-
-            if (_settings?.MaxResult > 0)
+            var results = SearchService.GetSearchResults(files, search, _settings.UseAliases);
+            if (_settings.MaxResult > 0)
                 results = SearchService.SortAndTruncateResults(results, _settings.MaxResult);
             
             return results;
