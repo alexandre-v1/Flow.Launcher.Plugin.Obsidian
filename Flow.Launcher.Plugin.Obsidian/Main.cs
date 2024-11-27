@@ -9,8 +9,8 @@ namespace Flow.Launcher.Plugin.Obsidian
 {
     public class Obsidian : IPlugin, ISettingProvider, IReloadable
     {
-        private IPublicAPI? _publicApi;
-        private Settings? _settings;
+        private IPublicAPI _publicApi = null!;
+        private Settings _settings = null!;
 
         public void Init(PluginInitContext context)
         {
@@ -22,7 +22,7 @@ namespace Flow.Launcher.Plugin.Obsidian
         public List<Result> Query(Query query)
         {
             string search = query.Search.Trim();
-            if (string.IsNullOrEmpty(search) || _settings == null)
+            if (string.IsNullOrEmpty(search))
                 return new List<Result>();
 
             var files = VaultManager.GetAllFiles();
@@ -35,13 +35,12 @@ namespace Flow.Launcher.Plugin.Obsidian
 
         public Control CreateSettingPanel()
         {
-            if (_settings == null) throw new Exception("Settings not initialized");
             return new SettingsView(_settings, this);
         }
 
         public void ReloadData()
         {
-            if (_settings != null) VaultManager.UpdateVaultList(_settings);
+            VaultManager.UpdateVaultList(_settings);
         }
     }
 }
