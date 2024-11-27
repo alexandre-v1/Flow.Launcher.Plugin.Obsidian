@@ -19,6 +19,8 @@
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
         
         <StackPanel Grid.Row="0" Orientation="Horizontal">
@@ -46,15 +48,18 @@
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
             Content="Use file extension" />
-        
-        <TextBlock
+        <CheckBox
+            x:Name="AddGlobalFolderExcludeToContext"
             Grid.Row="3"
-            Margin="10,20,5,5"
+            Margin="10,5,5,5"
             HorizontalAlignment="Left"
-            FontSize="18" 
-            FontWeight="Bold"
-            Text="Global Setting" />
-        <StackPanel Grid.Row="4" x:Name="GlobalVaultSettingPanel" />
+            Content="Add Global Folder Exclude To Context Menu" />
+        <CheckBox
+            x:Name="AddLocalFolderExcludeToContext"
+            Grid.Row="4"
+            Margin="10,5,5,5"
+            HorizontalAlignment="Left"
+            Content="Add Local Folder Exclude To Context Menu" />
         
         <TextBlock
             Grid.Row="5"
@@ -62,7 +67,16 @@
             HorizontalAlignment="Left"
             FontSize="18" 
             FontWeight="Bold"
+            Text="Global Setting" />
+        <StackPanel Grid.Row="6" x:Name="GlobalVaultSettingPanel" />
+        
+        <TextBlock
+            Grid.Row="7"
+            Margin="10,20,5,5"
+            HorizontalAlignment="Left"
+            FontSize="18" 
+            FontWeight="Bold"
             Text="Per Vault Setting" />
-        <StackPanel Grid.Row="6" x:Name="VaultsSettingPanel" />
+        <StackPanel Grid.Row="8" x:Name="VaultsSettingPanel" />
     </Grid>
 </UserControl>

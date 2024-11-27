@@ -4,18 +4,21 @@ using System.Windows.Controls;
 using Flow.Launcher.Plugin.Obsidian.Models;
 using Flow.Launcher.Plugin.Obsidian.Services;
 using Flow.Launcher.Plugin.Obsidian.Views;
+using ContextMenu = Flow.Launcher.Plugin.Obsidian.Services.ContextMenu;
 
 namespace Flow.Launcher.Plugin.Obsidian
 {
-    public class Obsidian : IPlugin, ISettingProvider, IReloadable
+    public class Obsidian : IPlugin, ISettingProvider, IReloadable, IContextMenu
     {
         private IPublicAPI _publicApi = null!;
         private Settings _settings = null!;
+        private IContextMenu _contextMenu = null!;
 
         public void Init(PluginInitContext context)
         {
             _publicApi = context.API;       
             _settings = _publicApi.LoadSettingJsonStorage<Settings>();
+            _contextMenu = new ContextMenu(this, _settings);
             ReloadData();
         }
 
@@ -36,6 +39,11 @@ namespace Flow.Launcher.Plugin.Obsidian
         public Control CreateSettingPanel()
         {
             return new SettingsView(_settings, this);
+        }
+
+        public List<Result> LoadContextMenus(Result selectedResult)
+        {
+            return _contextMenu.LoadContextMenus(selectedResult);
         }
 
         public void ReloadData()

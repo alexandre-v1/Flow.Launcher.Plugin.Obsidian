@@ -39,12 +39,20 @@ public partial class SettingsView : INotifyPropertyChanged
         MaxResults = Settings.MaxResult;
         UseAliases.IsChecked = Settings.UseAliases;
         UseFileExtension.IsChecked = Settings.UseFilesExtension;
+        AddGlobalFolderExcludeToContext.IsChecked = Settings.AddGlobalFolderExcludeToContext;
+        AddLocalFolderExcludeToContext.IsChecked = Settings.AddLocalFolderExcludeToContext;
         
         UseAliases.Checked += (_, _) => { Settings.UseAliases = true; };
         UseAliases.Unchecked += (_, _) => { Settings.UseAliases = false; };
         
         UseFileExtension.Checked += (_, _) => { Settings.UseFilesExtension = true; };
         UseFileExtension.Unchecked += (_, _) => { Settings.UseFilesExtension = false; };
+        
+        AddGlobalFolderExcludeToContext.Checked += (_, _) => { Settings.AddGlobalFolderExcludeToContext = true; };
+        AddGlobalFolderExcludeToContext.Unchecked += (_, _) => { Settings.AddGlobalFolderExcludeToContext = false; };
+        
+        AddLocalFolderExcludeToContext.Checked += (_, _) => { Settings.AddLocalFolderExcludeToContext = true; };
+        AddLocalFolderExcludeToContext.Unchecked += (_, _) => { Settings.AddLocalFolderExcludeToContext = false; };
     }
     
     private void SettingsView_OnUnloaded(object sender, RoutedEventArgs e)

@@ -8,7 +8,7 @@ namespace Flow.Launcher.Plugin.Obsidian.Models;
 public class File : Result
 {
     private static readonly string ObsidianLogoPath = Path.Combine("Icons", "obsidian-logo.png");
-    private readonly string _relativePath;
+    public readonly string RelativePath;
     public string Name { get; }
     public string Extension { get; }
     public string[]? Aliases { get; private set; }
@@ -18,9 +18,9 @@ public class File : Result
         Name = Path.GetFileNameWithoutExtension(path);
         Extension = Path.GetExtension(path);
         Title = useExtension ? Name + Extension : Name;
-        _relativePath = path.Replace(vault.VaultPath, "").TrimStart('\\');
-        SubTitle = Path.Combine(vault.Name, _relativePath);
-        CopyText = Path.Combine(vault.VaultPath, _relativePath);
+        RelativePath = path.Replace(vault.VaultPath, "").TrimStart('\\');
+        SubTitle = Path.Combine(vault.Name, RelativePath);
+        CopyText = Path.Combine(vault.VaultPath, RelativePath);
         Action = _ =>
         {
             OpenNote();
@@ -38,7 +38,7 @@ public class File : Result
         if (vault == null) return;
         
         string encodedVault = Uri.EscapeDataString(vault.Name);
-        string encodedPath = Uri.EscapeDataString(_relativePath);
+        string encodedPath = Uri.EscapeDataString(RelativePath);
         
         string uri = $"obsidian://open?vault={encodedVault}&file={encodedPath}";
         
