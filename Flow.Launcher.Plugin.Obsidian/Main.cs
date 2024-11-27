@@ -29,7 +29,7 @@ namespace Flow.Launcher.Plugin.Obsidian
                 return new List<Result>();
 
             var files = VaultManager.GetAllFiles();
-            var results = SearchService.GetSearchResults(files, search, _settings.UseAliases);
+            var results = SearchService.GetSearchResults(files, search, _settings);
             if (_settings.MaxResult > 0)
                 results = SearchService.SortAndTruncateResults(results, _settings.MaxResult);
             

@@ -13,11 +13,10 @@ public class File : Result
     public string Extension { get; }
     public string[]? Aliases { get; private set; }
     
-    public File(Vault vault, string path, bool useExtension , string[]? alias)
+    public File(Vault vault, string path, string[]? alias)
     {
         Name = Path.GetFileNameWithoutExtension(path);
         Extension = Path.GetExtension(path);
-        Title = useExtension ? Name + Extension : Name;
         RelativePath = path.Replace(vault.VaultPath, "").TrimStart('\\');
         SubTitle = Path.Combine(vault.Name, RelativePath);
         CopyText = Path.Combine(vault.VaultPath, RelativePath);

@@ -10,7 +10,7 @@ namespace Flow.Launcher.Plugin.Obsidian.Services;
 
 public static class SearchService
 {
-    public static List<Result> GetSearchResults(List<File> files, string search, bool useAliases)
+    public static List<Result> GetSearchResults(List<File> files, string search, Settings settings)
     {
         var results = new ConcurrentBag<Result>();
         string searchLower = search.ToLower();
@@ -21,7 +21,7 @@ public static class SearchService
             int maxScore = CalculateScore(file.Name, searchLower, pattern);
             string bestMatchTitle = file.Name;
 
-            if (useAliases && file.Aliases != null)
+            if (settings.UseAliases && file.Aliases != null)
             {
                 foreach (string alias in file.Aliases)
                 {
@@ -37,6 +37,8 @@ public static class SearchService
             if (maxScore <= 0) return;
             file.Score = maxScore;
             file.Title = bestMatchTitle;
+            if (settings.UseFilesExtension)
+                file.Title += file.Extension;
             results.Add(file);
         });
 

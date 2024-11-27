@@ -25,7 +25,6 @@ public class Vault
 
     private IEnumerable<File> GetFiles(Settings settings)
     {
-        bool useExtensions = settings.UseFilesExtension;
         bool useAliases = settings.UseAliases;
         
         var extensions = VaultSetting.GetSearchableExtensions(settings);
@@ -41,7 +40,7 @@ public class Vault
                 string[]? aliases = null;
                 if (useAliases)
                     aliases = AliasesService.GetAliases(filePath);
-                return new File(this, filePath, useExtensions, aliases);
+                return new File(this, filePath, aliases);
             });
 
         return files;
