@@ -30,7 +30,6 @@ public partial class GlobalVaultSettingView : INotifyPropertyChanged
         GlobalVaultSetting = globalVaultSetting;
         InitializeComponent();
         DataContext = this;
-        RefreshExcludedPaths();
     }
     
     private void GlobalVaultSettingViewOnLoaded(object sender, RoutedEventArgs e)
@@ -65,7 +64,6 @@ public partial class GlobalVaultSettingView : INotifyPropertyChanged
     {
         if (string.IsNullOrWhiteSpace(NewExcludePathText.Text)) return;
         GlobalVaultSetting.ExcludedPaths.Add(NewExcludePathText.Text);
-        RefreshExcludedPaths();
         NewExcludePathText.Clear();
         
         ScrollViewer? scrollViewer = ScrollViewerHelper.FindScrollViewer(ExcludedPathsListBox);
@@ -77,14 +75,6 @@ public partial class GlobalVaultSettingView : INotifyPropertyChanged
         var button = sender as Button;
         if (button?.DataContext is not string path) return;
         GlobalVaultSetting.ExcludedPaths.Remove(path);
-        RefreshExcludedPaths();
-    }
-
-    private void RefreshExcludedPaths()
-    {
-        // Force the ListBox to refresh
-        ExcludedPathsListBox.ItemsSource = null;
-        ExcludedPathsListBox.ItemsSource = GlobalVaultSetting.ExcludedPaths;
     }
 
     private void OnPropertyChanged([CallerMemberName] string? propertyName = null)

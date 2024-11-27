@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Flow.Launcher.Plugin.Obsidian.Models;
 
@@ -10,7 +11,7 @@ public class GlobalVaultSetting
     public bool SearchExcalidraw { get; set; } = true;
     public bool SearchOther { get; set; }
     public bool SearchContent { get; set; }
-    public List<string> ExcludedPaths { get; set; } = new();
+    public ObservableCollection<string> ExcludedPaths { get; set; } = new();
 
     public virtual HashSet<string> GetSearchableExtensions(Settings settings)
     {
