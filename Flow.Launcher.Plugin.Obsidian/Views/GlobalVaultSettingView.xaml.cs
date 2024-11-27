@@ -10,7 +10,7 @@ namespace Flow.Launcher.Plugin.Obsidian.Views;
 
 public partial class GlobalVaultSettingView : INotifyPropertyChanged
 {
-    private GlobalVaultSetting GlobalVaultSetting { get; set; }
+    public GlobalVaultSetting GlobalVaultSetting { get; set; }
     
     public event PropertyChangedEventHandler? PropertyChanged;
     private Visibility _globalSettingVisibility = Visibility.Visible;

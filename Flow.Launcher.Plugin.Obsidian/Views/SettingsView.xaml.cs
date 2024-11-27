@@ -41,6 +41,7 @@ public partial class SettingsView : INotifyPropertyChanged
         UseFileExtension.IsChecked = Settings.UseFilesExtension;
         AddGlobalFolderExcludeToContext.IsChecked = Settings.AddGlobalFolderExcludeToContext;
         AddLocalFolderExcludeToContext.IsChecked = Settings.AddLocalFolderExcludeToContext;
+        AddCheckBoxesToContext.IsChecked = Settings.AddCheckBoxesToContext;
         
         UseAliases.Checked += (_, _) => { Settings.UseAliases = true; };
         UseAliases.Unchecked += (_, _) => { Settings.UseAliases = false; };
@@ -53,6 +54,9 @@ public partial class SettingsView : INotifyPropertyChanged
         
         AddLocalFolderExcludeToContext.Checked += (_, _) => { Settings.AddLocalFolderExcludeToContext = true; };
         AddLocalFolderExcludeToContext.Unchecked += (_, _) => { Settings.AddLocalFolderExcludeToContext = false; };
+        
+        AddCheckBoxesToContext.Checked += (_, _) => { Settings.AddCheckBoxesToContext = true; };
+        AddCheckBoxesToContext.Unchecked += (_, _) => { Settings.AddCheckBoxesToContext = false; };
     }
     
     private void SettingsView_OnUnloaded(object sender, RoutedEventArgs e)

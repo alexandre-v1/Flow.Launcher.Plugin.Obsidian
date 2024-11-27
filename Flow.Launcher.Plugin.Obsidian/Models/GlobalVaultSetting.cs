@@ -11,7 +11,14 @@ public class GlobalVaultSetting
     public bool SearchExcalidraw { get; set; } = true;
     public bool SearchOther { get; set; }
     public bool SearchContent { get; set; }
-    public ObservableCollection<string> ExcludedPaths { get; set; } = new();
+    
+    public ObservableCollection<string> ExcludedPaths { get; set; } = new (DefaultsExcludedPaths);
+    private static readonly List<string> DefaultsExcludedPaths = new()
+    {
+        ".trash",
+        ".obsidian"
+    };
+
 
     public virtual HashSet<string> GetSearchableExtensions(Settings settings)
     {

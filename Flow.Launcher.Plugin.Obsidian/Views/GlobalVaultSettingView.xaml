@@ -66,6 +66,7 @@
                 FontSize="15" 
                 Text="Excluded Paths"/>
             <ListBox x:Name="ExcludedPathsListBox"
+                     ItemsSource="{Binding GlobalVaultSetting.ExcludedPaths}"
                      ScrollViewer.VerticalScrollBarVisibility="Auto"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                      ScrollViewer.CanContentScroll="False"
