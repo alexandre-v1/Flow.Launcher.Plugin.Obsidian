@@ -4,8 +4,8 @@ namespace Flow.Launcher.Plugin.Obsidian.Models;
 
 public class VaultSetting : GlobalVaultSetting
 {
-    public bool UseGlobalSetting { get; set; }
-    public bool UseGlobalExcludedPaths { get; set; }
+    public bool UseGlobalSetting { get; set; } = true;
+    public bool UseGlobalExcludedPaths { get; set; } = true;
 
     public override HashSet<string> GetSearchableExtensions(Settings settings)
     {

@@ -39,7 +39,6 @@ public partial class GlobalVaultSettingView : INotifyPropertyChanged
         SearchImages.IsChecked = GlobalVaultSetting.SearchImages;
         SearchExcalidraw.IsChecked = GlobalVaultSetting.SearchExcalidraw;
         SearchOther.IsChecked = GlobalVaultSetting.SearchOther;
-        SearchContent.IsChecked = GlobalVaultSetting.SearchContent;
         
         SearchMarkdown.Checked += (_, _) => { GlobalVaultSetting.SearchMarkdown = true; };
         SearchMarkdown.Unchecked += (_, _) => { GlobalVaultSetting.SearchMarkdown = false; }; 
@@ -55,9 +54,6 @@ public partial class GlobalVaultSettingView : INotifyPropertyChanged
         
         SearchOther.Checked += (_, _) => { GlobalVaultSetting.SearchOther = true; }; 
         SearchOther.Unchecked += (_, _) => { GlobalVaultSetting.SearchOther = false; }; 
-        
-        SearchContent.Checked += (_, _) => { GlobalVaultSetting.SearchContent = true; }; 
-        SearchContent.Unchecked += (_, _) => { GlobalVaultSetting.SearchContent = false; }; 
     }
 
     private void AddExcludePath_Click(object sender, RoutedEventArgs e)
