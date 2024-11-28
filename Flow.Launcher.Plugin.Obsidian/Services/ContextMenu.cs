@@ -21,10 +21,10 @@ public class ContextMenu : IContextMenu
         string path = file.RelativePath;
         
         var results = new List<Result>();
-        
-        if (_settings is { AddGlobalFolderExcludeToContext: false, AddLocalFolderExcludeToContext: false }) 
-            return results;
-        results.AddRange(ExcludeResults(path, (string)file.ContextData));
+        if (_settings.AddCheckBoxesToContext)
+            results.AddRange(file.GetCheckBoxes());
+        if (_settings.AddGlobalFolderExcludeToContext || _settings.AddLocalFolderExcludeToContext)
+            results.AddRange(ExcludeResults(path, (string)file.ContextData));
         return results;
     }
 
