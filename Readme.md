@@ -10,7 +10,7 @@ Inspired by [Obsidian-Notes by Garulf](https://github.com/Garulf/Obsidian-Notes/
   - Markdown
   - Canvas
   - Excalidraw
-  - Images ( png, jsp, jpeg, gif, bnp )
+  - Images ( png, jpg, jpeg, gif, bmp )
   - Other ( json, csv )
 - Folder Exclusions
 - Search with [Aliases](https://help.obsidian.md/Linking+notes+and+files/Aliases)
