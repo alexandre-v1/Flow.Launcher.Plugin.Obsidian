@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Flow.Launcher.Plugin.Obsidian.Services;
+using YamlDotNet.Serialization;
 
 namespace Flow.Launcher.Plugin.Obsidian.Models;
 
@@ -20,28 +22,32 @@ public class Vault
         VaultPath = vaultPath;
         VaultSetting = vaultSetting;
         Name = Path.GetFileName(VaultPath);
-        Files = GetFiles(settings).ToList();
+        Files = GetFiles(settings);
     }
 
-    private IEnumerable<File> GetFiles(Settings settings)
+    private List<File> GetFiles(Settings settings)
     {
         bool useAliases = settings.UseAliases;
-        
+
         var extensions = VaultSetting.GetSearchableExtensions(settings);
         var excludedPaths = VaultSetting.GetExcludedPaths(settings)
             .Select(excludedPath => Path.Combine(VaultPath, excludedPath))
             .ToList();
 
         var files = Directory.EnumerateFiles(VaultPath, "*", SearchOption.AllDirectories)
+            .AsParallel()
+            .WithDegreeOfParallelism(Environment.ProcessorCount)
             .Where(file => extensions.Contains(Path.GetExtension(file)) 
                            && !excludedPaths.Any(file.StartsWith))
-            .Select(delegate(string filePath)
+            .Select(filePath =>
             {
                 string[]? aliases = null;
-                if (useAliases)
-                    aliases = AliasesService.GetAliases(filePath);
+                if (!useAliases) return new File(this, filePath, aliases);
+                var deserializer = new Deserializer();
+                aliases = AliasesService.GetAliases(filePath, deserializer);
                 return new File(this, filePath, aliases);
-            });
+            })
+            .ToList();
 
         return files;
     }
