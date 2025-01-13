@@ -7,7 +7,7 @@ namespace Flow.Launcher.Plugin.Obsidian.Helpers;
 
 public static class ScrollViewerHelper
 {
-   public static ScrollViewer? FindScrollViewer(DependencyObject element)
+    public static ScrollViewer? FindScrollViewer(DependencyObject element)
     {
         if (element is ScrollViewer scrollViewer) return scrollViewer;
 
@@ -16,17 +16,7 @@ public static class ScrollViewerHelper
             ScrollViewer? result = FindScrollViewer(VisualTreeHelper.GetChild(element, i));
             if (result != null) return result;
         }
-        return null;
-    }
 
-    private static ScrollViewer? FindParentScrollViewer(DependencyObject element)
-    {
-        DependencyObject? parent = VisualTreeHelper.GetParent(element);
-        while (parent != null)
-        {
-            if (parent is ScrollViewer scrollViewer) return scrollViewer;
-            parent = VisualTreeHelper.GetParent(parent);
-        }
         return null;
     }
 
@@ -44,19 +34,31 @@ public static class ScrollViewerHelper
         RaiseMouseWheelEventOnParent(e, element);
     }
 
+    private static ScrollViewer? FindParentScrollViewer(DependencyObject element)
+    {
+        DependencyObject? parent = VisualTreeHelper.GetParent(element);
+        while (parent != null)
+        {
+            if (parent is ScrollViewer scrollViewer) return scrollViewer;
+            parent = VisualTreeHelper.GetParent(parent);
+        }
+
+        return null;
+    }
+
     private static bool IsScrolledToBoundary(ScrollViewer scrollViewer, bool scrollingDown, bool scrollingUp)
     {
-        bool atBottomBoundary = scrollingDown && 
-                                (scrollViewer.VerticalOffset >= scrollViewer.ScrollableHeight);
-        bool atTopBoundary = scrollingUp && 
-                             (scrollViewer.VerticalOffset == 0);
+        bool atBottomBoundary = scrollingDown &&
+                                scrollViewer.VerticalOffset >= scrollViewer.ScrollableHeight;
+        bool atTopBoundary = scrollingUp &&
+                             scrollViewer.VerticalOffset == 0;
 
         return atBottomBoundary || atTopBoundary;
     }
 
     private static void RaiseMouseWheelEventOnParent(MouseWheelEventArgs e, UIElement element)
     {
-        var eventArg = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)
+        MouseWheelEventArgs eventArg = new(e.MouseDevice, e.Timestamp, e.Delta)
         {
             RoutedEvent = UIElement.MouseWheelEvent
         };

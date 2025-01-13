@@ -12,39 +12,39 @@
 
     <Grid Margin="60,10,10,20" VerticalAlignment="Top">
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
-             <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
             <RowDefinition />
             <RowDefinition />
         </Grid.RowDefinitions>
-        
+
         <TextBlock
             Grid.Row="0"
             Margin="10,10,5,5"
             HorizontalAlignment="Left"
-            FontSize="16" 
+            FontSize="16"
             FontWeight="DemiBold"
             Text="Search" />
-        
+
         <StackPanel Grid.Row="1" Orientation="Horizontal">
             <TextBlock
                 Margin="10,10,10,5"
                 HorizontalAlignment="Left"
-                Text="Max Result"/>
-            <Button Content="-" Click="OnDecrease"/>
+                Text="Max Result" />
+            <Button Content="-" Click="OnDecrease" />
             <TextBox Text="{Binding MaxResults, 
              UpdateSourceTrigger=PropertyChanged}"
                      Width="50"
                      TextAlignment="Center" />
-            <Button Content="+" Click="OnIncrease"/>
+            <Button Content="+" Click="OnIncrease" />
         </StackPanel>
 
         <CheckBox
@@ -59,12 +59,12 @@
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
             Content="Use file extension" />
-        
+
         <TextBlock
             Grid.Row="4"
             Margin="10,10,5,5"
             HorizontalAlignment="Left"
-            FontSize="16" 
+            FontSize="16"
             FontWeight="DemiBold"
             Text="Context menu" />
         <CheckBox
@@ -85,21 +85,21 @@
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
             Content="CheckBoxes" />
-        
+
         <TextBlock
             Grid.Row="8"
             Margin="10,20,5,5"
             HorizontalAlignment="Left"
-            FontSize="18" 
+            FontSize="18"
             FontWeight="Bold"
             Text="Global Setting" />
         <StackPanel Grid.Row="9" x:Name="GlobalVaultSettingPanel" />
-        
+
         <TextBlock
             Grid.Row="10"
             Margin="10,20,5,5"
             HorizontalAlignment="Left"
-            FontSize="18" 
+            FontSize="18"
             FontWeight="Bold"
             Text="Per Vault Setting" />
         <StackPanel Grid.Row="11" x:Name="VaultsSettingPanel" />

@@ -29,21 +29,21 @@ public class Vault
     {
         bool useAliases = settings.UseAliases;
 
-        var extensions = VaultSetting.GetSearchableExtensions(settings);
-        var excludedPaths = VaultSetting.GetExcludedPaths(settings)
+        HashSet<string> extensions = VaultSetting.GetSearchableExtensions(settings);
+        List<string> excludedPaths = VaultSetting.GetExcludedPaths(settings)
             .Select(excludedPath => Path.Combine(VaultPath, excludedPath))
             .ToList();
 
-        var files = Directory.EnumerateFiles(VaultPath, "*", SearchOption.AllDirectories)
+        List<File> files = Directory.EnumerateFiles(VaultPath, "*", SearchOption.AllDirectories)
             .AsParallel()
             .WithDegreeOfParallelism(Environment.ProcessorCount)
-            .Where(file => extensions.Contains(Path.GetExtension(file)) 
+            .Where(file => extensions.Contains(Path.GetExtension(file))
                            && !excludedPaths.Any(file.StartsWith))
             .Select(filePath =>
             {
                 string[]? aliases = null;
                 if (!useAliases) return new File(this, filePath, aliases);
-                var deserializer = new Deserializer();
+                Deserializer deserializer = new();
                 aliases = AliasesService.GetAliases(filePath, deserializer);
                 return new File(this, filePath, aliases);
             })

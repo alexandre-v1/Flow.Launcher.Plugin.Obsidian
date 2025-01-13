@@ -13,7 +13,7 @@ public class File : Result
     public string Name { get; }
     public string Extension { get; }
     public string[]? Aliases { get; private set; }
-    
+
     public File(Vault vault, string path, string[]? alias)
     {
         Name = Path.GetFileNameWithoutExtension(path);
@@ -37,16 +37,12 @@ public class File : Result
         string vaultId = (string)ContextData;
         Vault? vault = VaultManager.GetVault(vaultId);
         if (vault == null) return;
-        
+
         string encodedVault = Uri.EscapeDataString(vault.Name);
         string encodedPath = Uri.EscapeDataString(RelativePath);
-        
+
         string uri = $"obsidian://open?vault={encodedVault}&file={encodedPath}";
-        
-        Process.Start(new ProcessStartInfo
-        {
-            FileName = uri,
-            UseShellExecute = true
-        });
+
+        Process.Start(new ProcessStartInfo { FileName = uri, UseShellExecute = true });
     }
 }

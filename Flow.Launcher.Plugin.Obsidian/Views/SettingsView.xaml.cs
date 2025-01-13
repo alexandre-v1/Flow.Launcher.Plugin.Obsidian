@@ -9,11 +9,6 @@ namespace Flow.Launcher.Plugin.Obsidian.Views;
 
 public partial class SettingsView : INotifyPropertyChanged
 {
-    private Obsidian Obsidian { get; }
-    private Settings Settings { get; }
-    
-    public event PropertyChangedEventHandler? PropertyChanged;
-    private int _maxResults;
     public int MaxResults
     {
         get => _maxResults;
@@ -25,6 +20,10 @@ public partial class SettingsView : INotifyPropertyChanged
             OnPropertyChanged();
         }
     }
+
+    private Obsidian Obsidian { get; }
+    private Settings Settings { get; }
+    private int _maxResults;
 
     public SettingsView(Settings settings, Obsidian obsidian)
     {
@@ -42,42 +41,36 @@ public partial class SettingsView : INotifyPropertyChanged
         AddGlobalFolderExcludeToContext.IsChecked = Settings.AddGlobalFolderExcludeToContext;
         AddLocalFolderExcludeToContext.IsChecked = Settings.AddLocalFolderExcludeToContext;
         AddCheckBoxesToContext.IsChecked = Settings.AddCheckBoxesToContext;
-        
+
         UseAliases.Checked += (_, _) => { Settings.UseAliases = true; };
         UseAliases.Unchecked += (_, _) => { Settings.UseAliases = false; };
-        
+
         UseFileExtension.Checked += (_, _) => { Settings.UseFilesExtension = true; };
         UseFileExtension.Unchecked += (_, _) => { Settings.UseFilesExtension = false; };
-        
+
         AddGlobalFolderExcludeToContext.Checked += (_, _) => { Settings.AddGlobalFolderExcludeToContext = true; };
         AddGlobalFolderExcludeToContext.Unchecked += (_, _) => { Settings.AddGlobalFolderExcludeToContext = false; };
-        
+
         AddLocalFolderExcludeToContext.Checked += (_, _) => { Settings.AddLocalFolderExcludeToContext = true; };
         AddLocalFolderExcludeToContext.Unchecked += (_, _) => { Settings.AddLocalFolderExcludeToContext = false; };
-        
+
         AddCheckBoxesToContext.Checked += (_, _) => { Settings.AddCheckBoxesToContext = true; };
         AddCheckBoxesToContext.Unchecked += (_, _) => { Settings.AddCheckBoxesToContext = false; };
     }
-    
-    private void SettingsView_OnUnloaded(object sender, RoutedEventArgs e)
-    {
-        Obsidian.ReloadData();
-    }
-    
+
+    private void SettingsView_OnUnloaded(object sender, RoutedEventArgs e) => Obsidian.ReloadData();
+
     private void CreateVaultSettingControls(Settings settings)
     {
-        var globalVaultSettingControl = new GlobalVaultSettingView(settings.GlobalVaultSetting);
+        GlobalVaultSettingView globalVaultSettingControl = new(settings.GlobalVaultSetting);
         GlobalVaultSettingPanel.Children.Add(globalVaultSettingControl);
-        var margin = new Thickness(0, 0, 10, 0);
-        foreach (VaultSettingView? vaultSettingControl in VaultManager.Vaults.Select(vault => new VaultSettingView(vault) { Margin = margin }))
-        {
+        Thickness margin = new(0, 0, 10, 0);
+        foreach (VaultSettingView? vaultSettingControl in VaultManager.Vaults.Select(vault =>
+                     new VaultSettingView(vault) { Margin = margin }))
             VaultsSettingPanel.Children.Add(vaultSettingControl);
-        }
     }
-    private void OnIncrease(object sender, RoutedEventArgs e)
-    {
-        MaxResults++;
-    }
+
+    private void OnIncrease(object sender, RoutedEventArgs e) => MaxResults++;
 
     private void OnDecrease(object sender, RoutedEventArgs e)
     {
@@ -85,8 +78,8 @@ public partial class SettingsView : INotifyPropertyChanged
         if (MaxResults < 0) MaxResults = 0;
     }
 
-    private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-    {
+    private void OnPropertyChanged([CallerMemberName] string? propertyName = null) =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
 }

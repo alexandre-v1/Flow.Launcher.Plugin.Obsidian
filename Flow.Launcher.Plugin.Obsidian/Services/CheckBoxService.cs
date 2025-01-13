@@ -10,12 +10,12 @@ public static class CheckBoxService
     private const string FontFamily = "/Resources/#Segoe Fluent Icons";
     private const string MarkedCheckBoxGlyph = "\uE73D";
     private const string CheckBoxGlyph = "\uE739";
-    
+
 
     public static List<Result> GetCheckBoxes(this File file)
     {
         string path = file.FilePath;
-        var checkBoxes = new List<Result>();
+        List<Result> checkBoxes = new();
         string[] lines = System.IO.File.ReadAllLines(path);
 
         string prevLine = string.Empty;
@@ -25,7 +25,7 @@ public static class CheckBoxService
             bool isChecked;
 
             if (line.Contains(MarkedCheckBox))
-            { 
+            {
                 isChecked = true;
                 title = line.Replace(MarkedCheckBox, "");
             }
@@ -36,19 +36,16 @@ public static class CheckBoxService
             }
             else
             {
-                if(line.Length > 0)
+                if (line.Length > 0)
                     prevLine = line;
                 continue;
             }
 
             string subTitle = string.Empty;
             string trim = prevLine.Trim();
-            if (trim.EndsWith(":"))
-            {
-                subTitle = trim[..^1];
-            }
+            if (trim.EndsWith(":")) subTitle = trim[..^1];
 
-            var item = new Result
+            Result item = new()
             {
                 Glyph = new GlyphInfo(FontFamily, isChecked ? MarkedCheckBoxGlyph : CheckBoxGlyph),
                 Title = title.Trim(),
@@ -61,6 +58,7 @@ public static class CheckBoxService
             };
             checkBoxes.Add(item);
         }
+
         return checkBoxes;
     }
 
@@ -68,18 +66,18 @@ public static class CheckBoxService
     {
         string filePath = file.FilePath;
         string[] lines = System.IO.File.ReadAllLines(filePath);
-        
+
         for (int i = 0; i < lines.Length; i++)
         {
             if (!lines[i].Contains(checkBoxLine)) continue;
-            
+
             if (isChecked)
                 lines[i] = lines[i].Replace(MarkedCheckBox, CheckBox);
             else
                 lines[i] = lines[i].Replace(CheckBox, MarkedCheckBox);
             break;
         }
-        
+
         System.IO.File.WriteAllLines(filePath, lines);
     }
 }
