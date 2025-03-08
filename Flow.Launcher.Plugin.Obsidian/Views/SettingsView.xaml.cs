@@ -41,6 +41,7 @@ public partial class SettingsView : INotifyPropertyChanged
         AddGlobalFolderExcludeToContext.IsChecked = Settings.AddGlobalFolderExcludeToContext;
         AddLocalFolderExcludeToContext.IsChecked = Settings.AddLocalFolderExcludeToContext;
         AddCheckBoxesToContext.IsChecked = Settings.AddCheckBoxesToContext;
+        AddCreateNoteOptionOnAllSearch.IsChecked = Settings.AddCreateNoteOptionOnAllSearch;
 
         UseAliases.Checked += (_, _) => { Settings.UseAliases = true; };
         UseAliases.Unchecked += (_, _) => { Settings.UseAliases = false; };
@@ -56,6 +57,9 @@ public partial class SettingsView : INotifyPropertyChanged
 
         AddCheckBoxesToContext.Checked += (_, _) => { Settings.AddCheckBoxesToContext = true; };
         AddCheckBoxesToContext.Unchecked += (_, _) => { Settings.AddCheckBoxesToContext = false; };
+
+        AddCreateNoteOptionOnAllSearch.Checked += (_, _) => { Settings.AddCreateNoteOptionOnAllSearch = true; };
+        AddCreateNoteOptionOnAllSearch.Unchecked += (_, _) => { Settings.AddCreateNoteOptionOnAllSearch = false; };
     }
 
     private void SettingsView_OnUnloaded(object sender, RoutedEventArgs e) => Obsidian.ReloadData();

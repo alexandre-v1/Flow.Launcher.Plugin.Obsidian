@@ -24,6 +24,7 @@
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
 
         <TextBlock
@@ -40,7 +41,7 @@
                 HorizontalAlignment="Left"
                 Text="Max Result" />
             <Button Content="-" Click="OnDecrease" />
-            <TextBox Text="{Binding MaxResults, 
+            <TextBox Text="{Binding MaxResults,
              UpdateSourceTrigger=PropertyChanged}"
                      Width="50"
                      TextAlignment="Center" />
@@ -59,9 +60,15 @@
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
             Content="Use file extension" />
+        <CheckBox
+            x:Name="AddCreateNoteOptionOnAllSearch"
+            Grid.Row="4"
+            Margin="10,5,5,5"
+            HorizontalAlignment="Left"
+            Content="Add create note option on all search" />
 
         <TextBlock
-            Grid.Row="4"
+            Grid.Row="5"
             Margin="10,10,5,5"
             HorizontalAlignment="Left"
             FontSize="16"
@@ -69,39 +76,39 @@
             Text="Context menu" />
         <CheckBox
             x:Name="AddGlobalFolderExcludeToContext"
-            Grid.Row="5"
+            Grid.Row="6"
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
             Content="Global Folder Exclude" />
         <CheckBox
             x:Name="AddLocalFolderExcludeToContext"
-            Grid.Row="6"
+            Grid.Row="7"
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
             Content="Local Folder Exclude" />
         <CheckBox
             x:Name="AddCheckBoxesToContext"
-            Grid.Row="7"
+            Grid.Row="8"
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
             Content="CheckBoxes" />
 
         <TextBlock
-            Grid.Row="8"
+            Grid.Row="9"
             Margin="10,20,5,5"
             HorizontalAlignment="Left"
             FontSize="18"
             FontWeight="Bold"
             Text="Global Setting" />
-        <StackPanel Grid.Row="9" x:Name="GlobalVaultSettingPanel" />
+        <StackPanel Grid.Row="10" x:Name="GlobalVaultSettingPanel" />
 
         <TextBlock
-            Grid.Row="10"
+            Grid.Row="11"
             Margin="10,20,5,5"
             HorizontalAlignment="Left"
             FontSize="18"
             FontWeight="Bold"
             Text="Per Vault Setting" />
-        <StackPanel Grid.Row="11" x:Name="VaultsSettingPanel" />
+        <StackPanel Grid.Row="12" x:Name="VaultsSettingPanel" />
     </Grid>
 </UserControl>

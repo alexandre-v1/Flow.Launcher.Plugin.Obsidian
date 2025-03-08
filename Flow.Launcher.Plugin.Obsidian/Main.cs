@@ -42,7 +42,8 @@ public class Obsidian : IPlugin, ISettingProvider, IReloadable, IContextMenu
         if (_settings.MaxResult > 0)
             results = SearchService.SortAndTruncateResults(results, _settings.MaxResult);
 
-        results.Add(NoteCreatorService.CreateNewNoteResult(query, _publicApi));
+        if (_settings.AddCreateNoteOptionOnAllSearch)
+            results.Add(NoteCreatorService.CreateNewNoteResult(query, _publicApi));
 
         return results;
     }
