@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Controls;
 using Flow.Launcher.Plugin.Obsidian.Models;
 using Flow.Launcher.Plugin.Obsidian.Services;
@@ -26,13 +27,22 @@ public class Obsidian : IPlugin, ISettingProvider, IReloadable, IContextMenu
     public List<Result> Query(Query query)
     {
         string search = query.Search.Trim();
+        List<Result> results = new();
         if (string.IsNullOrEmpty(search))
-            return new List<Result>();
+            return results;
+
+        if (NoteCreatorService.IsCreateNewNoteQuery(search))
+        {
+            results = NoteCreatorService.CreateNewNoteResultsWithVaults(query).ToList();
+            return results;
+        }
 
         List<File> files = VaultManager.GetAllFiles();
-        List<Result> results = SearchService.GetSearchResults(files, search, _settings);
+        results = SearchService.GetSearchResults(files, search, _settings);
         if (_settings.MaxResult > 0)
             results = SearchService.SortAndTruncateResults(results, _settings.MaxResult);
+
+        results.Add(NoteCreatorService.CreateNewNoteResult(query, _publicApi));
 
         return results;
     }
