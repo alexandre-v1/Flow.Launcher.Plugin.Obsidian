@@ -47,7 +47,7 @@ public class ContextMenu : IContextMenu
     private bool TryToExcludeLocalFolder(string folder, string? vaultId)
     {
         if (vaultId is null) return false;
-        Vault? vault = VaultManager.GetVault(vaultId);
+        Vault? vault = VaultManager.GetVaultWithId(vaultId);
         if (vault is null) return false;
         vault.VaultSetting.ExcludedPaths.Add(folder);
         _obsidian.ReloadData();

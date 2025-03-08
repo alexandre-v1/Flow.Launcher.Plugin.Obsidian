@@ -9,6 +9,7 @@ namespace Flow.Launcher.Plugin.Obsidian.Services;
 
 public static class VaultManager
 {
+    public static bool HasOnlyOneVault => Vaults.Count == 1;
     public static List<Vault> Vaults { get; private set; } = new();
 
     private static readonly string VaultListJsonPath =
@@ -48,5 +49,11 @@ public static class VaultManager
         return files;
     }
 
-    public static Vault? GetVault(string vaultId) => Vaults.Find(vault => vault.Id == vaultId);
+    public static Vault? GetVaultWithId(string vaultId) => Vaults.Find(vault => vault.Id == vaultId);
+
+    public static Vault? GetVaultWithName(string name)
+    {
+        Vault? vault = Vaults.Find(vault => vault.Name == name);
+        return vault;
+    }
 }

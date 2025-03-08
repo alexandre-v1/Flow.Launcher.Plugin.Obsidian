@@ -1,18 +1,17 @@
-using System;
 using System.Diagnostics;
 using System.IO;
+using Flow.Launcher.Plugin.Obsidian.Helpers;
 using Flow.Launcher.Plugin.Obsidian.Services;
 
 namespace Flow.Launcher.Plugin.Obsidian.Models;
 
 public class File : Result
 {
-    private static readonly string ObsidianLogoPath = Path.Combine("Icons", "obsidian-logo.png");
-    public readonly string RelativePath;
+    public readonly string Name;
     public readonly string FilePath;
-    public string Name { get; }
-    public string Extension { get; }
-    public string[]? Aliases { get; private set; }
+    public readonly string Extension;
+    public readonly string RelativePath;
+    public readonly string[]? Aliases;
 
     public File(Vault vault, string path, string[]? alias)
     {
@@ -28,21 +27,17 @@ public class File : Result
             return true;
         };
         ContextData = vault.Id;
-        IcoPath = ObsidianLogoPath;
+        IcoPath = Paths.ObsidianLogo;
         Aliases = alias;
     }
 
     private void OpenNote()
     {
         string vaultId = (string)ContextData;
-        Vault? vault = VaultManager.GetVault(vaultId);
+        Vault? vault = VaultManager.GetVaultWithId(vaultId);
         if (vault == null) return;
 
-        string encodedVault = Uri.EscapeDataString(vault.Name);
-        string encodedPath = Uri.EscapeDataString(RelativePath);
-
-        string uri = $"obsidian://open?vault={encodedVault}&file={encodedPath}";
-
+        string uri = UriService.GetOpenNoteUri(vault.Name, RelativePath);
         Process.Start(new ProcessStartInfo { FileName = uri, UseShellExecute = true });
     }
 }
