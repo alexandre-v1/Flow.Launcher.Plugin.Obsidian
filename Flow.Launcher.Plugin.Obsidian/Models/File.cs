@@ -12,6 +12,7 @@ public class File : Result
     public readonly string Extension;
     public readonly string RelativePath;
     public readonly string[]? Aliases;
+    public readonly string VaultId;
 
     public File(Vault vault, string path, string[]? alias)
     {
@@ -26,15 +27,14 @@ public class File : Result
             OpenNote();
             return true;
         };
-        ContextData = vault.Id;
+        VaultId = vault.Id;
         IcoPath = Paths.ObsidianLogo;
         Aliases = alias;
     }
 
     private void OpenNote()
     {
-        string vaultId = (string)ContextData;
-        Vault? vault = VaultManager.GetVaultWithId(vaultId);
+        Vault? vault = VaultManager.GetVaultWithId(VaultId);
         if (vault == null) return;
 
         string uri = UriService.GetOpenNoteUri(vault.Name, RelativePath);
