@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using Flow.Launcher.Plugin.Obsidian.Models;
 using File = Flow.Launcher.Plugin.Obsidian.Models.File;
@@ -10,6 +11,8 @@ namespace Flow.Launcher.Plugin.Obsidian.Services;
 public static class VaultManager
 {
     public static bool HasOnlyOneVault => Vaults.Count == 1;
+    public static bool OneVaultHasAdvancedUri => Vaults.Any(vault => vault.HasAdvancedUri);
+    public static bool AllVaultsHaveAdvancedUri => Vaults.All(vault => vault.HasAdvancedUri);
     public static List<Vault> Vaults { get; private set; } = new();
 
     private static readonly string VaultListJsonPath =
@@ -39,6 +42,11 @@ public static class VaultManager
             }
 
             Vaults.Add(new Vault(vaultId, path, vaultSetting, settings));
+        }
+
+        if (!OneVaultHasAdvancedUri)
+        {
+            settings.GlobalVaultSetting.OpenInNewTabByDefault = false;
         }
     }
 

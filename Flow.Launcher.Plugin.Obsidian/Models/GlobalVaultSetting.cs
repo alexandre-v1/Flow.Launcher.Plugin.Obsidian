@@ -7,6 +7,7 @@ public class GlobalVaultSetting
 {
     private static readonly List<string> DefaultsExcludedPaths = new() { ".trash", ".obsidian" };
 
+    public bool OpenInNewTabByDefault { get; set; } = true;
     public bool SearchMarkdown { get; set; } = true;
     public bool SearchCanvas { get; set; } = true;
     public bool SearchImages { get; set; }
@@ -32,7 +33,6 @@ public class GlobalVaultSetting
             searchPattern.Add(".gif");
             searchPattern.Add(".bmp");
         }
-
         if (SearchExcalidraw)
             searchPattern.Add(".excalidraw");
         if (SearchOther)

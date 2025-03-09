@@ -14,45 +14,47 @@
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
 
         <CheckBox
-            x:Name="SearchMarkdown"
+            x:Name="OpenInNewTabByDefault"
             Grid.Row="0"
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
-            Content="Search Markdown"
-            Visibility="{Binding GlobalSettingVisibility}" />
+            Content="Open in new tab by default"/>
         <CheckBox
-            x:Name="SearchCanvas"
+            x:Name="SearchMarkdown"
             Grid.Row="1"
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
-            Content="Search Canvas"
-            Visibility="{Binding GlobalSettingVisibility}" />
+            Content="Search Markdown"/>
         <CheckBox
-            x:Name="SearchImages"
+            x:Name="SearchCanvas"
             Grid.Row="2"
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
-            Content="Search Images"
-            Visibility="{Binding GlobalSettingVisibility}" />
+            Content="Search Canvas"/>
         <CheckBox
-            x:Name="SearchExcalidraw"
+            x:Name="SearchImages"
             Grid.Row="3"
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
-            Content="Search Excalidraw"
-            Visibility="{Binding GlobalSettingVisibility}" />
+            Content="Search Images"/>
         <CheckBox
-            x:Name="SearchOther"
+            x:Name="SearchExcalidraw"
             Grid.Row="4"
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
-            Content="Search Other"
-            Visibility="{Binding GlobalSettingVisibility}" />
+            Content="Search Excalidraw"/>
+        <CheckBox
+            x:Name="SearchOther"
+            Grid.Row="5"
+            Margin="10,5,5,5"
+            HorizontalAlignment="Left"
+            Content="Search Other"/>
 
-        <StackPanel Grid.Row="5" Margin="10,5,5,5">
+        <StackPanel Grid.Row="6" Margin="10,5,5,5">
             <TextBlock
                 HorizontalAlignment="Left"
                 FontSize="15"

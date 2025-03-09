@@ -2,14 +2,17 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using Flow.Launcher.Plugin.Obsidian.Helpers;
 using Flow.Launcher.Plugin.Obsidian.Models;
+using Flow.Launcher.Plugin.Obsidian.Services;
 
 namespace Flow.Launcher.Plugin.Obsidian.Views;
 
 public partial class GlobalVaultSettingView : INotifyPropertyChanged
 {
+    public Vault? Vault { get; }
     public GlobalVaultSetting GlobalVaultSetting { get; set; }
 
     public Visibility GlobalSettingVisibility
@@ -25,35 +28,62 @@ public partial class GlobalVaultSettingView : INotifyPropertyChanged
 
     private Visibility _globalSettingVisibility = Visibility.Visible;
 
-    public GlobalVaultSettingView(GlobalVaultSetting globalVaultSetting)
+    public GlobalVaultSettingView(Settings settings)
     {
-        GlobalVaultSetting = globalVaultSetting;
+        GlobalVaultSetting = settings.GlobalVaultSetting;
+        InitializeComponent();
+        DataContext = this;
+    }
+
+    public GlobalVaultSettingView(Vault vault)
+    {
+        Vault = vault;
+        GlobalVaultSetting = vault.VaultSetting;
         InitializeComponent();
         DataContext = this;
     }
 
     private void GlobalVaultSettingViewOnLoaded(object sender, RoutedEventArgs e)
     {
-        SearchMarkdown.IsChecked = GlobalVaultSetting.SearchMarkdown;
-        SearchCanvas.IsChecked = GlobalVaultSetting.SearchCanvas;
-        SearchImages.IsChecked = GlobalVaultSetting.SearchImages;
-        SearchExcalidraw.IsChecked = GlobalVaultSetting.SearchExcalidraw;
-        SearchOther.IsChecked = GlobalVaultSetting.SearchOther;
+        SetupOpenInNewTabDefault();
+        SetupCheckboxes();
+    }
 
-        SearchMarkdown.Checked += (_, _) => { GlobalVaultSetting.SearchMarkdown = true; };
-        SearchMarkdown.Unchecked += (_, _) => { GlobalVaultSetting.SearchMarkdown = false; };
+    private void SetupOpenInNewTabDefault()
+    {
+        OpenInNewTabByDefault.IsChecked = GlobalVaultSetting.OpenInNewTabByDefault;
+        OpenInNewTabByDefault.Checked += (_, _) => GlobalVaultSetting.OpenInNewTabByDefault = true;
+        OpenInNewTabByDefault.Unchecked += (_, _) => GlobalVaultSetting.OpenInNewTabByDefault = false;
+        BindingOperations.SetBinding(OpenInNewTabByDefault, VisibilityProperty, new Binding("GlobalSettingVisibility"));
 
-        SearchCanvas.Checked += (_, _) => { GlobalVaultSetting.SearchCanvas = true; };
-        SearchCanvas.Unchecked += (_, _) => { GlobalVaultSetting.SearchCanvas = false; };
+        bool hasAdvancedUri = Vault?.HasAdvancedUri ?? VaultManager.OneVaultHasAdvancedUri;
+        if (!hasAdvancedUri)
+        {
+            OpenInNewTabByDefault.IsEnabled = false;
+            OpenInNewTabByDefault.ToolTip = "This option requires the Obsidian Advanced URI plugin in your vault";
+            ToolTipService.SetShowOnDisabled(OpenInNewTabByDefault, true);
+        }
+        else if (Vault is null && !VaultManager.AllVaultsHaveAdvancedUri)
+        {
+            OpenInNewTabByDefault.ToolTip = "This option will be active only in vault with the Obsidian Advanced URI plugin";
+        }
+    }
 
-        SearchImages.Checked += (_, _) => { GlobalVaultSetting.SearchImages = true; };
-        SearchImages.Unchecked += (_, _) => { GlobalVaultSetting.SearchImages = false; };
+    private void SetupCheckboxes()
+    {
+        SetupCheckbox(SearchMarkdown, nameof(GlobalVaultSetting.SearchMarkdown));
+        SetupCheckbox(SearchCanvas, nameof(GlobalVaultSetting.SearchCanvas));
+        SetupCheckbox(SearchImages, nameof(GlobalVaultSetting.SearchImages));
+        SetupCheckbox(SearchExcalidraw, nameof(GlobalVaultSetting.SearchExcalidraw));
+        SetupCheckbox(SearchOther, nameof(GlobalVaultSetting.SearchOther));
+    }
 
-        SearchExcalidraw.Checked += (_, _) => { GlobalVaultSetting.SearchExcalidraw = true; };
-        SearchExcalidraw.Unchecked += (_, _) => { GlobalVaultSetting.SearchExcalidraw = false; };
-
-        SearchOther.Checked += (_, _) => { GlobalVaultSetting.SearchOther = true; };
-        SearchOther.Unchecked += (_, _) => { GlobalVaultSetting.SearchOther = false; };
+    private void SetupCheckbox(CheckBox checkBox, string propertyName)
+    {
+        checkBox.IsChecked = (bool)GlobalVaultSetting.GetType().GetProperty(propertyName)!.GetValue(GlobalVaultSetting)!;
+        checkBox.Checked += (_, _) => GlobalVaultSetting.GetType().GetProperty(propertyName)!.SetValue(GlobalVaultSetting, true);
+        checkBox.Unchecked += (_, _) => GlobalVaultSetting.GetType().GetProperty(propertyName)!.SetValue(GlobalVaultSetting, false);
+        BindingOperations.SetBinding(checkBox, VisibilityProperty, new Binding("GlobalSettingVisibility"));
     }
 
     private void AddExcludePath_Click(object sender, RoutedEventArgs e)

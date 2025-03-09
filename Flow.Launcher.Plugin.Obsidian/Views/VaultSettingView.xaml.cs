@@ -19,7 +19,7 @@ public partial class VaultSettingView
 
     private void InitializeControls()
     {
-        GlobalVaultSettingView = new GlobalVaultSettingView(VaultSetting);
+        GlobalVaultSettingView = new GlobalVaultSettingView(Vault);
         GlobalVaultSettingPanel.Children.Add(GlobalVaultSettingView);
     }
 

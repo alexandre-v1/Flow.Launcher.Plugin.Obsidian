@@ -15,6 +15,7 @@ public class Vault
 
     public readonly VaultSetting VaultSetting;
     public List<File> Files { get; private set; }
+    public bool HasAdvancedUri { get; set; }
 
     public Vault(string id, string vaultPath, VaultSetting vaultSetting, Settings settings)
     {
@@ -23,6 +24,8 @@ public class Vault
         VaultSetting = vaultSetting;
         Name = Path.GetFileName(VaultPath);
         Files = GetFiles(settings);
+        HasAdvancedUri = PluginsDetectionService.IsObsidianAdvancedUriPluginInstalled(VaultPath);
+        if (!HasAdvancedUri) VaultSetting.OpenInNewTabByDefault = false;
     }
 
     private List<File> GetFiles(Settings settings)
@@ -50,5 +53,11 @@ public class Vault
             .ToList();
 
         return files;
+    }
+
+    public bool OpenNoteInNewTabByDefault(GlobalVaultSetting globalSetting)
+    {
+        if (!HasAdvancedUri) return false;
+        return VaultSetting.UseGlobalSetting ? globalSetting.OpenInNewTabByDefault : VaultSetting.OpenInNewTabByDefault;
     }
 }

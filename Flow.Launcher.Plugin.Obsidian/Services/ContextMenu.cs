@@ -15,6 +15,16 @@ public class ContextMenu : IContextMenu
         _settings = settings;
     }
 
+    private static Result OpenInNewTabResult(File file) => new()
+    {
+        Title = "Open in new tab",
+        Action = _ =>
+        {
+            file.OpenNoteInNewTab();
+            return true;
+        }
+    };
+
     private List<Result> ExcludeResults(string relativePath, string? vaultId)
     {
         List<Result> results = new();
@@ -60,10 +70,20 @@ public class ContextMenu : IContextMenu
         string path = file.RelativePath;
 
         List<Result> results = new();
+        var vault = file.GetVault();
+        if (vault is null) return results;
+        if (vault.HasAdvancedUri)
+        {
+            if (!vault.OpenNoteInNewTabByDefault(_settings.GlobalVaultSetting))
+            {
+                results.Add(OpenInNewTabResult(file));
+            }
+        }
+
         if (_settings.AddCheckBoxesToContext)
             results.AddRange(file.GetCheckBoxes());
         if (_settings.AddGlobalFolderExcludeToContext || _settings.AddLocalFolderExcludeToContext)
-            results.AddRange(ExcludeResults(path, (string)file.ContextData));
+            results.AddRange(ExcludeResults(path, file.VaultId));
         return results;
     }
 }

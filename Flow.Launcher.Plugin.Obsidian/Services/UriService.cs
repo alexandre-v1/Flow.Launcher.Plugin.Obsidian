@@ -17,4 +17,11 @@ public static class UriService
         string eFileName = Uri.EscapeDataString(fileName);
         return $"obsidian://new?vault={eVaultName}&name={eFileName}";
     }
+
+    public static string GetOpenNoteInNewTabUri(string vaultName, string relativePath)
+    {
+        string eVaultName = Uri.EscapeDataString(vaultName);
+        string eRelativePath = Uri.EscapeDataString(relativePath);
+        return $"obsidian://adv-uri?vault={eVaultName}&filepath={eRelativePath}&openmode=true";
+    }
 }

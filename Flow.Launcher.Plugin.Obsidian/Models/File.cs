@@ -24,7 +24,14 @@ public class File : Result
         CopyText = FilePath;
         Action = _ =>
         {
-            OpenNote();
+            if (vault.OpenNoteInNewTabByDefault(vault.VaultSetting))
+            {
+                OpenNoteInNewTab();
+            }
+            else
+            {
+                OpenNote();
+            }
             return true;
         };
         VaultId = vault.Id;
@@ -40,4 +47,15 @@ public class File : Result
         string uri = UriService.GetOpenNoteUri(vault.Name, RelativePath);
         Process.Start(new ProcessStartInfo { FileName = uri, UseShellExecute = true });
     }
+
+    public void OpenNoteInNewTab()
+    {
+        Vault? vault = VaultManager.GetVaultWithId(VaultId);
+        if (vault is null) return;
+
+        string uri = UriService.GetOpenNoteInNewTabUri(vault.Name, RelativePath);
+        Process.Start(new ProcessStartInfo { FileName = uri, UseShellExecute = true });
+    }
+
+    public Vault? GetVault() => VaultManager.GetVaultWithId(VaultId);
 }

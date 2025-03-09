@@ -66,7 +66,7 @@ public partial class SettingsView : INotifyPropertyChanged
 
     private void CreateVaultSettingControls(Settings settings)
     {
-        GlobalVaultSettingView globalVaultSettingControl = new(settings.GlobalVaultSetting);
+        GlobalVaultSettingView globalVaultSettingControl = new(settings);
         GlobalVaultSettingPanel.Children.Add(globalVaultSettingControl);
         Thickness margin = new(0, 0, 10, 0);
         foreach (VaultSettingView? vaultSettingControl in VaultManager.Vaults.Select(vault =>
