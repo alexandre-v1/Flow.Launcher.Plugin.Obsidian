@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Flow.Launcher.Plugin.Obsidian.Helpers;
 using Flow.Launcher.Plugin.Obsidian.Models;
 
 namespace Flow.Launcher.Plugin.Obsidian.Services;
@@ -18,6 +19,7 @@ public class ContextMenu : IContextMenu
     private static Result OpenInNewTabResult(File file) => new()
     {
         Title = "Open in new tab",
+        Glyph = new GlyphInfo(Font.Family, Font.OpenInNewTabGlyph),
         Action = _ =>
         {
             file.OpenNoteInNewTab();
@@ -42,10 +44,20 @@ public class ContextMenu : IContextMenu
     }
 
     private Result ExcludeGlobalFolderResult(string folder) =>
-        new() { Title = $"Exclude {folder} folder globally", Action = _ => ExcludeGlobalFolder(folder) };
+        new()
+        {
+            Title = $"Exclude {folder} folder globally",
+            Action = _ => ExcludeGlobalFolder(folder),
+            Glyph = new GlyphInfo(Font.Family, Font.ExcludeGlyph)
+        };
 
     private Result ExcludeLocalFolderResult(string folder, string? vaultId) =>
-        new() { Title = $"Exclude {folder} folder locally", Action = _ => TryToExcludeLocalFolder(folder, vaultId) };
+        new()
+        {
+            Title = $"Exclude {folder} folder locally",
+            Action = _ => TryToExcludeLocalFolder(folder, vaultId),
+            Glyph = new GlyphInfo(Font.Family, Font.ExcludeGlyph)
+        };
 
     private bool ExcludeGlobalFolder(string folder)
     {
@@ -70,7 +82,7 @@ public class ContextMenu : IContextMenu
         string path = file.RelativePath;
 
         List<Result> results = new();
-        var vault = file.GetVault();
+        Vault? vault = file.GetVault();
         if (vault is null) return results;
         if (vault.HasAdvancedUri)
         {

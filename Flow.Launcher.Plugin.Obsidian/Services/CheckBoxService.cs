@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Flow.Launcher.Plugin.Obsidian.Helpers;
 using Flow.Launcher.Plugin.Obsidian.Models;
 
 namespace Flow.Launcher.Plugin.Obsidian.Services;
@@ -7,10 +8,6 @@ public static class CheckBoxService
 {
     private const string MarkedCheckBox = "- [x] ";
     private const string CheckBox = "- [ ] ";
-    private const string FontFamily = "/Resources/#Segoe Fluent Icons";
-    private const string MarkedCheckBoxGlyph = "\uE73D";
-    private const string CheckBoxGlyph = "\uE739";
-
 
     public static List<Result> GetCheckBoxes(this File file)
     {
@@ -47,7 +44,7 @@ public static class CheckBoxService
 
             Result item = new()
             {
-                Glyph = new GlyphInfo(FontFamily, isChecked ? MarkedCheckBoxGlyph : CheckBoxGlyph),
+                Glyph = new GlyphInfo(Font.Family, isChecked ? Font.MarkedCheckBoxGlyph : Font.CheckBoxGlyph),
                 Title = title.Trim(),
                 SubTitle = subTitle,
                 Action = _ =>
