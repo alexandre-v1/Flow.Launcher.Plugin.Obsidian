@@ -5,24 +5,22 @@ namespace Flow.Launcher.Plugin.Obsidian.Models;
 
 public class GlobalVaultSetting
 {
+    private static readonly List<string> DefaultsExcludedPaths = new() { ".trash", ".obsidian" };
+
+    public bool OpenInNewTabByDefault { get; set; } = true;
     public bool SearchMarkdown { get; set; } = true;
     public bool SearchCanvas { get; set; } = true;
     public bool SearchImages { get; set; }
     public bool SearchExcalidraw { get; set; } = true;
     public bool SearchOther { get; set; }
     public bool SearchContent { get; set; }
-    
-    public ObservableCollection<string> ExcludedPaths { get; set; } = new (DefaultsExcludedPaths);
-    private static readonly List<string> DefaultsExcludedPaths = new()
-    {
-        ".trash",
-        ".obsidian"
-    };
+
+    public ObservableCollection<string> ExcludedPaths { get; set; } = new(DefaultsExcludedPaths);
 
 
     public virtual HashSet<string> GetSearchableExtensions(Settings settings)
     {
-        var searchPattern = new HashSet<string>();
+        HashSet<string> searchPattern = new();
         if (SearchMarkdown)
             searchPattern.Add(".md");
         if (SearchCanvas)
@@ -45,9 +43,6 @@ public class GlobalVaultSetting
 
         return searchPattern;
     }
-    
-    public virtual List<string> GetExcludedPaths(Settings settings)
-    {
-        return new List<string>(ExcludedPaths);
-    }
+
+    public virtual List<string> GetExcludedPaths(Settings settings) => new(ExcludedPaths);
 }

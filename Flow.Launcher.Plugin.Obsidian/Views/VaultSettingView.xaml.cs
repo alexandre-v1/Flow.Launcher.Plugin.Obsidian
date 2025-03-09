@@ -6,9 +6,9 @@ namespace Flow.Launcher.Plugin.Obsidian.Views;
 public partial class VaultSettingView
 {
     private Vault Vault { get; }
-    private VaultSetting VaultSetting { get; set; }
+    private VaultSetting VaultSetting { get; }
     private GlobalVaultSettingView? GlobalVaultSettingView { get; set; }
-    
+
     public VaultSettingView(Vault vault)
     {
         Vault = vault;
@@ -19,18 +19,18 @@ public partial class VaultSettingView
 
     private void InitializeControls()
     {
-        GlobalVaultSettingView = new GlobalVaultSettingView(VaultSetting);
+        GlobalVaultSettingView = new GlobalVaultSettingView(Vault);
         GlobalVaultSettingPanel.Children.Add(GlobalVaultSettingView);
     }
 
     private void VaultSettingViewOnLoaded(object sender, RoutedEventArgs e)
     {
         VaultName.Text = Vault.Name;
-        
+
         UseGlobalSetting.IsChecked = VaultSetting.UseGlobalSetting;
         UpdateGlobalVaultSettingVisibility(!VaultSetting.UseGlobalSetting);
         UseGlobalExcludedPaths.IsChecked = VaultSetting.UseGlobalExcludedPaths;
-        
+
         UseGlobalSetting.Checked += (_, _) =>
         {
             VaultSetting.UseGlobalSetting = true;
@@ -41,11 +41,11 @@ public partial class VaultSettingView
             VaultSetting.UseGlobalSetting = false;
             UpdateGlobalVaultSettingVisibility(true);
         };
-        
+
         UseGlobalExcludedPaths.Checked += (_, _) => { VaultSetting.UseGlobalExcludedPaths = true; };
         UseGlobalExcludedPaths.Unchecked += (_, _) => { VaultSetting.UseGlobalExcludedPaths = false; };
     }
-    
+
 
     private void UpdateGlobalVaultSettingVisibility(bool isVisible)
     {

@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Flow.Launcher.Plugin.Obsidian.Services;
+using YamlDotNet.Serialization;
 
 namespace Flow.Launcher.Plugin.Obsidian.Models;
 
@@ -13,6 +15,7 @@ public class Vault
 
     public readonly VaultSetting VaultSetting;
     public List<File> Files { get; private set; }
+    public bool HasAdvancedUri { get; set; }
 
     public Vault(string id, string vaultPath, VaultSetting vaultSetting, Settings settings)
     {
@@ -20,29 +23,41 @@ public class Vault
         VaultPath = vaultPath;
         VaultSetting = vaultSetting;
         Name = Path.GetFileName(VaultPath);
-        Files = GetFiles(settings).ToList();
+        Files = GetFiles(settings);
+        HasAdvancedUri = PluginsDetectionService.IsObsidianAdvancedUriPluginInstalled(VaultPath);
+        if (!HasAdvancedUri) VaultSetting.OpenInNewTabByDefault = false;
     }
 
-    private IEnumerable<File> GetFiles(Settings settings)
+    private List<File> GetFiles(Settings settings)
     {
         bool useAliases = settings.UseAliases;
-        
-        var extensions = VaultSetting.GetSearchableExtensions(settings);
-        var excludedPaths = VaultSetting.GetExcludedPaths(settings)
+
+        HashSet<string> extensions = VaultSetting.GetSearchableExtensions(settings);
+        List<string> excludedPaths = VaultSetting.GetExcludedPaths(settings)
             .Select(excludedPath => Path.Combine(VaultPath, excludedPath))
             .ToList();
 
-        var files = Directory.EnumerateFiles(VaultPath, "*", SearchOption.AllDirectories)
-            .Where(file => extensions.Contains(Path.GetExtension(file)) 
+        List<File> files = Directory.EnumerateFiles(VaultPath, "*", SearchOption.AllDirectories)
+            .AsParallel()
+            .WithDegreeOfParallelism(Environment.ProcessorCount)
+            .Where(file => extensions.Contains(Path.GetExtension(file))
                            && !excludedPaths.Any(file.StartsWith))
-            .Select(delegate(string filePath)
+            .Select(filePath =>
             {
                 string[]? aliases = null;
-                if (useAliases)
-                    aliases = AliasesService.GetAliases(filePath);
+                if (!useAliases) return new File(this, filePath, aliases);
+                Deserializer deserializer = new();
+                aliases = AliasesService.GetAliases(filePath, deserializer);
                 return new File(this, filePath, aliases);
-            });
+            })
+            .ToList();
 
         return files;
+    }
+
+    public bool OpenNoteInNewTabByDefault(GlobalVaultSetting globalSetting)
+    {
+        if (!HasAdvancedUri) return false;
+        return VaultSetting.UseGlobalSetting ? globalSetting.OpenInNewTabByDefault : VaultSetting.OpenInNewTabByDefault;
     }
 }

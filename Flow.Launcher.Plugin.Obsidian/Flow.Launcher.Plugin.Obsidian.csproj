@@ -22,10 +22,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Flow.Launcher.Plugin" Version="4.4.0" />
-    <PackageReference Include="YamlDotNet" Version="16.2.0" />
+    <PackageReference Include="Flow.Launcher.Plugin" Version="4.4.0"/>
+    <PackageReference Include="YamlDotNet" Version="16.2.0"/>
   </ItemGroup>
-  
+
   <ItemGroup>
     <Content Include="plugin.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -34,7 +34,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  
+
   <ItemGroup>
     <Page Update="Views\GlobalVaultSettingView.xaml">
       <Generator>MSBuild:Compile</Generator>

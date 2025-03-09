@@ -1,45 +1,49 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
+using YamlDotNet.Serialization;
 
 namespace Flow.Launcher.Plugin.Obsidian.Services;
 
 public static class AliasesService
 {
-    public static string[]? GetAliases (string filePath)
+    public static string[]? GetAliases(string filePath, Deserializer deserializer)
     {
-        string content = File.ReadAllText(filePath);
-        if (!content.StartsWith("---")) return null;
-        string[] parts = content.Split(new[] { "---" }, 3, StringSplitOptions.None);
-        if (parts.Length < 3) return null;
+        using StreamReader reader = new(filePath);
+        if (reader.ReadLine() != "---")
+            return null;
+
+        StringBuilder yamlContentBuilder = new();
+
+        while (reader.ReadLine() is { } line)
+        {
+            if (line == "---")
+                break;
+            yamlContentBuilder.AppendLine(line);
+        }
+
+        if (yamlContentBuilder.Length == 0)
+            return null;
+
+        Dictionary<string, object> frontMatterDict =
+            deserializer.Deserialize<Dictionary<string, object>>(yamlContentBuilder.ToString());
+        if (!frontMatterDict.TryGetValue("aliases", out object? aliases))
+            return null;
 
         List<string> aliasListResult = new();
-        string frontMatter = parts[1];
-        
-        var deserializer = new YamlDotNet.Serialization.Deserializer();
-        var frontMatterDict = deserializer.Deserialize<Dictionary<string, object>>(frontMatter);
-
-        if (!frontMatterDict.TryGetValue("aliases", out object? aliases))
-            return aliasListResult.Count > 0 ? aliasListResult.ToArray() : null;
-        
         switch (aliases)
         {
-            case List<object> aliasObjectList:
-            {
-                foreach (object alias in aliasObjectList)
-                {
+            case IEnumerable<object> aliasList:
+                foreach (object alias in aliasList)
                     if (alias is string aliasString)
-                    {
                         aliasListResult.Add(aliasString);
-                    }
-                }
 
                 break;
-            }
             case string singleAlias:
                 aliasListResult.Add(singleAlias);
                 break;
         }
+
         return aliasListResult.Count > 0 ? aliasListResult.ToArray() : null;
     }
 }

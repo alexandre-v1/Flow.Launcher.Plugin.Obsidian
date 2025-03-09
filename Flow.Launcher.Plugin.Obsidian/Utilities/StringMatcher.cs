@@ -7,9 +7,9 @@ namespace Flow.Launcher.Plugin.Obsidian.Utilities;
 
 public static class StringMatcher
 {
-    public static List<(File File, int Distance)> FindClosestMatches(List<File> sourceList, string searchTerm, int maxDistance = 3)
-    {
-        return sourceList
+    public static List<(File File, int Distance)> FindClosestMatches(List<File> sourceList, string searchTerm,
+        int maxDistance = 3) =>
+        sourceList
             .Select(file => (
                 Text: file,
                 Distance: CalculateLevenshteinDistance(file.Title.ToLower(), searchTerm.ToLower())
@@ -17,7 +17,6 @@ public static class StringMatcher
             .Where(result => result.Distance <= maxDistance)
             .OrderBy(result => result.Distance)
             .ToList();
-    }
 
     public static int CalculateLevenshteinDistance(string source, string target)
     {
@@ -36,15 +35,13 @@ public static class StringMatcher
             matrix[0, j] = j;
 
         for (int i = 1; i <= source.Length; i++)
+        for (int j = 1; j <= target.Length; j++)
         {
-            for (int j = 1; j <= target.Length; j++)
-            {
-                int cost = source[i - 1] == target[j - 1] ? 0 : 1;
-                matrix[i, j] = Math.Min(
-                    Math.Min(matrix[i - 1, j] + 1, matrix[i, j - 1] + 1),
-                    matrix[i - 1, j - 1] + cost
-                );
-            }
+            int cost = source[i - 1] == target[j - 1] ? 0 : 1;
+            matrix[i, j] = Math.Min(
+                Math.Min(matrix[i - 1, j] + 1, matrix[i, j - 1] + 1),
+                matrix[i - 1, j - 1] + cost
+            );
         }
 
         return matrix[source.Length, target.Length];

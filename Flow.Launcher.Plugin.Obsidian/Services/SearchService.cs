@@ -12,28 +12,26 @@ public static class SearchService
 {
     public static List<Result> GetSearchResults(List<File> files, string search, Settings settings)
     {
-        var results = new ConcurrentBag<Result>();
+        ConcurrentBag<Result> results = new();
         string searchLower = search.ToLower();
         string pattern = $@"[_\s\-\.]{Regex.Escape(searchLower)}";
-        
+
         Parallel.ForEach(files, file =>
         {
             int maxScore = CalculateScore(file.Name, searchLower, pattern);
             string bestMatchTitle = file.Name;
 
             if (settings.UseAliases && file.Aliases != null)
-            {
                 foreach (string alias in file.Aliases)
                 {
                     int score = CalculateScore(alias, searchLower, pattern);
-                    
+
                     if (score <= maxScore) continue;
                     maxScore = score;
                     bestMatchTitle = alias;
                     if (score == 100) break;
                 }
-            }
-            
+
             if (maxScore <= 0) return;
             file.Score = maxScore;
             file.Title = bestMatchTitle;
@@ -45,20 +43,24 @@ public static class SearchService
         return results.ToList();
     }
 
+    public static List<Result> SortAndTruncateResults(List<Result> results, int maxResult)
+    {
+        return results.OrderByDescending(result => result.Score).Take(maxResult).ToList();
+    }
+
     private static int CalculateScore(string name, string searchLower, string pattern)
     {
         int score = 0;
         string fileTitleLower = name.ToLower();
-            
-        if (fileTitleLower == searchLower)
-        {
-            return 100;
-        }
-            
+
+        if (fileTitleLower == searchLower) return 100;
+
         int distance = StringMatcher.CalculateLevenshteinDistance(fileTitleLower, searchLower);
-    
+
         if (fileTitleLower.StartsWith(searchLower))
+        {
             score = 80;
+        }
         else if (fileTitleLower.Contains(searchLower))
         {
             score = 50;
@@ -72,10 +74,5 @@ public static class SearchService
 
         score += 2 - distance;
         return score;
-    }
-
-    public static List<Result> SortAndTruncateResults(List<Result> results, int maxResult)
-    {
-        return results.OrderByDescending(result => result.Score).Take(maxResult).ToList();
     }
 }
