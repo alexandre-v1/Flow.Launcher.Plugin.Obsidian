@@ -4,7 +4,7 @@
     "Name": "Obsidian",
     "Description": "Search all Obsidian files",
     "Author": "alexandre-v1",
-    "Version": "1.1.0",
+    "Version": "1.1.1",
     "Language": "csharp",
     "Website": "https://github.com/alexandre-v1/Flow.Launcher.Plugin.Obsidian",
     "IcoPath": "Icons/obsidian-logo.png",
