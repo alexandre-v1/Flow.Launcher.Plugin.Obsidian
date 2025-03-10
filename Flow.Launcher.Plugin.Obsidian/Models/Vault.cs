@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Flow.Launcher.Plugin.Obsidian.Services;
-using YamlDotNet.Serialization;
 
 namespace Flow.Launcher.Plugin.Obsidian.Models;
 
@@ -28,6 +27,12 @@ public class Vault
         if (!HasAdvancedUri) VaultSetting.OpenInNewTabByDefault = false;
     }
 
+    public bool OpenNoteInNewTabByDefault(GlobalVaultSetting globalSetting)
+    {
+        if (!HasAdvancedUri) return false;
+        return VaultSetting.UseGlobalSetting ? globalSetting.OpenInNewTabByDefault : VaultSetting.OpenInNewTabByDefault;
+    }
+
     private List<File> GetFiles(Settings settings)
     {
         bool useAliases = settings.UseAliases;
@@ -46,18 +51,11 @@ public class Vault
             {
                 string[]? aliases = null;
                 if (!useAliases) return new File(this, filePath, aliases);
-                Deserializer deserializer = new();
-                aliases = AliasesService.GetAliases(filePath, deserializer);
+                aliases = AliasesService.GetAliases(filePath);
                 return new File(this, filePath, aliases);
             })
             .ToList();
 
         return files;
-    }
-
-    public bool OpenNoteInNewTabByDefault(GlobalVaultSetting globalSetting)
-    {
-        if (!HasAdvancedUri) return false;
-        return VaultSetting.UseGlobalSetting ? globalSetting.OpenInNewTabByDefault : VaultSetting.OpenInNewTabByDefault;
     }
 }

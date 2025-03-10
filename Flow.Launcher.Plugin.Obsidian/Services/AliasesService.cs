@@ -1,49 +1,64 @@
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using YamlDotNet.Serialization;
+using System.Linq;
 
 namespace Flow.Launcher.Plugin.Obsidian.Services;
 
 public static class AliasesService
 {
-    public static string[]? GetAliases(string filePath, Deserializer deserializer)
+    private const string YamlFrontMatterDelimiter = "---";
+    private const string AliasesKey = "aliases:";
+    private const int AliasesKeyLength = 8;
+
+    public static string[]? GetAliases(string filePath)
     {
         using StreamReader reader = new(filePath);
-        if (reader.ReadLine() != "---")
-            return null;
+        if (reader.ReadLine()?.Trim() is not YamlFrontMatterDelimiter) return null;
 
-        StringBuilder yamlContentBuilder = new();
+        bool inAliases = false;
+        var aliases = new List<string>();
 
         while (reader.ReadLine() is { } line)
         {
-            if (line == "---")
+            line = line.Trim();
+            if (line is YamlFrontMatterDelimiter) break;
+
+            if (line.StartsWith(AliasesKey))
+            {
+                inAliases = true;
+                ParseAliasLine(line[AliasesKeyLength..].Trim(), aliases);
+                continue;
+            }
+
+            if (!inAliases) continue;
+            if (line.StartsWith('-'))
+            {
+                aliases.Add(line[1..].Trim().Trim('"'));
+            }
+            else if (line.Contains(':'))
+            {
                 break;
-            yamlContentBuilder.AppendLine(line);
+            }
+            else
+            {
+                ParseAliasLine(line.Trim(), aliases);
+            }
         }
 
-        if (yamlContentBuilder.Length == 0)
-            return null;
+        return aliases.Count > 0 ? aliases.ToArray() : null;
+    }
 
-        Dictionary<string, object> frontMatterDict =
-            deserializer.Deserialize<Dictionary<string, object>>(yamlContentBuilder.ToString());
-        if (!frontMatterDict.TryGetValue("aliases", out object? aliases))
-            return null;
 
-        List<string> aliasListResult = new();
-        switch (aliases)
+    private static void ParseAliasLine(string value, List<string> aliases)
+    {
+        if (value.StartsWith('['))
         {
-            case IEnumerable<object> aliasList:
-                foreach (object alias in aliasList)
-                    if (alias is string aliasString)
-                        aliasListResult.Add(aliasString);
-
-                break;
-            case string singleAlias:
-                aliasListResult.Add(singleAlias);
-                break;
+            string[] entries = value.TrimStart('[').TrimEnd(']').Split(',');
+            aliases.AddRange(entries.Select(entry => entry.Trim().Trim('"')));
         }
-
-        return aliasListResult.Count > 0 ? aliasListResult.ToArray() : null;
+        else if (!string.IsNullOrWhiteSpace(value))
+        {
+            aliases.Add(value.Trim('"'));
+        }
     }
 }
