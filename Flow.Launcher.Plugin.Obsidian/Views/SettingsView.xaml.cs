@@ -1,7 +1,9 @@
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls;
 using Flow.Launcher.Plugin.Obsidian.Models;
 using Flow.Launcher.Plugin.Obsidian.Services;
 
@@ -36,30 +38,27 @@ public partial class SettingsView : INotifyPropertyChanged
     private void SettingsView_OnLoaded(object sender, RoutedEventArgs e)
     {
         MaxResults = Settings.MaxResult;
-        UseAliases.IsChecked = Settings.UseAliases;
-        UseFileExtension.IsChecked = Settings.UseFilesExtension;
-        AddGlobalFolderExcludeToContext.IsChecked = Settings.AddGlobalFolderExcludeToContext;
-        AddLocalFolderExcludeToContext.IsChecked = Settings.AddLocalFolderExcludeToContext;
-        AddCheckBoxesToContext.IsChecked = Settings.AddCheckBoxesToContext;
-        AddCreateNoteOptionOnAllSearch.IsChecked = Settings.AddCreateNoteOptionOnAllSearch;
+        SetupCheckboxes();
+    }
 
-        UseAliases.Checked += (_, _) => { Settings.UseAliases = true; };
-        UseAliases.Unchecked += (_, _) => { Settings.UseAliases = false; };
+    private void SetupCheckboxes()
+    {
+        SetupCheckbox(AddCreateNoteOptionOnAllSearch, nameof(Settings.AddCreateNoteOptionOnAllSearch));
+        SetupCheckbox(UseFileExtension, nameof(Settings.UseFilesExtension));
+        SetupCheckbox(UseAliases, nameof(Settings.UseAliases));
+        SetupCheckbox(UseTags, nameof(Settings.UseTags));
+        SetupCheckbox(AddGlobalFolderExcludeToContext, nameof(Settings.AddGlobalFolderExcludeToContext));
+        SetupCheckbox(AddLocalFolderExcludeToContext, nameof(Settings.AddLocalFolderExcludeToContext));
+        SetupCheckbox(AddCheckBoxesToContext, nameof(Settings.AddCheckBoxesToContext));
+    }
 
-        UseFileExtension.Checked += (_, _) => { Settings.UseFilesExtension = true; };
-        UseFileExtension.Unchecked += (_, _) => { Settings.UseFilesExtension = false; };
-
-        AddGlobalFolderExcludeToContext.Checked += (_, _) => { Settings.AddGlobalFolderExcludeToContext = true; };
-        AddGlobalFolderExcludeToContext.Unchecked += (_, _) => { Settings.AddGlobalFolderExcludeToContext = false; };
-
-        AddLocalFolderExcludeToContext.Checked += (_, _) => { Settings.AddLocalFolderExcludeToContext = true; };
-        AddLocalFolderExcludeToContext.Unchecked += (_, _) => { Settings.AddLocalFolderExcludeToContext = false; };
-
-        AddCheckBoxesToContext.Checked += (_, _) => { Settings.AddCheckBoxesToContext = true; };
-        AddCheckBoxesToContext.Unchecked += (_, _) => { Settings.AddCheckBoxesToContext = false; };
-
-        AddCreateNoteOptionOnAllSearch.Checked += (_, _) => { Settings.AddCreateNoteOptionOnAllSearch = true; };
-        AddCreateNoteOptionOnAllSearch.Unchecked += (_, _) => { Settings.AddCreateNoteOptionOnAllSearch = false; };
+    private void SetupCheckbox(CheckBox checkBox, string propertyName)
+    {
+        PropertyInfo? property = Settings.GetType().GetProperty(propertyName);
+        if (property is null) return;
+        checkBox.IsChecked = property.GetValue(Settings) as bool? ?? false;
+        checkBox.Checked += (_, _) => property.SetValue(Settings, true);
+        checkBox.Unchecked += (_, _) => property.SetValue(Settings, false);
     }
 
     private void SettingsView_OnUnloaded(object sender, RoutedEventArgs e) => Obsidian.ReloadData();

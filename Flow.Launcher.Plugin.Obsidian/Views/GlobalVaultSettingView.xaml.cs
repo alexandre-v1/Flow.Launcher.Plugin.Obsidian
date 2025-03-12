@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -65,7 +66,8 @@ public partial class GlobalVaultSettingView : INotifyPropertyChanged
         }
         else if (Vault is null && !VaultManager.AllVaultsHaveAdvancedUri)
         {
-            OpenInNewTabByDefault.ToolTip = "This option will be active only in vault with the Obsidian Advanced URI plugin";
+            OpenInNewTabByDefault.ToolTip =
+                "This option will be active only in vault with the Obsidian Advanced URI plugin";
         }
     }
 
@@ -80,9 +82,11 @@ public partial class GlobalVaultSettingView : INotifyPropertyChanged
 
     private void SetupCheckbox(CheckBox checkBox, string propertyName)
     {
-        checkBox.IsChecked = (bool)GlobalVaultSetting.GetType().GetProperty(propertyName)!.GetValue(GlobalVaultSetting)!;
-        checkBox.Checked += (_, _) => GlobalVaultSetting.GetType().GetProperty(propertyName)!.SetValue(GlobalVaultSetting, true);
-        checkBox.Unchecked += (_, _) => GlobalVaultSetting.GetType().GetProperty(propertyName)!.SetValue(GlobalVaultSetting, false);
+        PropertyInfo? property = GlobalVaultSetting.GetType().GetProperty(propertyName);
+        if (property is null) return;
+        checkBox.IsChecked = property.GetValue(GlobalVaultSetting) as bool? ?? false;
+        checkBox.Checked += (_, _) => property.SetValue(GlobalVaultSetting, true);
+        checkBox.Unchecked += (_, _) => property.SetValue(GlobalVaultSetting, false);
         BindingOperations.SetBinding(checkBox, VisibilityProperty, new Binding("GlobalSettingVisibility"));
     }
 

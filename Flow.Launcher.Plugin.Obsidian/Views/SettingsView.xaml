@@ -25,15 +25,17 @@
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
 
         <TextBlock
             Grid.Row="0"
             Margin="10,10,5,5"
             HorizontalAlignment="Left"
-            FontSize="16"
-            FontWeight="DemiBold"
-            Text="Search" />
+            FontSize="18"
+            FontWeight="Bold"
+            Text="Search Options" />
 
         <StackPanel Grid.Row="1" Orientation="Horizontal">
             <TextBlock
@@ -47,60 +49,63 @@
                      TextAlignment="Center" />
             <Button Content="+" Click="OnIncrease" />
         </StackPanel>
-
         <CheckBox
-            x:Name="UseAliases"
+            x:Name="AddCreateNoteOptionOnAllSearch"
             Grid.Row="2"
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
-            Content="Use Aliases" />
+            Content="Add create note option on all search" />
         <CheckBox
             x:Name="UseFileExtension"
             Grid.Row="3"
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
             Content="Use file extension" />
-        <CheckBox
-            x:Name="AddCreateNoteOptionOnAllSearch"
-            Grid.Row="4"
-            Margin="10,5,5,5"
-            HorizontalAlignment="Left"
-            Content="Add create note option on all search" />
 
         <TextBlock
-            Grid.Row="5"
+            Grid.Row="4"
             Margin="10,10,5,5"
             HorizontalAlignment="Left"
             FontSize="16"
             FontWeight="DemiBold"
-            Text="Context menu" />
+            Text="Searchable Obsidian properties" />
         <CheckBox
-            x:Name="AddGlobalFolderExcludeToContext"
+            x:Name="UseAliases"
+            Grid.Row="5"
+            Margin="10,5,5,5"
+            HorizontalAlignment="Left"
+            Content="Aliases" />
+        <CheckBox
+            x:Name="UseTags"
             Grid.Row="6"
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
-            Content="Global Folder Exclude" />
-        <CheckBox
-            x:Name="AddLocalFolderExcludeToContext"
+            Content="Tags" />
+        <TextBlock
             Grid.Row="7"
-            Margin="10,5,5,5"
+            Margin="10,10,5,5"
             HorizontalAlignment="Left"
-            Content="Local Folder Exclude" />
+            FontSize="16"
+            FontWeight="DemiBold"
+            Text="Context menu options" />
         <CheckBox
-            x:Name="AddCheckBoxesToContext"
+            x:Name="AddGlobalFolderExcludeToContext"
             Grid.Row="8"
             Margin="10,5,5,5"
             HorizontalAlignment="Left"
-            Content="CheckBoxes" />
-
-        <TextBlock
+            Content="Exclude Folder Globally" />
+        <CheckBox
+            x:Name="AddLocalFolderExcludeToContext"
             Grid.Row="9"
-            Margin="10,20,5,5"
+            Margin="10,5,5,5"
             HorizontalAlignment="Left"
-            FontSize="18"
-            FontWeight="Bold"
-            Text="Global Setting" />
-        <StackPanel Grid.Row="10" x:Name="GlobalVaultSettingPanel" />
+            Content="Exclude Folder in Vault" />
+        <CheckBox
+            x:Name="AddCheckBoxesToContext"
+            Grid.Row="10"
+            Margin="10,5,5,5"
+            HorizontalAlignment="Left"
+            Content="Note's Tasks List" />
 
         <TextBlock
             Grid.Row="11"
@@ -108,7 +113,16 @@
             HorizontalAlignment="Left"
             FontSize="18"
             FontWeight="Bold"
+            Text="Global Setting" />
+        <StackPanel Grid.Row="12" x:Name="GlobalVaultSettingPanel" />
+
+        <TextBlock
+            Grid.Row="13"
+            Margin="10,20,5,5"
+            HorizontalAlignment="Left"
+            FontSize="18"
+            FontWeight="Bold"
             Text="Per Vault Setting" />
-        <StackPanel Grid.Row="12" x:Name="VaultsSettingPanel" />
+        <StackPanel Grid.Row="14" x:Name="VaultsSettingPanel" />
     </Grid>
 </UserControl>

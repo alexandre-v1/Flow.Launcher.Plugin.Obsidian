@@ -6,6 +6,7 @@ public class Settings
 {
     public int MaxResult { get; set; }
     public bool UseAliases { get; set; } = true;
+    public bool UseTags { get; set; } = true;
     public bool UseFilesExtension { get; set; }
     public bool AddCheckBoxesToContext { get; set; } = true;
     public bool AddGlobalFolderExcludeToContext { get; set; } = true;
