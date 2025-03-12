@@ -11,10 +11,11 @@ public class File : Result
     public readonly string FilePath;
     public readonly string Extension;
     public readonly string RelativePath;
-    public readonly string[]? Aliases;
     public readonly string VaultId;
+    public string[]? Aliases { get; set; }
+    public string[]? Tags { get; set; }
 
-    public File(Vault vault, string path, string[]? alias)
+    public File(Vault vault, string path)
     {
         Name = Path.GetFileNameWithoutExtension(path);
         FilePath = path;
@@ -32,20 +33,11 @@ public class File : Result
             {
                 OpenNote();
             }
+
             return true;
         };
         VaultId = vault.Id;
         IcoPath = Paths.ObsidianLogo;
-        Aliases = alias;
-    }
-
-    private void OpenNote()
-    {
-        Vault? vault = VaultManager.GetVaultWithId(VaultId);
-        if (vault == null) return;
-
-        string uri = UriService.GetOpenNoteUri(vault.Name, RelativePath);
-        Process.Start(new ProcessStartInfo { FileName = uri, UseShellExecute = true });
     }
 
     public void OpenNoteInNewTab()
@@ -58,4 +50,13 @@ public class File : Result
     }
 
     public Vault? GetVault() => VaultManager.GetVaultWithId(VaultId);
+
+    private void OpenNote()
+    {
+        Vault? vault = VaultManager.GetVaultWithId(VaultId);
+        if (vault == null) return;
+
+        string uri = UriService.GetOpenNoteUri(vault.Name, RelativePath);
+        Process.Start(new ProcessStartInfo { FileName = uri, UseShellExecute = true });
+    }
 }

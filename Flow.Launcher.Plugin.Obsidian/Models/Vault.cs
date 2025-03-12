@@ -36,6 +36,8 @@ public class Vault
     private List<File> GetFiles(Settings settings)
     {
         bool useAliases = settings.UseAliases;
+        bool useTags = settings.UseTags;
+        bool useObsidianProperties = settings.UseAliases || settings.UseTags;
 
         HashSet<string> extensions = VaultSetting.GetSearchableExtensions(settings);
         List<string> excludedPaths = VaultSetting.GetExcludedPaths(settings)
@@ -48,12 +50,9 @@ public class Vault
             .Where(file => extensions.Contains(Path.GetExtension(file))
                            && !excludedPaths.Any(file.StartsWith))
             .Select(filePath =>
-            {
-                string[]? aliases = null;
-                if (!useAliases) return new File(this, filePath, aliases);
-                aliases = AliasesService.GetAliases(filePath);
-                return new File(this, filePath, aliases);
-            })
+                useObsidianProperties
+                    ? new File(this, filePath).AddObsidianProperties(useAliases, useTags)
+                    : new File(this, filePath))
             .ToList();
 
         return files;
