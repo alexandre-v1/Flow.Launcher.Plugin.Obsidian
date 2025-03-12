@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,7 +14,10 @@ public static class VaultManager
     public static bool HasOnlyOneVault => Vaults.Count == 1;
     public static bool OneVaultHasAdvancedUri => Vaults.Any(vault => vault.HasAdvancedUri);
     public static bool AllVaultsHaveAdvancedUri => Vaults.All(vault => vault.HasAdvancedUri);
+    public static HashSet<string> TagsList => new(_tagsList.Keys);
+
     public static List<Vault> Vaults { get; private set; } = new();
+    private static readonly ConcurrentDictionary<string, byte> _tagsList = new();
 
     private static readonly string VaultListJsonPath =
         Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "obsidian", "obsidian.json");
@@ -57,11 +61,30 @@ public static class VaultManager
         return files;
     }
 
+    public static List<File> GetAllFilesWithTag(string lowerTag)
+    {
+        List<File> files = new();
+        foreach (Vault vault in Vaults)
+        {
+            files.AddRange(vault.Files.Where(file => file.HasTag(lowerTag)));
+        }
+
+        return files;
+    }
+
     public static Vault? GetVaultWithId(string vaultId) => Vaults.Find(vault => vault.Id == vaultId);
 
     public static Vault? GetVaultWithName(string name)
     {
         Vault? vault = Vaults.Find(vault => vault.Name == name);
         return vault;
+    }
+
+    public static void AddTagsToList(List<string> tags)
+    {
+        foreach (string tag in tags)
+        {
+            _tagsList.TryAdd(tag, 0);
+        }
     }
 }

@@ -43,12 +43,10 @@ public static class SearchService
         return results.ToList();
     }
 
-    public static List<Result> SortAndTruncateResults(List<Result> results, int maxResult)
-    {
-        return results.OrderByDescending(result => result.Score).Take(maxResult).ToList();
-    }
+    public static List<Result> SortAndTruncateResults(List<Result> results, int maxResult) =>
+        results.OrderByDescending(result => result.Score).Take(maxResult).ToList();
 
-    private static int CalculateScore(string name, string searchLower, string pattern)
+    public static int CalculateScore(string name, string searchLower, string pattern)
     {
         int score = 0;
         string fileTitleLower = name.ToLower();
