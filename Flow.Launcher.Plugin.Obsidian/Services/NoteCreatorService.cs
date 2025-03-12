@@ -8,11 +8,11 @@ namespace Flow.Launcher.Plugin.Obsidian.Services;
 
 public static class NoteCreatorService
 {
-    private static string NoteCreatorKeyword { get; set; } = "create";
+    public const string NoteCreatorKeyword = "create";
 
-    public static Result CreateNewNoteResult(Query query, IPublicAPI publicApi)
+    public static Result CreateNewNoteResult(string actionKeyword, string search, IPublicAPI publicApi)
     {
-        string search = query.Search;
+        if (string.IsNullOrEmpty(search)) search = "Untitled";
         return new Result
         {
             Title = $"Create new note \"{search}\"",
@@ -25,7 +25,7 @@ public static class NoteCreatorService
                     return true;
                 }
 
-                publicApi.ChangeQuery($"{query.ActionKeyword} {NoteCreatorKeyword} {search}", true);
+                publicApi.ChangeQuery($"{actionKeyword} {NoteCreatorKeyword} {search}", true);
                 return false;
             }
         };
@@ -34,18 +34,16 @@ public static class NoteCreatorService
     public static IEnumerable<Result> CreateNewNoteResultsWithVaults(Query query)
     {
         string search = RemoveNoteCreatorKeyword(query.Search);
-        var select = VaultManager.Vaults.Select(
+        IEnumerable<Result> select = VaultManager.Vaults.Select(
             vault => CreateNewNoteResultWithVault(search, vault));
         return select;
     }
 
-    private static string RemoveNoteCreatorKeyword(string search)
-    {
-        return search.Replace(NoteCreatorKeyword, "").Trim();
-    }
+    private static string RemoveNoteCreatorKeyword(string search) => search.Replace(NoteCreatorKeyword, "").Trim();
 
     private static Result CreateNewNoteResultWithVault(string search, Vault vault)
     {
+        if (string.IsNullOrEmpty(search)) search = "Untitled";
         return new Result
         {
             Title = $"Create new note \"{search}\" in {vault.Name}",
@@ -62,10 +60,5 @@ public static class NoteCreatorService
     {
         string uri = UriService.GetCreateNoteUri(vault.Name, noteName);
         Process.Start(new ProcessStartInfo { FileName = uri, UseShellExecute = true });
-    }
-
-    public static bool IsCreateNewNoteQuery(string search)
-    {
-        return search.StartsWith(NoteCreatorKeyword);
     }
 }
