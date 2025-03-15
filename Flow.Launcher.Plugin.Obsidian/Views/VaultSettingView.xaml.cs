@@ -1,16 +1,19 @@
 using System.Windows;
 using Flow.Launcher.Plugin.Obsidian.Models;
+using Flow.Launcher.Plugin.Obsidian.Services;
 
 namespace Flow.Launcher.Plugin.Obsidian.Views;
 
 public partial class VaultSettingView
 {
+    private VaultManager VaultManager { get; }
     private Vault Vault { get; }
     private VaultSetting VaultSetting { get; }
     private GlobalVaultSettingView? GlobalVaultSettingView { get; set; }
 
-    public VaultSettingView(Vault vault)
+    public VaultSettingView(VaultManager vaultManager, Vault vault)
     {
+        VaultManager = vaultManager;
         Vault = vault;
         VaultSetting = vault.VaultSetting;
         InitializeComponent();
@@ -19,7 +22,7 @@ public partial class VaultSettingView
 
     private void InitializeControls()
     {
-        GlobalVaultSettingView = new GlobalVaultSettingView(Vault);
+        GlobalVaultSettingView = new GlobalVaultSettingView(VaultManager, Vault);
         GlobalVaultSettingPanel.Children.Add(GlobalVaultSettingView);
     }
 

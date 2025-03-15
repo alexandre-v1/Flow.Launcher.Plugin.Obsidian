@@ -1,55 +1,77 @@
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Flow.Launcher.Plugin.Obsidian.Helpers;
 using Flow.Launcher.Plugin.Obsidian.Models;
+using Flow.Launcher.Plugin.Obsidian.Utilities;
 
 namespace Flow.Launcher.Plugin.Obsidian.Services;
 
-public static class TagSearchService
+public class TagSearchService
 {
-    public static List<Result> GetTagSearchResults(string tagSearch, string actionKeyword, IPublicAPI publicApi)
+    private readonly VaultManager _vaultManager;
+    private readonly SearchService _searchService;
+    private readonly IPublicAPI _publicApi;
+
+    public TagSearchService(VaultManager vaultManager, SearchService searchService, IPublicAPI publicApi)
     {
-        string searchLower = tagSearch.ToLower();
-        List<Result> results = new();
+        _vaultManager = vaultManager;
+        _searchService = searchService;
+        _publicApi = publicApi;
+    }
 
-        foreach (string tag in VaultManager.TagsList)
-        {
-            string tagLower = tag.ToLower();
-            Result result = GetTagResult(tag, actionKeyword, publicApi);
-            if (!tagLower.StartsWith(tagSearch)) continue;
+    public List<Result> FindMatchingTags(string search, string actionKeyword)
+    {
+        TagSearchInfo searchInfo = new(
+            search,
+            $@"[_\s\-\.]{Regex.Escape(search)}"
+        );
 
-            string pattern = $@"[_\s\-\.]{Regex.Escape(searchLower)}";
-            int score = SearchService.CalculateScore(tagLower, tagSearch, pattern);
-            if (score <= 0) continue;
-            result.Score = score;
-            results.Add(result);
-        }
+        return _vaultManager.TagsList
+            .AsParallel()
+            .Select(tag => CreateScoredTagResult(tag, searchInfo, actionKeyword))
+            .Where(result => result.Score > 0)
+            .ToList();
+    }
+
+    public List<Result> ExecuteTagQuery(Query query)
+    {
+        string tag = query.FirstSearch.TrimStart('#');
+
+        List<Result> results = _vaultManager.IsAnExistingTag(tag)
+            ? FindFilesWithTag(tag, query)
+            : FindMatchingTags(tag, query.ActionKeyword);
 
         return results;
     }
 
-    public static List<Result> GetAllSearchTagResults(IPublicAPI publicApi, string actionKeyword) =>
-        VaultManager.TagsList.Select(tag => GetTagResult(tag, actionKeyword, publicApi)).ToList();
-
-    public static List<Result> GetSearchResultWithTag(string lowerTag, string searchWithoutTag, Settings settings)
+    private Result CreateScoredTagResult(string tag, TagSearchInfo searchInfo, string actionKeyword)
     {
-        Debug.WriteLine($"GetSearchResultWithTag lowertag:'{lowerTag}' searchWithoutTag: '{searchWithoutTag}'");
-        return SearchService.GetSearchResults(VaultManager.GetAllFilesWithTag(lowerTag), searchWithoutTag, settings);
+        Result result = CreateTagResult(tag, actionKeyword);
+
+        int score = SearchService.CalculateScore(tag, searchInfo.SearchTerm, searchInfo.Pattern);
+        result.Score = score;
+        return result;
     }
 
-    public static bool IsATag(string lowerTagToCheck) =>
-        VaultManager.TagsList.Any(tag => tag.ToLower() == lowerTagToCheck);
+    private List<Result> FindFilesWithTag(string tag, Query query)
+    {
+        List<Result> results = FilterFilesWithTagByQuery(tag, query.SecondToEndSearch);
 
-    public static bool IsSameTag(this string tag, string tagToCheck) =>
-        string.Equals(tag, tagToCheck, StringComparison.CurrentCultureIgnoreCase);
+        if (_vaultManager.Settings.MaxResult > 0)
+            results = _searchService.SortAndTruncateResults(results);
 
-    public static bool HasTag(this File file, string tag) =>
-        file.Tags?.Any(tagToCheck => tagToCheck.IsSameTag(tag)) ?? false;
+        return results;
+    }
 
-    private static Result GetTagResult(string tag, string actionKeyword, IPublicAPI publicApi) =>
+    private List<Result> FilterFilesWithTagByQuery(string tag, string search)
+    {
+        List<File> filesWithTag = _vaultManager.GetAllFilesWithTag(tag);
+        return string.IsNullOrEmpty(search)
+            ? filesWithTag.Cast<Result>().ToList()
+            : _searchService.CreateFileSearchResults(filesWithTag, search);
+    }
+
+    private Result CreateTagResult(string tag, string actionKeyword) =>
         new()
         {
             Title = $"#{tag}",
@@ -57,8 +79,10 @@ public static class TagSearchService
             IcoPath = Paths.ObsidianLogo,
             Action = _ =>
             {
-                publicApi.ChangeQuery($"{actionKeyword} #{tag} ");
+                _publicApi.ChangeQuery($"{actionKeyword} #{tag} ");
                 return false;
             }
         };
+
+    private record TagSearchInfo(string SearchTerm, string Pattern);
 }

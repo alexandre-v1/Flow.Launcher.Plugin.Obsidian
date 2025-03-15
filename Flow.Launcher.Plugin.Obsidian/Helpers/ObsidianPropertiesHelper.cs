@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using File = Flow.Launcher.Plugin.Obsidian.Models.File;
 
-namespace Flow.Launcher.Plugin.Obsidian.Services;
+namespace Flow.Launcher.Plugin.Obsidian.Helpers;
 
-public static class ObsidianPropertiesService
+public static class ObsidianPropertiesHelper
 {
     private const string YamlFrontMatterDelimiter = "---";
     private const string AliasesKey = "aliases:";
@@ -15,7 +15,7 @@ public static class ObsidianPropertiesService
     private const int TagsKeyLength = 5;
 
 
-    public static File AddObsidianProperties(this File file, bool useAliases, bool useTags)
+    public static File AddObsidianProperties(File file, bool useAliases, bool useTags)
     {
         using StreamReader reader = new(file.FilePath);
         if (reader.ReadLine()?.Trim() is not YamlFrontMatterDelimiter) return file;
@@ -71,11 +71,11 @@ public static class ObsidianPropertiesService
         {
             file.Aliases = aliases.ToArray();
         }
+
         if (useTags && tags?.Count > 0)
         {
-            if(tags.Count is 0 || tags.All(string.IsNullOrWhiteSpace)) return file;
+            if (tags.Count is 0 || tags.All(string.IsNullOrWhiteSpace)) return file;
             file.Tags = tags.ToArray();
-            VaultManager.AddTagsToList(tags);
         }
 
         return file;

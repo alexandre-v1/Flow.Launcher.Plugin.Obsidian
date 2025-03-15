@@ -3,9 +3,9 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Controls;
 using Flow.Launcher.Plugin.Obsidian.Models;
 using Flow.Launcher.Plugin.Obsidian.Services;
+using CheckBox = System.Windows.Controls.CheckBox;
 
 namespace Flow.Launcher.Plugin.Obsidian.Views;
 
@@ -27,12 +27,12 @@ public partial class SettingsView : INotifyPropertyChanged
     private Settings Settings { get; }
     private int _maxResults;
 
-    public SettingsView(Settings settings, Obsidian obsidian)
+    public SettingsView(VaultManager vaultManager, Obsidian obsidian)
     {
         Obsidian = obsidian;
-        Settings = settings;
+        Settings = vaultManager.Settings;
         InitializeComponent();
-        CreateVaultSettingControls(settings);
+        CreateVaultSettingControls(vaultManager);
     }
 
     private void SettingsView_OnLoaded(object sender, RoutedEventArgs e)
@@ -63,13 +63,13 @@ public partial class SettingsView : INotifyPropertyChanged
 
     private void SettingsView_OnUnloaded(object sender, RoutedEventArgs e) => Obsidian.ReloadData();
 
-    private void CreateVaultSettingControls(Settings settings)
+    private void CreateVaultSettingControls(VaultManager vaultManager)
     {
-        GlobalVaultSettingView globalVaultSettingControl = new(settings);
+        GlobalVaultSettingView globalVaultSettingControl = new(vaultManager);
         GlobalVaultSettingPanel.Children.Add(globalVaultSettingControl);
         Thickness margin = new(0, 0, 10, 0);
-        foreach (VaultSettingView? vaultSettingControl in VaultManager.Vaults.Select(vault =>
-                     new VaultSettingView(vault) { Margin = margin }))
+        foreach (VaultSettingView? vaultSettingControl in vaultManager.Vaults.Select(vault =>
+                     new VaultSettingView(vaultManager, vault) { Margin = margin }))
             VaultsSettingPanel.Children.Add(vaultSettingControl);
     }
 
