@@ -1,4 +1,4 @@
-namespace Flow.Launcher.Plugin.Obsidian.Helpers;
+namespace Flow.Launcher.Plugin.Obsidian.Utilities;
 
 public static class Font
 {

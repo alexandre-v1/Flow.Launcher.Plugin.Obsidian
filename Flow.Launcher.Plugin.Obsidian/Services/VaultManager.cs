@@ -1,31 +1,34 @@
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text.Json;
+using Flow.Launcher.Plugin.Obsidian.Extensions;
 using Flow.Launcher.Plugin.Obsidian.Models;
+using Flow.Launcher.Plugin.Obsidian.Utilities;
 using File = Flow.Launcher.Plugin.Obsidian.Models.File;
 
 namespace Flow.Launcher.Plugin.Obsidian.Services;
 
-public static class VaultManager
+public class VaultManager
 {
-    public static bool HasOnlyOneVault => Vaults.Count == 1;
-    public static bool OneVaultHasAdvancedUri => Vaults.Any(vault => vault.HasAdvancedUri);
-    public static bool AllVaultsHaveAdvancedUri => Vaults.All(vault => vault.HasAdvancedUri);
-    public static HashSet<string> TagsList => new(_tagsList.Keys);
+    public bool HasOnlyOneVault => Vaults.Count is 1;
+    public bool OneVaultHasAdvancedUri => Vaults.Any(vault => vault.HasAdvancedUri);
+    public bool AllVaultsHaveAdvancedUri => Vaults.All(vault => vault.HasAdvancedUri);
+    public HashSet<string> TagsList => new(_tagsList.Keys);
 
-    public static List<Vault> Vaults { get; private set; } = new();
-    private static readonly ConcurrentDictionary<string, byte> _tagsList = new();
+    public List<Vault> Vaults { get; private set; } = new();
+    private readonly ConcurrentDictionary<string, byte> _tagsList = new();
+    public readonly Settings Settings;
 
-    private static readonly string VaultListJsonPath =
-        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "obsidian", "obsidian.json");
+    public VaultManager(Settings settings)
+    {
+        Settings = settings;
+    }
 
-    public static void UpdateVaultList(Settings settings)
+    public void UpdateVaultList(Settings? settings)
     {
         Vaults = new List<Vault>();
-        string jsonString = System.IO.File.ReadAllText(VaultListJsonPath);
+        string jsonString = System.IO.File.ReadAllText(Paths.VaultListJsonPath);
         using JsonDocument document = JsonDocument.Parse(jsonString);
 
         JsonElement root = document.RootElement;
@@ -38,53 +41,60 @@ public static class VaultManager
             string? path = vault.Value.GetProperty("path").GetString();
             if (path is null) continue;
 
-            settings.VaultsSetting.TryGetValue(vaultId, out VaultSetting? vaultSetting);
+            Settings.VaultsSetting.TryGetValue(vaultId, out VaultSetting? vaultSetting);
             if (vaultSetting is null)
             {
                 vaultSetting = new VaultSetting();
-                settings.VaultsSetting.Add(vaultId, vaultSetting);
+                Settings.VaultsSetting.Add(vaultId, vaultSetting);
             }
 
-            Vaults.Add(new Vault(vaultId, path, vaultSetting, settings));
+            Vaults.Add(new Vault(vaultId, path, vaultSetting, this));
         }
 
         if (!OneVaultHasAdvancedUri)
         {
-            settings.GlobalVaultSetting.OpenInNewTabByDefault = false;
+            Settings.GlobalVaultSetting.OpenInNewTabByDefault = false;
         }
     }
 
-    public static List<File> GetAllFiles()
+    public List<File> GetAllFiles()
     {
         List<File> files = new();
         foreach (Vault vault in Vaults) files.AddRange(vault.Files);
         return files;
     }
 
-    public static List<File> GetAllFilesWithTag(string lowerTag)
+    public List<File> GetAllFilesWithTag(string tag)
     {
         List<File> files = new();
         foreach (Vault vault in Vaults)
         {
-            files.AddRange(vault.Files.Where(file => file.HasTag(lowerTag)));
+            files.AddRange(vault.Files.Where(file => file.HasTag(tag)));
         }
 
         return files;
     }
 
-    public static Vault? GetVaultWithId(string vaultId) => Vaults.Find(vault => vault.Id == vaultId);
+    public Vault? GetVaultWithId(string vaultId) => Vaults.Find(vault => vault.Id == vaultId);
 
-    public static Vault? GetVaultWithName(string name)
+    public Vault? GetVaultWithName(string name)
     {
         Vault? vault = Vaults.Find(vault => vault.Name == name);
         return vault;
     }
 
-    public static void AddTagsToList(List<string> tags)
+    public void AddTagsToList(string[] tags)
     {
         foreach (string tag in tags)
         {
             _tagsList.TryAdd(tag, 0);
         }
+    }
+
+    public bool IsAnExistingTag(string tagToCheck) => TagsList.Any(tag => tag.IsSameString(tagToCheck));
+
+    public string? GetExistingTag(string tagToGet)
+    {
+        return TagsList.FirstOrDefault(tag => tag.IsSameString(tagToGet));
     }
 }

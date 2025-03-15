@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using Flow.Launcher.Plugin.Obsidian.Helpers;
+using Flow.Launcher.Plugin.Obsidian.Extensions;
 using Flow.Launcher.Plugin.Obsidian.Models;
+using Flow.Launcher.Plugin.Obsidian.Utilities;
 
 namespace Flow.Launcher.Plugin.Obsidian.Services;
 
@@ -9,11 +10,13 @@ public class ContextMenu : IContextMenu
 {
     private readonly Obsidian _obsidian;
     private readonly Settings _settings;
+    private readonly VaultManager _vaultManager;
 
-    public ContextMenu(Obsidian obsidian, Settings settings)
+    public ContextMenu(Obsidian obsidian, VaultManager vaultManager)
     {
         _obsidian = obsidian;
-        _settings = settings;
+        _vaultManager = vaultManager;
+        _settings = _vaultManager.Settings;
     }
 
     private static Result OpenInNewTabResult(File file) => new()
@@ -22,7 +25,7 @@ public class ContextMenu : IContextMenu
         Glyph = new GlyphInfo(Font.Family, Font.OpenInNewTabGlyph),
         Action = _ =>
         {
-            file.OpenNoteInNewTab();
+            file.OpenInNewTab();
             return true;
         }
     };
@@ -69,7 +72,7 @@ public class ContextMenu : IContextMenu
     private bool TryToExcludeLocalFolder(string folder, string? vaultId)
     {
         if (vaultId is null) return false;
-        Vault? vault = VaultManager.GetVaultWithId(vaultId);
+        Vault? vault = _vaultManager.GetVaultWithId(vaultId);
         if (vault is null) return false;
         vault.VaultSetting.ExcludedPaths.Add(folder);
         _obsidian.ReloadData();
@@ -82,11 +85,12 @@ public class ContextMenu : IContextMenu
         string path = file.RelativePath;
 
         List<Result> results = new();
-        Vault? vault = file.GetVault();
+        Vault? vault = _vaultManager.GetVaultWithId(file.VaultId);
+
         if (vault is null) return results;
         if (vault.HasAdvancedUri)
         {
-            if (!vault.OpenNoteInNewTabByDefault(_settings.GlobalVaultSetting))
+            if (!vault.OpenInNewTabByDefault(_settings.GlobalVaultSetting))
             {
                 results.Add(OpenInNewTabResult(file));
             }

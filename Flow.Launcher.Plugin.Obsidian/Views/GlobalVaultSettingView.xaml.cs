@@ -8,13 +8,13 @@ using System.Windows.Input;
 using Flow.Launcher.Plugin.Obsidian.Helpers;
 using Flow.Launcher.Plugin.Obsidian.Models;
 using Flow.Launcher.Plugin.Obsidian.Services;
+using CheckBox = System.Windows.Controls.CheckBox;
 
 namespace Flow.Launcher.Plugin.Obsidian.Views;
 
 public partial class GlobalVaultSettingView : INotifyPropertyChanged
 {
-    public Vault? Vault { get; }
-    public GlobalVaultSetting GlobalVaultSetting { get; set; }
+    public GlobalVaultSetting GlobalVaultSetting { get; }
 
     public Visibility GlobalSettingVisibility
     {
@@ -27,17 +27,22 @@ public partial class GlobalVaultSettingView : INotifyPropertyChanged
         }
     }
 
+    private VaultManager VaultManager { get; }
+    private Vault? Vault { get; }
+
     private Visibility _globalSettingVisibility = Visibility.Visible;
 
-    public GlobalVaultSettingView(Settings settings)
+    public GlobalVaultSettingView(VaultManager vaultManager)
     {
-        GlobalVaultSetting = settings.GlobalVaultSetting;
+        VaultManager = vaultManager;
+        GlobalVaultSetting = vaultManager.Settings.GlobalVaultSetting;
         InitializeComponent();
         DataContext = this;
     }
 
-    public GlobalVaultSettingView(Vault vault)
+    public GlobalVaultSettingView(VaultManager vaultManager, Vault vault)
     {
+        VaultManager = vaultManager;
         Vault = vault;
         GlobalVaultSetting = vault.VaultSetting;
         InitializeComponent();

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows.Controls;
 using Flow.Launcher.Plugin.Obsidian.Models;
 using Flow.Launcher.Plugin.Obsidian.Services;
+using Flow.Launcher.Plugin.Obsidian.Utilities;
 using Flow.Launcher.Plugin.Obsidian.Views;
 using ContextMenu = Flow.Launcher.Plugin.Obsidian.Services.ContextMenu;
 
@@ -10,69 +11,64 @@ namespace Flow.Launcher.Plugin.Obsidian;
 
 public class Obsidian : IPlugin, ISettingProvider, IReloadable, IContextMenu
 {
-    private IPublicAPI _publicApi = null!;
-    private Settings _settings = null!;
-    private IContextMenu _contextMenu = null!;
+    private VaultManager? _vaultManager;
+    private SearchService? _searchService;
+    private NoteCreatorService? _noteCreatorService;
+    private TagSearchService? _tagSearchService;
 
-    public List<Result> LoadContextMenus(Result selectedResult) => _contextMenu.LoadContextMenus(selectedResult);
+    private IPublicAPI? _publicApi;
+    private Settings? _settings;
+    private IContextMenu? _contextMenu;
+
+    public List<Result> LoadContextMenus(Result selectedResult) =>
+        _contextMenu is null ? new List<Result>() : _contextMenu.LoadContextMenus(selectedResult);
 
     public void Init(PluginInitContext context)
     {
         _publicApi = context.API;
         _settings = _publicApi.LoadSettingJsonStorage<Settings>();
-        _contextMenu = new ContextMenu(this, _settings);
+        _vaultManager = new VaultManager(_settings);
+
+        _searchService = new SearchService(_vaultManager);
+        _tagSearchService = new TagSearchService(_vaultManager, _searchService, _publicApi);
+        _noteCreatorService = new NoteCreatorService(_vaultManager, _tagSearchService, _publicApi);
+        _contextMenu = new ContextMenu(this, _vaultManager);
         ReloadData();
     }
 
     public List<Result> Query(Query query)
     {
-        string search = query.Search;
         List<Result> results = new();
+        if (_searchService is null || _tagSearchService is null || _noteCreatorService is null) return results;
+
+        string search = query.Search;
         if (string.IsNullOrEmpty(search)) return results;
 
-        if (QueryTypeDetector.IsCreateNewNoteQuery(search))
+        if (QueryTypeDetector.IsNoteCreationQuery(search))
         {
-            return NoteCreatorService.CreateNewNoteResultsWithVaults(query).ToList();
+            return _noteCreatorService.BuildNoteCreationResults(query).ToList();
         }
 
-        if (_settings.UseTags && QueryTypeDetector.IsTagSearchQuery(search))
+        if (_settings is { UseTags: true } && QueryTypeDetector.IsTagSearchQuery(search))
         {
-            if (search is "#")
-            {
-                return TagSearchService.GetAllSearchTagResults(_publicApi, query.ActionKeyword);
-            }
-
-            string tag = query.FirstSearch.TrimStart('#');
-            string lowerTag = tag.ToLower();
-            if (TagSearchService.IsATag(lowerTag))
-            {
-                results = TagSearchService.GetSearchResultWithTag(lowerTag, query.SecondToEndSearch, _settings);
-
-                if (_settings.MaxResult > 0)
-                    results = SearchService.SortAndTruncateResults(results, _settings.MaxResult);
-                if (_settings.AddCreateNoteOptionOnAllSearch && string.IsNullOrEmpty(query.SecondToEndSearch))
-                    results.Add(NoteCreatorService.CreateNewNoteResult(query.ActionKeyword, query.SecondToEndSearch,
-                        _publicApi));
-
-                return results;
-            }
-
-            return TagSearchService.GetTagSearchResults(lowerTag, query.ActionKeyword, _publicApi);
+            results = _tagSearchService.ExecuteTagQuery(query);
+            if (string.IsNullOrEmpty(query.SecondSearch)) return results;
+            if (_settings is not { AddCreateNoteOptionOnAllSearch: true }) return results;
+            results.Add(_noteCreatorService.CreateTaggedNoteResult(query.ActionKeyword, query.SecondSearch,
+                query.FirstSearch.TrimStart('#')));
         }
-
-        List<File> files = VaultManager.GetAllFiles();
-
-        results = SearchService.GetSearchResults(files, search, _settings);
-        if (_settings.MaxResult > 0)
-            results = SearchService.SortAndTruncateResults(results, _settings.MaxResult);
-
-        if (_settings.AddCreateNoteOptionOnAllSearch && string.IsNullOrEmpty(search))
-            results.Add(NoteCreatorService.CreateNewNoteResult(query.ActionKeyword, search, _publicApi));
+        else
+        {
+            results = _searchService.FindMatchingFiles(search);
+            if (_settings is not { AddCreateNoteOptionOnAllSearch: true }) return results;
+            results.Add(_noteCreatorService.CreateNewNoteResult(query.ActionKeyword, search));
+        }
 
         return results;
     }
 
-    public void ReloadData() => VaultManager.UpdateVaultList(_settings);
+    public void ReloadData() => _vaultManager?.UpdateVaultList(_settings);
 
-    public Control CreateSettingPanel() => new SettingsView(_settings, this);
+    public Control CreateSettingPanel() =>
+        _vaultManager is null ? new Control() : new SettingsView(_vaultManager, this);
 }

@@ -1,9 +1,8 @@
 using System.IO;
-using Flow.Launcher.Plugin.Obsidian.Helpers;
 
-namespace Flow.Launcher.Plugin.Obsidian.Services;
+namespace Flow.Launcher.Plugin.Obsidian.Utilities;
 
-public static class PluginsDetectionService
+public static class PluginsDetection
 {
     private const string AdvancedUriPluginName = "obsidian-advanced-uri";
 

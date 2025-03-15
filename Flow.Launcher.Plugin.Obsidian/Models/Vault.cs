@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Flow.Launcher.Plugin.Obsidian.Services;
+using Flow.Launcher.Plugin.Obsidian.Utilities;
 
 namespace Flow.Launcher.Plugin.Obsidian.Models;
 
@@ -11,33 +12,36 @@ public class Vault
     public readonly string Id;
     public readonly string Name;
     public readonly string VaultPath;
-
     public readonly VaultSetting VaultSetting;
     public List<File> Files { get; private set; }
     public bool HasAdvancedUri { get; set; }
 
-    public Vault(string id, string vaultPath, VaultSetting vaultSetting, Settings settings)
+    private readonly VaultManager _vaultManager;
+
+    public Vault(string id, string vaultPath, VaultSetting vaultSetting, VaultManager vaultManager)
     {
         Id = id;
         VaultPath = vaultPath;
         VaultSetting = vaultSetting;
         Name = Path.GetFileName(VaultPath);
-        Files = GetFiles(settings);
-        HasAdvancedUri = PluginsDetectionService.IsObsidianAdvancedUriPluginInstalled(VaultPath);
+        _vaultManager = vaultManager;
+        Files = GetFiles();
+        HasAdvancedUri = PluginsDetection.IsObsidianAdvancedUriPluginInstalled(VaultPath);
         if (!HasAdvancedUri) VaultSetting.OpenInNewTabByDefault = false;
     }
 
-    public bool OpenNoteInNewTabByDefault(GlobalVaultSetting globalSetting)
+    public bool OpenInNewTabByDefault(GlobalVaultSetting globalSetting)
     {
         if (!HasAdvancedUri) return false;
         return VaultSetting.UseGlobalSetting ? globalSetting.OpenInNewTabByDefault : VaultSetting.OpenInNewTabByDefault;
     }
 
-    private List<File> GetFiles(Settings settings)
+    private List<File> GetFiles()
     {
+        Settings settings = _vaultManager.Settings;
         bool useAliases = settings.UseAliases;
         bool useTags = settings.UseTags;
-        bool useObsidianProperties = settings.UseAliases || settings.UseTags;
+        bool useObsidianProperties = useAliases || useTags;
 
         HashSet<string> extensions = VaultSetting.GetSearchableExtensions(settings);
         List<string> excludedPaths = VaultSetting.GetExcludedPaths(settings)
@@ -50,9 +54,13 @@ public class Vault
             .Where(file => extensions.Contains(Path.GetExtension(file))
                            && !excludedPaths.Any(file.StartsWith))
             .Select(filePath =>
-                useObsidianProperties
-                    ? new File(this, filePath).AddObsidianProperties(useAliases, useTags)
-                    : new File(this, filePath))
+            {
+                File file = new(this, filePath);
+                if (!useObsidianProperties) return file;
+                file = file.AddObsidianProperties(useAliases, useTags);
+                if (file.Tags is not null) _vaultManager.AddTagsToList(file.Tags);
+                return file;
+            })
             .ToList();
 
         return files;
