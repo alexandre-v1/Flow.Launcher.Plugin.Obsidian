@@ -26,25 +26,11 @@ public class File : Result
         CopyText = FilePath;
         Action = _ =>
         {
-            if (vault.OpenInNewTabByDefault(vault.VaultSetting))
-            {
-                OpenInNewTab();
-            }
-            else
-            {
-                Open();
-            }
-
+            Open(vault.OpenInNewTabByDefault());
             return true;
         };
         VaultId = vault.Id;
         IcoPath = Paths.ObsidianLogo;
-    }
-
-    public void OpenInNewTab()
-    {
-        string uri = ObsidianUriGenerator.CreateOpenInNewTabUri(VaultId, RelativePath);
-        Process.Start(new ProcessStartInfo { FileName = uri, UseShellExecute = true });
     }
 
     public bool HasTag(string tag) =>
@@ -53,9 +39,11 @@ public class File : Result
     public File AddObsidianProperties(bool useAliases, bool useTags) =>
         ObsidianPropertiesHelper.AddObsidianProperties(this, useAliases, useTags);
 
-    private void Open()
+    public void Open(bool openInNewTab = false)
     {
-        string uri = ObsidianUriGenerator.CreateOpenFileUri(VaultId, RelativePath);
+        string uri = openInNewTab
+            ? ObsidianUriGenerator.CreateOpenInNewTabUri(VaultId, RelativePath)
+            : ObsidianUriGenerator.CreateOpenFileUri(VaultId, RelativePath);
         Process.Start(new ProcessStartInfo { FileName = uri, UseShellExecute = true });
     }
 }

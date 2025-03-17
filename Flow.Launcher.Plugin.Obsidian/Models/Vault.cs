@@ -30,10 +30,10 @@ public class Vault
         if (!HasAdvancedUri) VaultSetting.OpenInNewTabByDefault = false;
     }
 
-    public bool OpenInNewTabByDefault(GlobalVaultSetting globalSetting)
+    public bool OpenInNewTabByDefault()
     {
         if (!HasAdvancedUri) return false;
-        return VaultSetting.UseGlobalSetting ? globalSetting.OpenInNewTabByDefault : VaultSetting.OpenInNewTabByDefault;
+        return VaultSetting.UseGlobalSetting ? _vaultManager.Settings.GlobalVaultSetting.OpenInNewTabByDefault : VaultSetting.OpenInNewTabByDefault;
     }
 
     private List<File> GetFiles()

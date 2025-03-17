@@ -25,7 +25,7 @@ public class ContextMenu : IContextMenu
         Glyph = new GlyphInfo(Font.Family, Font.OpenInNewTabGlyph),
         Action = _ =>
         {
-            file.OpenInNewTab();
+            file.Open(true);
             return true;
         }
     };
@@ -90,7 +90,7 @@ public class ContextMenu : IContextMenu
         if (vault is null) return results;
         if (vault.HasAdvancedUri)
         {
-            if (!vault.OpenInNewTabByDefault(_settings.GlobalVaultSetting))
+            if (!vault.OpenInNewTabByDefault())
             {
                 results.Add(OpenInNewTabResult(file));
             }
