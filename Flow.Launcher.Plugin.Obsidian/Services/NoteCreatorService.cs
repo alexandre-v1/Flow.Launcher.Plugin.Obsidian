@@ -96,7 +96,8 @@ public class NoteCreatorService
             {
                 if (_vaultManager.HasOnlyOneVault)
                 {
-                    LaunchTaggedNoteCreation(_vaultManager.Vaults[0], noteName, new HashSet<string> { tag });
+                    var vault = _vaultManager.Vaults[0];
+                    LaunchTaggedNoteCreation(vault, noteName, new HashSet<string> { tag }, vault.OpenInNewTabByDefault());
                     return true;
                 }
 
@@ -106,9 +107,12 @@ public class NoteCreatorService
         };
     }
 
-    private static void LaunchTaggedNoteCreation(Vault vault, string noteName, IReadOnlySet<string> tags)
+    private static void LaunchTaggedNoteCreation(Vault vault, string noteName, IReadOnlySet<string> tags, bool openInNewTab = false)
     {
-        string uri = ObsidianUriGenerator.CreateTaggedNoteUri(vault.Name, noteName, tags);
+        string uri = openInNewTab
+            ? ObsidianUriGenerator.GenerateTaggedNoteInNewTabUri(vault.Name, noteName, tags)
+            : ObsidianUriGenerator.GenerateTaggedNoteUri(vault.Name, noteName, tags);
+
         Process.Start(new ProcessStartInfo { FileName = uri, UseShellExecute = true });
     }
 
@@ -129,7 +133,7 @@ public class NoteCreatorService
 
     private static void LaunchNoteCreation(Vault vault, string noteName)
     {
-        string uri = ObsidianUriGenerator.CreateNewNoteUri(vault.Name, noteName);
+        string uri = ObsidianUriGenerator.GenerateNewNoteUri(vault.Name, noteName);
         Process.Start(new ProcessStartInfo { FileName = uri, UseShellExecute = true });
     }
 
@@ -162,7 +166,7 @@ public class NoteCreatorService
             IcoPath = Paths.ObsidianLogo,
             Action = _ =>
             {
-                LaunchTaggedNoteCreation(vault, noteName, tags);
+                LaunchTaggedNoteCreation(vault, noteName, tags, vault.OpenInNewTabByDefault());
                 return true;
             }
         };

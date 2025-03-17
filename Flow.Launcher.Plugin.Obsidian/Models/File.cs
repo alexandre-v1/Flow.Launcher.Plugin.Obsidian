@@ -42,8 +42,8 @@ public class File : Result
     public void Open(bool openInNewTab = false)
     {
         string uri = openInNewTab
-            ? ObsidianUriGenerator.CreateOpenInNewTabUri(VaultId, RelativePath)
-            : ObsidianUriGenerator.CreateOpenFileUri(VaultId, RelativePath);
+            ? ObsidianUriGenerator.GenerateOpenInNewTabUri(VaultId, RelativePath)
+            : ObsidianUriGenerator.GenerateOpenFileUri(VaultId, RelativePath);
         Process.Start(new ProcessStartInfo { FileName = uri, UseShellExecute = true });
     }
 }
