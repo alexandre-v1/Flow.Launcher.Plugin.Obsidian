@@ -61,7 +61,7 @@ public partial class SettingsView : INotifyPropertyChanged
         checkBox.Unchecked += (_, _) => property.SetValue(Settings, false);
     }
 
-    private void SettingsView_OnUnloaded(object sender, RoutedEventArgs e) => Obsidian.ReloadData();
+    private void SettingsView_OnUnloaded(object sender, RoutedEventArgs e) => _ = Obsidian.ReloadDataAsync();
 
     private void CreateVaultSettingControls(VaultManager vaultManager)
     {

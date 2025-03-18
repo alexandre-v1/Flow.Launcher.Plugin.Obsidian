@@ -65,7 +65,7 @@ public class ContextMenu : IContextMenu
     private bool ExcludeGlobalFolder(string folder)
     {
         _settings.GlobalVaultSetting.ExcludedPaths.Add(folder);
-        _obsidian.ReloadData();
+        _ = _obsidian.ReloadDataAsync();
         return true;
     }
 
@@ -75,7 +75,7 @@ public class ContextMenu : IContextMenu
         Vault? vault = _vaultManager.GetVaultWithId(vaultId);
         if (vault is null) return false;
         vault.VaultSetting.ExcludedPaths.Add(folder);
-        _obsidian.ReloadData();
+        _ =_obsidian.ReloadDataAsync();
         return true;
     }
 

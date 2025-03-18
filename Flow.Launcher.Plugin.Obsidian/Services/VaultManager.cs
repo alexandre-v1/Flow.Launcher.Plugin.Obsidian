@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 using Flow.Launcher.Plugin.Obsidian.Extensions;
 using Flow.Launcher.Plugin.Obsidian.Models;
 using Flow.Launcher.Plugin.Obsidian.Utilities;
@@ -9,31 +10,28 @@ using File = Flow.Launcher.Plugin.Obsidian.Models.File;
 
 namespace Flow.Launcher.Plugin.Obsidian.Services;
 
-public class VaultManager
+public class VaultManager(Settings settings)
 {
     public bool HasOnlyOneVault => Vaults.Count is 1;
     public bool OneVaultHasAdvancedUri => Vaults.Any(vault => vault.HasAdvancedUri);
     public bool AllVaultsHaveAdvancedUri => Vaults.All(vault => vault.HasAdvancedUri);
-    public HashSet<string> TagsList => new(_tagsList.Keys);
+    public HashSet<string> TagsList => [.._tagsList.Keys];
+    private List<File>? _allFiles;
 
-    public List<Vault> Vaults { get; private set; } = new();
+    public List<Vault> Vaults { get; private set; } = [];
     private readonly ConcurrentDictionary<string, byte> _tagsList = new();
-    public readonly Settings Settings;
+    public readonly Settings Settings = settings;
 
-    public VaultManager(Settings settings)
+    public async Task UpdateVaultListAsync()
     {
-        Settings = settings;
-    }
-
-    public void UpdateVaultList(Settings? settings)
-    {
-        Vaults = new List<Vault>();
-        string jsonString = System.IO.File.ReadAllText(Paths.VaultListJsonPath);
+        Vaults = [];
+        string jsonString = await System.IO.File.ReadAllTextAsync(Paths.VaultListJsonPath);
         using JsonDocument document = JsonDocument.Parse(jsonString);
 
         JsonElement root = document.RootElement;
         JsonElement vaults = root.GetProperty("vaults");
 
+        var vaultLoadTasks = new List<(Vault Vault, Task LoadingTask)>();
 
         foreach (JsonProperty vault in vaults.EnumerateObject())
         {
@@ -48,31 +46,33 @@ public class VaultManager
                 Settings.VaultsSetting.Add(vaultId, vaultSetting);
             }
 
-            Vaults.Add(new Vault(vaultId, path, vaultSetting, this));
+            var newVault = new Vault(vaultId, path, vaultSetting, this);
+            var loadingTask = newVault.LoadFilesAsync();
+            vaultLoadTasks.Add((newVault, loadingTask));
         }
 
         if (!OneVaultHasAdvancedUri)
         {
             Settings.GlobalVaultSetting.OpenInNewTabByDefault = false;
         }
+
+        foreach ((Vault vault, Task loadingTask) in vaultLoadTasks)
+        {
+            await loadingTask;
+            Vaults.Add(vault);
+        }
+
+        _allFiles = Vaults.SelectMany(vault => vault.Files).ToList();
     }
 
     public List<File> GetAllFiles()
     {
-        List<File> files = new();
-        foreach (Vault vault in Vaults) files.AddRange(vault.Files);
-        return files;
+        return _allFiles ??= Vaults.SelectMany(vault => vault.Files).ToList();
     }
 
     public List<File> GetAllFilesWithTag(string tag)
     {
-        List<File> files = new();
-        foreach (Vault vault in Vaults)
-        {
-            files.AddRange(vault.Files.Where(file => file.HasTag(tag)));
-        }
-
-        return files;
+        return GetAllFiles().Where(file => file.HasTag(tag)).ToList();
     }
 
     public Vault? GetVaultWithId(string vaultId) => Vaults.Find(vault => vault.Id == vaultId);

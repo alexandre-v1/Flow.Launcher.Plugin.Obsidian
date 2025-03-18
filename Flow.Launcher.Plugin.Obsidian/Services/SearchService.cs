@@ -7,16 +7,9 @@ using Flow.Launcher.Plugin.Obsidian.Utilities;
 
 namespace Flow.Launcher.Plugin.Obsidian.Services;
 
-public class SearchService
+public class SearchService(VaultManager vaultManager)
 {
-    private readonly VaultManager _vaultManager;
-    private readonly Settings _settings;
-
-    public SearchService(VaultManager vaultManager)
-    {
-        _settings = vaultManager.Settings;
-        _vaultManager = vaultManager;
-    }
+    private readonly Settings _settings = vaultManager.Settings;
 
     public static int CalculateScore(string source, string target, string pattern)
     {
@@ -47,7 +40,7 @@ public class SearchService
 
     public List<Result> FindMatchingFiles(string search)
     {
-        List<Result> results = CreateFileSearchResults(_vaultManager.GetAllFiles(), search);
+        List<Result> results = CreateFileSearchResults(vaultManager.GetAllFiles(), search);
         if (_settings.MaxResult > 0)
         {
             results = SortAndTruncateResults(results);
@@ -58,11 +51,7 @@ public class SearchService
 
     public List<Result> CreateFileSearchResults(List<File> files, string search)
     {
-        if (string.IsNullOrEmpty(search))
-        {
-            //Return all file with Name as Title
-            return files.Cast<Result>().ToList();
-        }
+        if (string.IsNullOrEmpty(search)) return files.Cast<Result>().ToList();
 
         SearchInfo searchInfo = new(
             search,

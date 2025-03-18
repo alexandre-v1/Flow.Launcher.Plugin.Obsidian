@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using Flow.Launcher.Plugin.Obsidian.Models;
 using Flow.Launcher.Plugin.Obsidian.Services;
@@ -9,7 +11,7 @@ using ContextMenu = Flow.Launcher.Plugin.Obsidian.Services.ContextMenu;
 
 namespace Flow.Launcher.Plugin.Obsidian;
 
-public class Obsidian : IPlugin, ISettingProvider, IReloadable, IContextMenu
+public class Obsidian : IAsyncPlugin, ISettingProvider, IAsyncReloadable, IContextMenu
 {
     private VaultManager? _vaultManager;
     private SearchService? _searchService;
@@ -21,9 +23,9 @@ public class Obsidian : IPlugin, ISettingProvider, IReloadable, IContextMenu
     private IContextMenu? _contextMenu;
 
     public List<Result> LoadContextMenus(Result selectedResult) =>
-        _contextMenu is null ? new List<Result>() : _contextMenu.LoadContextMenus(selectedResult);
+        _contextMenu is null ? [] : _contextMenu.LoadContextMenus(selectedResult);
 
-    public void Init(PluginInitContext context)
+    public async Task InitAsync(PluginInitContext context)
     {
         _publicApi = context.API;
         _settings = _publicApi.LoadSettingJsonStorage<Settings>();
@@ -33,16 +35,18 @@ public class Obsidian : IPlugin, ISettingProvider, IReloadable, IContextMenu
         _tagSearchService = new TagSearchService(_vaultManager, _searchService, _publicApi);
         _noteCreatorService = new NoteCreatorService(_vaultManager, _tagSearchService, _publicApi);
         _contextMenu = new ContextMenu(this, _vaultManager);
-        ReloadData();
+        await ReloadDataAsync();
     }
 
-    public List<Result> Query(Query query)
+    public async Task<List<Result>> QueryAsync(Query query, CancellationToken token)
     {
-        List<Result> results = new();
+        List<Result> results = [];
         if (_searchService is null || _tagSearchService is null || _noteCreatorService is null) return results;
 
         string search = query.Search;
         if (string.IsNullOrEmpty(search)) return results;
+
+        if (token.IsCancellationRequested) return results;
 
         if (QueryTypeDetector.IsNoteCreationQuery(search))
         {
@@ -63,11 +67,14 @@ public class Obsidian : IPlugin, ISettingProvider, IReloadable, IContextMenu
             if (_settings is not { AddCreateNoteOptionOnAllSearch: true }) return results;
             results.Add(_noteCreatorService.CreateNewNoteResult(query.ActionKeyword, search));
         }
-
         return results;
     }
 
-    public void ReloadData() => _vaultManager?.UpdateVaultList(_settings);
+    public async Task ReloadDataAsync()
+    {
+        if (_vaultManager is null) return;
+        await _vaultManager.UpdateVaultListAsync();
+    }
 
     public Control CreateSettingPanel() =>
         _vaultManager is null ? new Control() : new SettingsView(_vaultManager, this);
