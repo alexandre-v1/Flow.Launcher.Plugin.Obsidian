@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
@@ -14,9 +13,7 @@ namespace Flow.Launcher.Plugin.Obsidian;
 public class Obsidian : IAsyncPlugin, ISettingProvider, IAsyncReloadable, IContextMenu
 {
     private VaultManager? _vaultManager;
-    private SearchService? _searchService;
-    private NoteCreatorService? _noteCreatorService;
-    private TagSearchService? _tagSearchService;
+    private QueryHandler? _queryHandler;
 
     private IPublicAPI? _publicApi;
     private Settings? _settings;
@@ -31,43 +28,25 @@ public class Obsidian : IAsyncPlugin, ISettingProvider, IAsyncReloadable, IConte
         _settings = _publicApi.LoadSettingJsonStorage<Settings>();
         _vaultManager = new VaultManager(_settings);
 
-        _searchService = new SearchService(_vaultManager);
-        _tagSearchService = new TagSearchService(_vaultManager, _searchService, _publicApi);
-        _noteCreatorService = new NoteCreatorService(_vaultManager, _tagSearchService, _publicApi);
+        var searchService = new SearchService(_vaultManager);
+        var tagSearchService = new TagSearchService(_vaultManager, searchService, _publicApi);
+        var noteCreatorService = new NoteCreatorService(_vaultManager, tagSearchService, _publicApi);
+        _queryHandler = new QueryHandler( searchService, tagSearchService, noteCreatorService, _settings);
         _contextMenu = new ContextMenu(this, _vaultManager);
         await ReloadDataAsync();
     }
 
     public async Task<List<Result>> QueryAsync(Query query, CancellationToken token)
     {
-        List<Result> results = [];
-        if (_searchService is null || _tagSearchService is null || _noteCreatorService is null) return results;
+        if (_queryHandler is null || QueryTypeDetector.ShouldReturnEmptyResults(query, token)) return [];
 
-        string search = query.Search;
-        if (string.IsNullOrEmpty(search)) return results;
+        if (QueryTypeDetector.IsNoteCreationSearch(query.Search))
+            return _queryHandler.HandleNoteCreation(query);
 
-        if (token.IsCancellationRequested) return results;
+        if (_queryHandler.IsTagSearchEnabled && QueryTypeDetector.IsTagSearch(query.Search))
+            return _queryHandler.HandleTagSearch(query);
 
-        if (QueryTypeDetector.IsNoteCreationQuery(search))
-        {
-            return _noteCreatorService.BuildNoteCreationResults(query).ToList();
-        }
-
-        if (_settings is { UseTags: true } && QueryTypeDetector.IsTagSearchQuery(search))
-        {
-            results = _tagSearchService.ExecuteTagQuery(query);
-            if (string.IsNullOrEmpty(query.SecondSearch)) return results;
-            if (_settings is not { AddCreateNoteOptionOnAllSearch: true }) return results;
-            results.Add(_noteCreatorService.CreateTaggedNoteResult(query.ActionKeyword, query.SecondSearch,
-                query.FirstSearch.TrimStart('#')));
-        }
-        else
-        {
-            results = _searchService.FindMatchingFiles(search);
-            if (_settings is not { AddCreateNoteOptionOnAllSearch: true }) return results;
-            results.Add(_noteCreatorService.CreateNewNoteResult(query.ActionKeyword, search));
-        }
-        return results;
+        return _queryHandler.HandleRegularSearch(query);
     }
 
     public async Task ReloadDataAsync()
