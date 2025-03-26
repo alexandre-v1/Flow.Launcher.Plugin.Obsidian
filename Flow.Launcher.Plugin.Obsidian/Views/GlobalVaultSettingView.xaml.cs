@@ -6,8 +6,8 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using Flow.Launcher.Plugin.Obsidian.Helpers;
+using Flow.Launcher.Plugin.Obsidian.Managers;
 using Flow.Launcher.Plugin.Obsidian.Models;
-using Flow.Launcher.Plugin.Obsidian.Services;
 using CheckBox = System.Windows.Controls.CheckBox;
 
 namespace Flow.Launcher.Plugin.Obsidian.Views;

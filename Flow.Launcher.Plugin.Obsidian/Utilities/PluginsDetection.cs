@@ -10,6 +10,7 @@ public static class PluginsDetection
     {
         string pluginsJsonPath = Paths.GetCommunityPluginsJsonPath(vaultPath);
         if (!File.Exists(pluginsJsonPath)) return false;
+
         string json = File.ReadAllText(pluginsJsonPath);
         return json.Contains(AdvancedUriPluginName);
     }

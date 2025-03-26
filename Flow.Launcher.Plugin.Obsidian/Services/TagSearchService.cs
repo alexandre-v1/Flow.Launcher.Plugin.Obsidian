@@ -1,88 +1,38 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Flow.Launcher.Plugin.Obsidian.Models;
 using Flow.Launcher.Plugin.Obsidian.Utilities;
 
 namespace Flow.Launcher.Plugin.Obsidian.Services;
 
-public class TagSearchService
+public class TagSearchService(IPublicAPI publicApi)
 {
-    private readonly VaultManager _vaultManager;
-    private readonly SearchService _searchService;
-    private readonly IPublicAPI _publicApi;
-
-    public TagSearchService(VaultManager vaultManager, SearchService searchService, IPublicAPI publicApi)
+    public List<Result> GetMatchingTagResults(IEnumerable<string> tags, string tagToSearch, QueryData queryData)
     {
-        _vaultManager = vaultManager;
-        _searchService = searchService;
-        _publicApi = publicApi;
-    }
-
-    public List<Result> FindMatchingTags(string search, string actionKeyword)
-    {
-        TagSearchInfo searchInfo = new(
-            search,
-            $@"[_\s\-\.]{Regex.Escape(search)}"
+        return SearchUtility.SearchAndScore(
+            CreateTagsResults(queryData, tags),
+            tagToSearch,
+            SearchUtility.CalculateResultRelevance,
+            result => result.Score
         );
-
-        return _vaultManager.TagsList
-            .AsParallel()
-            .Select(tag => CreateScoredTagResult(tag, searchInfo, actionKeyword))
-            .Where(result => result.Score > 0)
-            .ToList();
     }
 
-    public List<Result> ExecuteTagQuery(Query query)
-    {
-        string tag = query.FirstSearch.TrimStart('#');
+    private List<Result> CreateTagsResults(QueryData queryData, IEnumerable<string> tags) =>
+        tags.Select(tag => CreateTagResult(queryData, tag)).ToList();
 
-        List<Result> results = _vaultManager.IsAnExistingTag(tag)
-            ? FindFilesWithTag(tag, query)
-            : FindMatchingTags(tag, query.ActionKeyword);
-
-        return results;
-    }
-
-    private Result CreateScoredTagResult(string tag, TagSearchInfo searchInfo, string actionKeyword)
-    {
-        Result result = CreateTagResult(tag, actionKeyword);
-
-        int score = SearchService.CalculateScore(tag, searchInfo.SearchTerm, searchInfo.Pattern);
-        result.Score = score;
-        return result;
-    }
-
-    private List<Result> FindFilesWithTag(string tag, Query query)
-    {
-        List<Result> results = FilterFilesWithTagByQuery(tag, query.SecondToEndSearch);
-
-        if (_vaultManager.Settings.MaxResult > 0)
-            results = _searchService.SortAndTruncateResults(results);
-
-        return results;
-    }
-
-    private List<Result> FilterFilesWithTagByQuery(string tag, string search)
-    {
-        List<File> filesWithTag = _vaultManager.GetAllFilesWithTag(tag);
-        return string.IsNullOrEmpty(search)
-            ? filesWithTag.Cast<Result>().ToList()
-            : _searchService.CreateFileSearchResults(filesWithTag, search);
-    }
-
-    private Result CreateTagResult(string tag, string actionKeyword) =>
+    private Result CreateTagResult(QueryData queryData, string tag) =>
         new()
         {
             Title = $"#{tag}",
             SubTitle = "Tag",
             IcoPath = Paths.ObsidianLogo,
-            Action = _ =>
-            {
-                _publicApi.ChangeQuery($"{actionKeyword} #{tag} ");
-                return false;
-            }
+            Action = _ => ChangeQueryToAutoCompleteOne(queryData, tag, queryData.GetFirstInvalidTagIndex())
         };
 
-    private record TagSearchInfo(string SearchTerm, string Pattern);
+    private bool ChangeQueryToAutoCompleteOne(QueryData queryData, string newTag, int index)
+    {
+        string newQuery = queryData.GetRawQueryWithReplaced($"#{newTag}", index);
+        publicApi.ChangeQuery($"{newQuery} ");
+        return false;
+    }
 }

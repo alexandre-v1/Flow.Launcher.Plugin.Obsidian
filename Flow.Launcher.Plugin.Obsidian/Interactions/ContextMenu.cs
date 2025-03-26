@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Flow.Launcher.Plugin.Obsidian.Extensions;
+using Flow.Launcher.Plugin.Obsidian.Managers;
 using Flow.Launcher.Plugin.Obsidian.Models;
 using Flow.Launcher.Plugin.Obsidian.Utilities;
 
-namespace Flow.Launcher.Plugin.Obsidian.Services;
+namespace Flow.Launcher.Plugin.Obsidian.Interactions;
 
 public class ContextMenu : IContextMenu
 {
@@ -32,7 +33,7 @@ public class ContextMenu : IContextMenu
 
     private List<Result> ExcludeResults(string relativePath, string? vaultId)
     {
-        List<Result> results = new();
+        List<Result> results = [];
         string[] parts = relativePath.Split('\\');
         for (int i = 0; i < parts.Length - 1; i++)
         {
@@ -46,21 +47,19 @@ public class ContextMenu : IContextMenu
         return results;
     }
 
-    private Result ExcludeGlobalFolderResult(string folder) =>
-        new()
-        {
-            Title = $"Exclude {folder} folder globally",
-            Action = _ => ExcludeGlobalFolder(folder),
-            Glyph = new GlyphInfo(Font.Family, Font.ExcludeGlyph)
-        };
+    private Result ExcludeGlobalFolderResult(string folder) => new()
+    {
+        Title = $"Exclude {folder} folder globally",
+        Action = _ => ExcludeGlobalFolder(folder),
+        Glyph = new GlyphInfo(Font.Family, Font.ExcludeGlyph)
+    };
 
-    private Result ExcludeLocalFolderResult(string folder, string? vaultId) =>
-        new()
-        {
-            Title = $"Exclude {folder} folder locally",
-            Action = _ => TryToExcludeLocalFolder(folder, vaultId),
-            Glyph = new GlyphInfo(Font.Family, Font.ExcludeGlyph)
-        };
+    private Result ExcludeLocalFolderResult(string folder, string? vaultId) => new()
+    {
+        Title = $"Exclude {folder} folder locally",
+        Action = _ => TryToExcludeLocalFolder(folder, vaultId),
+        Glyph = new GlyphInfo(Font.Family, Font.ExcludeGlyph)
+    };
 
     private bool ExcludeGlobalFolder(string folder)
     {
@@ -71,23 +70,33 @@ public class ContextMenu : IContextMenu
 
     private bool TryToExcludeLocalFolder(string folder, string? vaultId)
     {
-        if (vaultId is null) return false;
+        if (vaultId is null)
+        {
+            return false;
+        }
+
         Vault? vault = _vaultManager.GetVaultWithId(vaultId);
-        if (vault is null) return false;
+        if (vault is null)
+        {
+            return false;
+        }
+
         vault.VaultSetting.ExcludedPaths.Add(folder);
-        _ =_obsidian.ReloadDataAsync();
+        _ = _obsidian.ReloadDataAsync();
         return true;
     }
 
     public List<Result> LoadContextMenus(Result selectedResult)
     {
-        if (selectedResult is not File file) return new List<Result>();
+        if (selectedResult is not File file)
+            return [];
         string path = file.RelativePath;
 
-        List<Result> results = new();
+        List<Result> results = [];
         Vault? vault = _vaultManager.GetVaultWithId(file.VaultId);
 
-        if (vault is null) return results;
+        if (vault is null)
+            return results;
         if (vault.HasAdvancedUri)
         {
             if (!vault.OpenInNewTabByDefault())

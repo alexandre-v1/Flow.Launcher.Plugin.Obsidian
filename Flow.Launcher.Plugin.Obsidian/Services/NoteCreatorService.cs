@@ -1,174 +1,110 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Flow.Launcher.Plugin.Obsidian.Extensions;
+using Flow.Launcher.Plugin.Obsidian.Helpers;
 using Flow.Launcher.Plugin.Obsidian.Models;
 using Flow.Launcher.Plugin.Obsidian.Utilities;
 
 namespace Flow.Launcher.Plugin.Obsidian.Services;
 
-public class NoteCreatorService
+public class NoteCreatorService(IPublicAPI publicApi)
 {
-    public const string NoteCreatorKeyword = "create";
-
-    private readonly VaultManager _vaultManager;
-    private readonly TagSearchService _tagSearchService;
-    private readonly IPublicAPI _publicApi;
-
-    public NoteCreatorService(VaultManager vaultManager, TagSearchService tagSearchService, IPublicAPI publicApi)
+    public Result BuildSingleVaultNoteCreationResult(QueryData queryData)
     {
-        _vaultManager = vaultManager;
-        _tagSearchService = tagSearchService;
-        _publicApi = publicApi;
+        string noteName = GetNoteName(queryData);
+        string title = $"Create new note \"{noteName}\"";
+
+        if (queryData.HasOnlyOneVault())
+        {
+            title += $" in {queryData.GetTheOnlyVault()?.Name}";
+        }
+
+        if (queryData.HasValidTags)
+        {
+            title += $" {FormatTagsForDisplay(queryData.ValidTags)}";
+        }
+
+        return BuildNoteCreationResult(title, queryData, noteName);
     }
 
-    public List<Result> BuildNoteCreationResults(Query query)
+    public List<Result> BuildMultiVaultNoteCreationResults(QueryData queryData)
     {
-        List<Result> results;
-        TagQuery tagQuery = new(query, _vaultManager);
+        string noteName = GetNoteName(queryData);
+        List<Result> results = [];
 
-        if (!tagQuery.HasValidOrInvalidTags)
+        foreach (Vault vault in queryData.Vaults)
         {
-            results = _vaultManager.Vaults
-                .Select(vault => CreateVaultSpecificNoteResult(vault, query.SecondToEndSearch))
-                .ToList();
-            return results;
-        }
+            string title = $"Create new note \"{noteName}\" in {vault.Name} ";
 
-        if (!tagQuery.HasInvalidTags)
-        {
-            results = _vaultManager.Vaults.Select(vault =>
-                CreateVaultSpecificTaggedNoteResult(vault, tagQuery.SecondToEndSearchWithoutTags,
-                    tagQuery.Tags)).ToList();
-            return results;
-        }
-
-        results = _tagSearchService.FindMatchingTags(tagQuery.GetInvalidTag(), query.ActionKeyword);
-
-        string queryString = string.Empty;
-        if (!string.IsNullOrEmpty(query.ActionKeyword))
-        {
-            queryString = $"{query.ActionKeyword} ";
-        }
-
-        queryString += $"{tagQuery.SearchWithoutInvalidTags} ";
-
-        foreach (Result result in results)
-        {
-            result.Action = _ =>
+            if (queryData.HasValidTags)
             {
-                _publicApi.ChangeQuery(queryString += $"{result.Title} ");
-                return false;
-            };
+                title += FormatTagsForDisplay(queryData.ValidTags);
+            }
+
+            results.Add(BuildNoteCreationResult(title, queryData, noteName, vault));
         }
 
         return results;
     }
 
-    public Result CreateNewNoteResult(string actionKeyword, string search)
-    {
-        if (string.IsNullOrEmpty(search)) search = "Untitled";
-        return new Result
-        {
-            Title = $"Create new note \"{search}\"",
-            IcoPath = Paths.ObsidianLogo,
-            Action = _ =>
-            {
-                if (_vaultManager.HasOnlyOneVault)
-                {
-                    LaunchNoteCreation(_vaultManager.Vaults[0], search);
-                    return true;
-                }
-
-                _publicApi.ChangeQuery($"{actionKeyword} {NoteCreatorKeyword} {search}", true);
-                return false;
-            }
-        };
-    }
-
-    public Result CreateTaggedNoteResult(string actionKeyword, string noteName, string tag)
-    {
-        if (string.IsNullOrEmpty(noteName)) noteName = "Untitled";
-        return new Result
-        {
-            Title = $"Create new note \"{noteName}\" with tag #{tag}",
-            IcoPath = Paths.ObsidianLogo,
-            Action = _ =>
-            {
-                if (_vaultManager.HasOnlyOneVault)
-                {
-                    var vault = _vaultManager.Vaults[0];
-                    LaunchTaggedNoteCreation(vault, noteName, new HashSet<string> { tag }, vault.OpenInNewTabByDefault());
-                    return true;
-                }
-
-                _publicApi.ChangeQuery($"{actionKeyword} {NoteCreatorKeyword} {noteName} #{tag}", true);
-                return false;
-            }
-        };
-    }
-
-    private static void LaunchTaggedNoteCreation(Vault vault, string noteName, IReadOnlySet<string> tags, bool openInNewTab = false)
-    {
-        string uri = openInNewTab
-            ? ObsidianUriGenerator.GenerateTaggedNoteInNewTabUri(vault.Name, noteName, tags)
-            : ObsidianUriGenerator.GenerateTaggedNoteUri(vault.Name, noteName, tags);
-
-        Process.Start(new ProcessStartInfo { FileName = uri, UseShellExecute = true });
-    }
-
-    private static Result CreateVaultSpecificNoteResult(Vault vault, string search)
-    {
-        if (string.IsNullOrEmpty(search)) search = "Untitled";
-        return new Result
-        {
-            Title = $"Create new note \"{search}\" in {vault.Name}",
-            IcoPath = Paths.ObsidianLogo,
-            Action = _ =>
-            {
-                LaunchNoteCreation(vault, search);
-                return true;
-            }
-        };
-    }
-
-    private static void LaunchNoteCreation(Vault vault, string noteName)
-    {
-        string uri = ObsidianUriGenerator.GenerateNewNoteUri(vault.Name, noteName);
-        Process.Start(new ProcessStartInfo { FileName = uri, UseShellExecute = true });
-    }
-
-    private static Result CreateVaultSpecificTaggedNoteResult(Vault vault, string noteName, IReadOnlySet<string> tags)
-    {
-        if (string.IsNullOrEmpty(noteName)) noteName = "Untitled";
-        string title = $"Create new note \"{noteName}\" in {vault.Name} ";
-        if (tags.Count is 1)
-        {
-            title += $"with tag #{tags.First()} ";
-        }
-        else
-        {
-            title += "with tags ";
-            for (int i = 0; i < tags.Count; i++)
-            {
-                if (i == tags.Count - 1)
-                {
-                    title += $"and #{tags.ElementAt(i)} ";
-                    break;
-                }
-
-                title += $"#{tags.ElementAt(i)} ";
-            }
-        }
-
-        return new Result
+    private Result BuildNoteCreationResult(string title, QueryData queryData, string noteName, Vault? vault = null) =>
+        new()
         {
             Title = title,
             IcoPath = Paths.ObsidianLogo,
-            Action = _ =>
-            {
-                LaunchTaggedNoteCreation(vault, noteName, tags, vault.OpenInNewTabByDefault());
-                return true;
-            }
+            Action = _ => CreateNoteActionHandler(queryData, noteName, vault)
         };
+
+    private bool CreateNoteActionHandler(QueryData queryData, string noteName, Vault? vault = null)
+    {
+        vault ??= queryData.GetTheOnlyVault();
+        if (vault is null)
+        {
+            string newQuery = queryData.GetRawQueryWithAPrefix(Keyword.NoteCreator);
+            publicApi.ChangeQuery(newQuery, true);
+            return false;
+        }
+
+        string content = string.Empty;
+        if (queryData.HasValidTags)
+            content = ObsidianPropertiesHelper.BuildYamlFrontMatterWithTags(queryData.ValidTags);
+
+        string uri =
+            ObsidianUriGenerator.GenerateNewFileUri(vault.Id, noteName, content, vault.OpenInNewTabByDefault());
+        Process.Start(new ProcessStartInfo { FileName = uri, UseShellExecute = true });
+        return true;
+    }
+
+    private string GetNoteName(QueryData queryData)
+    {
+        string noteName = queryData.GetCleanSearchTerms().Without(Keyword.NoteCreator).JoinToString();
+        return string.IsNullOrEmpty(noteName) ? "Untitled" : noteName;
+    }
+
+    private string FormatTagsForDisplay(ICollection<string> tags)
+    {
+        switch (tags.Count)
+        {
+            case 0:
+                return string.Empty;
+            case 1:
+                return $"with tag #{tags.First()}";
+        }
+
+        string result = "with tags ";
+
+        for (int i = 0; i < tags.Count; i++)
+        {
+            if (i == tags.Count - 1)
+            {
+                result += $"and #{tags.ElementAt(i)} ";
+                break;
+            }
+
+            result += $"#{tags.ElementAt(i)} ";
+        }
+
+        return result;
     }
 }

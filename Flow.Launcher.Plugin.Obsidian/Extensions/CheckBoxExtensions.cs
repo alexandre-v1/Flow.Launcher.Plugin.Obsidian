@@ -12,7 +12,7 @@ public static class CheckBoxExtensions
     public static List<Result> GetCheckBoxes(this File file)
     {
         string path = file.FilePath;
-        List<Result> checkBoxes = new();
+        List<Result> checkBoxes = [];
         string[] lines = System.IO.File.ReadAllLines(path);
 
         string prevLine = string.Empty;
@@ -40,7 +40,7 @@ public static class CheckBoxExtensions
 
             string subTitle = string.Empty;
             string trim = prevLine.Trim();
-            if (trim.EndsWith(":")) subTitle = trim[..^1];
+            if (trim.EndsWith(':')) subTitle = trim[..^1];
 
             Result item = new()
             {

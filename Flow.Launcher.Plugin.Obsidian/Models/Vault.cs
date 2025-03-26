@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Flow.Launcher.Plugin.Obsidian.Services;
+using Flow.Launcher.Plugin.Obsidian.Extensions;
+using Flow.Launcher.Plugin.Obsidian.Managers;
 using Flow.Launcher.Plugin.Obsidian.Utilities;
 
 namespace Flow.Launcher.Plugin.Obsidian.Models;
@@ -14,8 +15,9 @@ public class Vault
     public readonly string Name;
     public readonly string VaultPath;
     public readonly VaultSetting VaultSetting;
+    public HashSet<string> Tags { get; } = [];
+    public bool HasAdvancedUri { get; }
     public List<File> Files { get; private set; } = [];
-    public bool HasAdvancedUri { get; set; }
 
     private readonly VaultManager _vaultManager;
 
@@ -27,16 +29,23 @@ public class Vault
         Name = Path.GetFileName(VaultPath);
         _vaultManager = vaultManager;
         HasAdvancedUri = PluginsDetection.IsObsidianAdvancedUriPluginInstalled(VaultPath);
-        if (!HasAdvancedUri) VaultSetting.OpenInNewTabByDefault = false;
+        if (!HasAdvancedUri)
+        {
+            VaultSetting.OpenInNewTabByDefault = false;
+        }
     }
 
     public bool OpenInNewTabByDefault()
     {
         if (!HasAdvancedUri) return false;
-        return VaultSetting.UseGlobalSetting ? _vaultManager.Settings.GlobalVaultSetting.OpenInNewTabByDefault : VaultSetting.OpenInNewTabByDefault;
+        return VaultSetting.UseGlobalSetting
+            ? _vaultManager.Settings.GlobalVaultSetting.OpenInNewTabByDefault
+            : VaultSetting.OpenInNewTabByDefault;
     }
 
     public async Task LoadFilesAsync() => Files = await GetFilesAsync();
+
+    public bool TagExists(string tag) => Tags.Any(t => t.EqualsIgnoreCase(tag));
 
     private async Task<List<File>> GetFilesAsync()
     {
@@ -55,17 +64,24 @@ public class Vault
             return Directory.EnumerateFiles(VaultPath, "*", SearchOption.AllDirectories)
                 .AsParallel()
                 .WithDegreeOfParallelism(Environment.ProcessorCount)
-                .Where(file => extensions.Contains(Path.GetExtension(file))
-                               && !excludedPaths.Any(file.StartsWith))
+                .Where(file => extensions.Contains(Path.GetExtension(file)) && !excludedPaths.Any(file.StartsWith))
                 .Select(filePath =>
                 {
                     File file = new(this, filePath);
                     if (!useObsidianProperties) return file;
                     file = file.AddObsidianProperties(useAliases, useTags);
-                    if (file.Tags is not null) _vaultManager.AddTagsToList(file.Tags);
+                    if (file.Tags is not null) AddTagsToList(file.Tags);
                     return file;
                 })
                 .ToList();
         });
+    }
+
+    private void AddTagsToList(string[] tags)
+    {
+        foreach (string tag in tags)
+        {
+            Tags.Add(tag);
+        }
     }
 }

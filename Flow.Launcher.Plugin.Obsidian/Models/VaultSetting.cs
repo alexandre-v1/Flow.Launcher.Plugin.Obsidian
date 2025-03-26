@@ -14,9 +14,12 @@ public class VaultSetting : GlobalVaultSetting
 
     public override List<string> GetExcludedPaths(Settings settings)
     {
-        List<string> excludedPaths = new();
+        List<string> excludedPaths = [];
         if (UseGlobalExcludedPaths)
+        {
             excludedPaths.AddRange(settings.GlobalVaultSetting.GetExcludedPaths(settings));
+        }
+
         excludedPaths.AddRange(base.GetExcludedPaths(settings));
         return excludedPaths;
     }

@@ -1,0 +1,117 @@
+using System.Collections.Generic;
+using System.Linq;
+using Flow.Launcher.Plugin.Obsidian.Extensions;
+using Flow.Launcher.Plugin.Obsidian.Utilities;
+
+namespace Flow.Launcher.Plugin.Obsidian.Models;
+
+public class QueryData
+{
+    public HashSet<string> ValidTags { get; } = [];
+    public HashSet<string> InvalidTags { get; } = [];
+
+    public bool HasInvalidTags => InvalidTags.Count > 0;
+
+    public bool HasValidTags => ValidTags.Count > 0;
+    public HashSet<Vault> Vaults { get; private set; } = [];
+
+    private Query Query { get; }
+
+    private QueryData(Query query) => Query = query;
+
+    public static QueryData Parse(Query query, IEnumerable<Vault> enumerableVaults)
+    {
+        HashSet<Vault> vaults = enumerableVaults.ToHashSet();
+        QueryData queryData = new(query);
+        HashSet<Vault> newVaults = [];
+
+        foreach (string searchTerm in query.SearchTerms)
+        {
+            if (searchTerm.StartsWith('#')) continue;
+
+            foreach (Vault vault in vaults.Where(vault => vault.Name.EqualsIgnoreCase(searchTerm)))
+            {
+                newVaults.Add(vault);
+            }
+        }
+
+        queryData.Vaults = newVaults.Count is 0 ? vaults : newVaults;
+
+        foreach (string searchTerm in query.SearchTerms)
+        {
+            if (!searchTerm.StartsWith('#'))
+                continue;
+
+            string tag = searchTerm.TrimStart('#');
+
+            if (queryData.Vaults.Any(vault => vault.TagExists(tag)))
+            {
+                queryData.ValidTags.Add(tag);
+            }
+            else
+            {
+                queryData.InvalidTags.Add(tag);
+            }
+        }
+
+        return queryData;
+    }
+
+    public string GetRawQueryWithReplaced(string newSearchTerm, int index)
+    {
+        string[] searchTerms = Query.SearchTerms;
+        searchTerms[index] = newSearchTerm;
+
+        return $"{Query.ActionKeyword} {searchTerms.JoinToString()}";
+    }
+
+    public int GetFirstInvalidTagIndex()
+    {
+        for (int i = 0; i < Query.SearchTerms.Length; i++)
+        {
+            if (
+                Query.SearchTerms[i].StartsWith('#')
+                && !ValidTags.Contains(Query.SearchTerms[i].TrimStart('#'))
+            )
+                return i;
+        }
+
+        return -1;
+    }
+
+    // Search terms without tags and vaults
+    public string[] GetCleanSearchTerms() =>
+        Query
+            .SearchTerms.Where(term =>
+                !term.StartsWith('#') && !Vaults.Any(vault => vault.Name.EqualsIgnoreCase(term))
+            )
+            .ToArray();
+
+    // Search without tags and vaults
+    public string GetCleanSearch() => GetCleanSearchTerms().JoinToString();
+
+    public bool IsEmptyQuery() => Query.SearchTerms.Length is 0;
+
+    public bool HasCleanSearchContent() => GetCleanSearchTerms().Length > 0;
+
+    public bool HasOnlyOneVault() => Vaults.Count is 1;
+
+    public Vault? GetTheOnlyVault() => Vaults.Count is 1 ? Vaults.First() : null;
+
+    public string GetRawQueryWithAPrefix(string prefix) => $"{Query.ActionKeyword} {prefix} {Query.Search}";
+
+    public HashSet<string> GetPossibleTags() =>
+        Vaults.SelectMany(vault => vault.Tags)
+            .Where(tag => !ValidTags.ContainsIgnoreCase(tag))
+            .ToHashSet();
+
+    public List<File> GetAllFiles() => Vaults.SelectMany(vault => vault.Files).ToList();
+
+    public List<File> GetAllFilesWithTags() =>
+        Vaults
+            .SelectMany(vault => vault.Files)
+            .Where(file => file.HasTags(ValidTags))
+            .ToList();
+
+    public bool IsNoteCreationSearch() => Query.Search.StartsWith(Keyword.NoteCreator);
+}

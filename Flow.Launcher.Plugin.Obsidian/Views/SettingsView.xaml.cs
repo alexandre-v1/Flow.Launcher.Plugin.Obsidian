@@ -3,8 +3,8 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using Flow.Launcher.Plugin.Obsidian.Managers;
 using Flow.Launcher.Plugin.Obsidian.Models;
-using Flow.Launcher.Plugin.Obsidian.Services;
 using CheckBox = System.Windows.Controls.CheckBox;
 
 namespace Flow.Launcher.Plugin.Obsidian.Views;

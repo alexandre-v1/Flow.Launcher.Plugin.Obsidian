@@ -1,6 +1,6 @@
 using System.Windows;
+using Flow.Launcher.Plugin.Obsidian.Managers;
 using Flow.Launcher.Plugin.Obsidian.Models;
-using Flow.Launcher.Plugin.Obsidian.Services;
 
 namespace Flow.Launcher.Plugin.Obsidian.Views;
 

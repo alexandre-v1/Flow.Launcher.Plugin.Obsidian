@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Flow.Launcher.Plugin.Obsidian.Extensions;
 using File = Flow.Launcher.Plugin.Obsidian.Models.File;
 
 namespace Flow.Launcher.Plugin.Obsidian.Helpers;
@@ -20,8 +21,8 @@ public static class ObsidianPropertiesHelper
         using StreamReader reader = new(file.FilePath);
         if (reader.ReadLine()?.Trim() is not YamlFrontMatterDelimiter) return file;
 
-        List<string>? aliases = useAliases ? new List<string>() : null;
-        List<string>? tags = useTags ? new List<string>() : null;
+        List<string>? aliases = useAliases ? [] : null;
+        List<string>? tags = useTags ? [] : null;
 
         List<string>? currentList = null;
 
@@ -38,24 +39,24 @@ public static class ObsidianPropertiesHelper
                 continue;
             }
 
-            if (useAliases && line.StartsWith(AliasesKey))
+            if (aliases is not null && line.StartsWith(AliasesKey))
             {
                 currentList = aliases;
-                ParseLine(line[AliasesKeyLength..].Trim(), aliases!);
+                ParseLine(line[AliasesKeyLength..].Trim(), aliases);
                 continue;
             }
 
-            if (useTags && line.StartsWith(TagsKey))
+            if (tags is not null && line.StartsWith(TagsKey))
             {
                 currentList = tags;
-                ParseLine(line[TagsKeyLength..].Trim(), tags!);
+                ParseLine(line[TagsKeyLength..].Trim(), tags);
                 continue;
             }
 
             if (currentList is null) continue;
             if (line[0] is '-')
             {
-                currentList.Add(line[1..].Trim().Trim('"'));
+                currentList.Add(CleanValue(line[1..]));
             }
             else if (!line.Contains(':'))
             {
@@ -72,21 +73,32 @@ public static class ObsidianPropertiesHelper
             file.Aliases = aliases.ToArray();
         }
 
-        if (useTags && tags?.Count > 0)
-        {
-            if (tags.Count is 0 || tags.All(string.IsNullOrWhiteSpace)) return file;
-            file.Tags = tags.ToArray();
-        }
+        if (!useTags || !(tags?.Count > 0)) return file;
+
+        if (tags.Count is 0 || tags.All(string.IsNullOrWhiteSpace)) return file;
+        file.Tags = tags.ToArray();
 
         return file;
+    }
+
+    public static string BuildYamlFrontMatterWithTags(IReadOnlySet<string> tags)
+    {
+        const string yamlDelimiter = "---";
+        string tagsList = tags.JoinToString("\n  - ");
+
+        return $"{yamlDelimiter}\n" +
+               $"tags:\n" +
+               $"  - {tagsList}\n" +
+               $"{yamlDelimiter}\n";
     }
 
     private static void ParseLine(string value, List<string> entriesList)
     {
         if (!value.StartsWith('['))
         {
-            if (!string.IsNullOrWhiteSpace(value))
-                entriesList.Add(value.Trim('"'));
+            string cleanValue = CleanValue(value);
+            if (!string.IsNullOrWhiteSpace(cleanValue))
+                entriesList.Add(cleanValue);
             return;
         }
 
@@ -95,7 +107,9 @@ public static class ObsidianPropertiesHelper
             .TrimEnd(']');
 
         entriesList.AddRange(span.ToString().Split(',')
-            .Select(entry => entry.Trim().Trim('"'))
+            .Select(CleanValue)
             .Where(trimmed => trimmed.Length > 0));
     }
+
+    private static string CleanValue(string value) => value.Trim().Trim('"').TrimStart('#');
 }

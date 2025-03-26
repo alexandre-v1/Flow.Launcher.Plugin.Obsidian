@@ -14,7 +14,7 @@ public static class ScrollViewerHelper
         for (int i = 0; i < VisualTreeHelper.GetChildrenCount(element); i++)
         {
             ScrollViewer? result = FindScrollViewer(VisualTreeHelper.GetChild(element, i));
-            if (result != null) return result;
+            if (result is not null) return result;
         }
 
         return null;
@@ -23,7 +23,7 @@ public static class ScrollViewerHelper
     public static void HandlePreviewMouseWheel(object sender, MouseWheelEventArgs e, UIElement element)
     {
         ScrollViewer? scrollViewer = FindScrollViewer(element);
-        if (scrollViewer == null) return;
+        if (scrollViewer is null) return;
 
         bool isScrollingDown = e.Delta < 0;
         bool isScrollingUp = e.Delta > 0;
@@ -37,7 +37,7 @@ public static class ScrollViewerHelper
     private static ScrollViewer? FindParentScrollViewer(DependencyObject element)
     {
         DependencyObject? parent = VisualTreeHelper.GetParent(element);
-        while (parent != null)
+        while (parent is not null)
         {
             if (parent is ScrollViewer scrollViewer) return scrollViewer;
             parent = VisualTreeHelper.GetParent(parent);
@@ -48,10 +48,8 @@ public static class ScrollViewerHelper
 
     private static bool IsScrolledToBoundary(ScrollViewer scrollViewer, bool scrollingDown, bool scrollingUp)
     {
-        bool atBottomBoundary = scrollingDown &&
-                                scrollViewer.VerticalOffset >= scrollViewer.ScrollableHeight;
-        bool atTopBoundary = scrollingUp &&
-                             scrollViewer.VerticalOffset == 0;
+        bool atBottomBoundary = scrollingDown && scrollViewer.VerticalOffset >= scrollViewer.ScrollableHeight;
+        bool atTopBoundary = scrollingUp && scrollViewer.VerticalOffset is 0;
 
         return atBottomBoundary || atTopBoundary;
     }

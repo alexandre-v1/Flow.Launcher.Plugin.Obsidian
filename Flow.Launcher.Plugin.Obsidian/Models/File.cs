@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -31,19 +32,23 @@ public class File : Result
         };
         VaultId = vault.Id;
         IcoPath = Paths.ObsidianLogo;
+        Score = 100;
     }
-
-    public bool HasTag(string tag) =>
-        Tags?.Any(tagToCheck => tagToCheck.IsSameString(tag)) ?? false;
 
     public File AddObsidianProperties(bool useAliases, bool useTags) =>
         ObsidianPropertiesHelper.AddObsidianProperties(this, useAliases, useTags);
 
     public void Open(bool openInNewTab = false)
     {
-        string uri = openInNewTab
-            ? ObsidianUriGenerator.GenerateOpenInNewTabUri(VaultId, RelativePath)
-            : ObsidianUriGenerator.GenerateOpenFileUri(VaultId, RelativePath);
+        string uri = ObsidianUriGenerator.GenerateOpenFileUri(VaultId, RelativePath, openInNewTab);
         Process.Start(new ProcessStartInfo { FileName = uri, UseShellExecute = true });
     }
+
+    public bool HasTags(IEnumerable<string> tagsToCheck)
+    {
+        return Tags is not null && tagsToCheck.All(HasTag);
+    }
+
+    private bool HasTag(string tag) =>
+        Tags?.Any(tagToCheck => tagToCheck.EqualsIgnoreCase(tag)) ?? false;
 }
