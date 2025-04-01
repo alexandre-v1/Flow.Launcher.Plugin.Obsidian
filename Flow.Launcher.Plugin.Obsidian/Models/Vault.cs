@@ -47,6 +47,8 @@ public class Vault
 
     public bool TagExists(string tag) => Tags.Any(t => t.EqualsIgnoreCase(tag));
 
+    public bool IsVaultName(string vaultName) => Name.EqualsIgnoreCase(vaultName);
+
     private async Task<List<File>> GetFilesAsync()
     {
         Settings settings = _vaultManager.Settings;
@@ -70,18 +72,10 @@ public class Vault
                     File file = new(this, filePath);
                     if (!useObsidianProperties) return file;
                     file = file.AddObsidianProperties(useAliases, useTags);
-                    if (file.Tags is not null) AddTagsToList(file.Tags);
+                    if (file.Tags is not null) Tags.UnionWith(file.Tags);
                     return file;
                 })
                 .ToList();
         });
-    }
-
-    private void AddTagsToList(string[] tags)
-    {
-        foreach (string tag in tags)
-        {
-            Tags.Add(tag);
-        }
     }
 }

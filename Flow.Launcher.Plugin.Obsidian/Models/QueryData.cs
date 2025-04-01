@@ -11,17 +11,23 @@ public class QueryData
     public HashSet<string> InvalidTags { get; } = [];
 
     public bool HasInvalidTags => InvalidTags.Count > 0;
-
     public bool HasValidTags => ValidTags.Count > 0;
-    public HashSet<Vault> Vaults { get; private set; } = [];
 
+    public readonly string[] SearchTerms;
+    public readonly string[] CleanSearchTerms;
+
+    public HashSet<Vault> Vaults { get; private set; } = [];
     private Query Query { get; }
 
-    private QueryData(Query query) => Query = query;
-
-    public static QueryData Parse(Query query, IEnumerable<Vault> enumerableVaults)
+    private QueryData(Query query)
     {
-        HashSet<Vault> vaults = enumerableVaults.ToHashSet();
+        Query = query;
+        SearchTerms = query.SearchTerms;
+        CleanSearchTerms = GetCleanSearchTerms();
+    }
+
+    public static QueryData Parse(Query query, HashSet<Vault> vaults)
+    {
         QueryData queryData = new(query);
         HashSet<Vault> newVaults = [];
 
@@ -29,7 +35,8 @@ public class QueryData
         {
             if (searchTerm.StartsWith('#')) continue;
 
-            foreach (Vault vault in vaults.Where(vault => vault.Name.EqualsIgnoreCase(searchTerm)))
+            string term = searchTerm;
+            foreach (Vault vault in vaults.Where(vault => vault.IsVaultName(term)))
             {
                 newVaults.Add(vault);
             }
@@ -69,30 +76,21 @@ public class QueryData
     {
         for (int i = 0; i < Query.SearchTerms.Length; i++)
         {
-            if (
-                Query.SearchTerms[i].StartsWith('#')
-                && !ValidTags.Contains(Query.SearchTerms[i].TrimStart('#'))
-            )
+            if (Query.SearchTerms[i].StartsWith('#') && !ValidTags.Contains(Query.SearchTerms[i].TrimStart('#')))
+            {
                 return i;
+            }
         }
 
         return -1;
     }
 
-    // Search terms without tags and vaults
-    public string[] GetCleanSearchTerms() =>
-        Query
-            .SearchTerms.Where(term =>
-                !term.StartsWith('#') && !Vaults.Any(vault => vault.Name.EqualsIgnoreCase(term))
-            )
-            .ToArray();
-
     // Search without tags and vaults
-    public string GetCleanSearch() => GetCleanSearchTerms().JoinToString();
+    public string GetCleanSearch() => CleanSearchTerms.JoinToString();
 
     public bool IsEmptyQuery() => Query.SearchTerms.Length is 0;
 
-    public bool HasCleanSearchContent() => GetCleanSearchTerms().Length > 0;
+    public bool HasCleanSearchContent() => CleanSearchTerms.Length > 0;
 
     public bool HasOnlyOneVault() => Vaults.Count is 1;
 
@@ -114,4 +112,10 @@ public class QueryData
             .ToList();
 
     public bool IsNoteCreationSearch() => Query.Search.StartsWith(Keyword.NoteCreator);
+
+    // Search terms without tags and vaults
+    private string[] GetCleanSearchTerms() =>
+        Query.SearchTerms
+            .Where(term => !term.StartsWith('#') && !Vaults.Any(vault => vault.Name.EqualsIgnoreCase(term)))
+            .ToArray();
 }

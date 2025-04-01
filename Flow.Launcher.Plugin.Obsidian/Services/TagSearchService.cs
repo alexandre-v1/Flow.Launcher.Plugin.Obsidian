@@ -7,15 +7,12 @@ namespace Flow.Launcher.Plugin.Obsidian.Services;
 
 public class TagSearchService(IPublicAPI publicApi)
 {
-    public List<Result> GetMatchingTagResults(IEnumerable<string> tags, string tagToSearch, QueryData queryData)
-    {
-        return SearchUtility.SearchAndScore(
+    public List<Result> GetMatchingTagResults(IEnumerable<string> tags, string tagToSearch, QueryData queryData) =>
+        SearchUtility.SearchAndScore(
             CreateTagsResults(queryData, tags),
             tagToSearch,
-            SearchUtility.CalculateResultRelevance,
-            result => result.Score
+            SearchUtility.CalculateResultRelevance
         );
-    }
 
     private List<Result> CreateTagsResults(QueryData queryData, IEnumerable<string> tags) =>
         tags.Select(tag => CreateTagResult(queryData, tag)).ToList();

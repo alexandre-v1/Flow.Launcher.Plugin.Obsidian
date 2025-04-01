@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using Flow.Launcher.Plugin.Obsidian.Extensions;
 using Flow.Launcher.Plugin.Obsidian.Helpers;
 using Flow.Launcher.Plugin.Obsidian.Utilities;
@@ -14,8 +13,8 @@ public class File : Result
     public readonly string FilePath;
     public readonly string RelativePath;
     public readonly string VaultId;
-    public string[]? Aliases { get; set; }
-    public string[]? Tags { get; set; }
+    public HashSet<string>? Aliases { get; set; }
+    public HashSet<string>? Tags { get; set; }
 
     public File(Vault vault, string path)
     {
@@ -44,11 +43,7 @@ public class File : Result
         Process.Start(new ProcessStartInfo { FileName = uri, UseShellExecute = true });
     }
 
-    public bool HasTags(IEnumerable<string> tagsToCheck)
-    {
-        return Tags is not null && tagsToCheck.All(HasTag);
-    }
+    public bool HasTags(HashSet<string> tagsToCheck) => Tags is not null && tagsToCheck.IsSubsetOf(Tags);
 
-    private bool HasTag(string tag) =>
-        Tags?.Any(tagToCheck => tagToCheck.EqualsIgnoreCase(tag)) ?? false;
+    public bool HasTag(string tag) => Tags is not null && Tags.Contains(tag);
 }

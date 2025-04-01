@@ -11,8 +11,7 @@ public static class SearchUtility
     public static List<TResult> SearchAndScore<TSource, TResult>(
         IEnumerable<TSource> items,
         string search,
-        Func<TSource, SearchInfo, TResult> scoreFunc,
-        Func<TResult, int> getScore)
+        Func<TSource, SearchInfo, TResult> scoreFunc)
     {
         SearchInfo searchInfo = new(
             search,
@@ -22,7 +21,6 @@ public static class SearchUtility
         return items
             .AsParallel()
             .Select(item => scoreFunc(item, searchInfo))
-            .Where(result => getScore(result) > 0)
             .ToList();
     }
 

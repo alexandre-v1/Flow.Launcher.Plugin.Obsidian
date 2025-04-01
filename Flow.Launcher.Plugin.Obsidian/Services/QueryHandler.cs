@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Flow.Launcher.Plugin.Obsidian.Extensions;
 using Flow.Launcher.Plugin.Obsidian.Models;
 
@@ -11,8 +12,9 @@ public class QueryHandler(IPublicAPI publicApi, Settings settings)
     private readonly SearchService _searchService = new();
     private readonly TagSearchService _tagSearchService = new(publicApi);
     private readonly NoteCreatorService _noteCreatorService = new(publicApi);
+    private readonly ContentSearchService _contentSearchService = new();
 
-    public List<Result> HandleQuery(QueryData queryData)
+    public async Task<List<Result>> HandleQuery(QueryData queryData)
     {
         if (queryData.IsEmptyQuery()) return [];
 
@@ -26,12 +28,12 @@ public class QueryHandler(IPublicAPI publicApi, Settings settings)
 
         if (!queryData.HasCleanSearchContent()) return files.ToResults();
 
-        files = _searchService.ScoreAndFilterFiles(files, queryData.GetCleanSearch());
+        string cleanSearch = queryData.GetCleanSearch();
+        files = _searchService.SearchAndScoreFilesByName(files, cleanSearch);
+        files = await _contentSearchService.SearchAndScoreFilesByContentAsync(files, cleanSearch);
 
-        if (settings.MaxResult > 0)
-        {
-            files = SortAndTruncateFilesResults(files);
-        }
+        files = SortAndTruncateFilesResults(files);
+
 
         List<Result> results = files.ToResults();
 
@@ -55,7 +57,9 @@ public class QueryHandler(IPublicAPI publicApi, Settings settings)
     }
 
     private List<File> SortAndTruncateFilesResults(List<File> files) =>
-        settings.MaxResult is 0 ? files : SortFilesResults(files).Take(settings.MaxResult).ToList();
+        settings.MaxResult is 0
+            ? files.Where(file => file.Score > 0).ToList()
+            : SortFilesResults(files).Where(file => file.Score > 0).Take(settings.MaxResult).ToList();
 
     private List<File> SortFilesResults(List<File> files) =>
         files.OrderByDescending(result => result.Score).ToList();

@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Flow.Launcher.Plugin.Obsidian.Models;
 using Flow.Launcher.Plugin.Obsidian.Utilities;
+using File = System.IO.File;
 
 namespace Flow.Launcher.Plugin.Obsidian.Managers;
 
@@ -12,20 +13,20 @@ public class VaultManager(Settings settings)
     public bool HasOnlyOneVault => Vaults.Count is 1;
     public bool OneVaultHasAdvancedUri => Vaults.Any(vault => vault.HasAdvancedUri);
     public bool AllVaultsHaveAdvancedUri => Vaults.All(vault => vault.HasAdvancedUri);
-
-    public List<Vault> Vaults { get; private set; } = [];
     public readonly Settings Settings = settings;
+
+    public HashSet<Vault> Vaults { get; private set; } = [];
 
     public async Task UpdateVaultListAsync()
     {
         Vaults = [];
-        string jsonString = await System.IO.File.ReadAllTextAsync(Paths.VaultListJsonPath);
+        string jsonString = await File.ReadAllTextAsync(Paths.VaultListJsonPath);
         using JsonDocument document = JsonDocument.Parse(jsonString);
 
         JsonElement root = document.RootElement;
         JsonElement vaults = root.GetProperty("vaults");
 
-        var vaultLoadTasks = new List<(Vault Vault, Task LoadingTask)>();
+        List<(Vault Vault, Task LoadingTask)> vaultLoadTasks = [];
 
         foreach (JsonProperty vault in vaults.EnumerateObject())
         {
@@ -40,8 +41,8 @@ public class VaultManager(Settings settings)
                 Settings.VaultsSetting.Add(vaultId, vaultSetting);
             }
 
-            var newVault = new Vault(vaultId, path, vaultSetting, this);
-            var loadingTask = newVault.LoadFilesAsync();
+            Vault newVault = new(vaultId, path, vaultSetting, this);
+            Task loadingTask = newVault.LoadFilesAsync();
             vaultLoadTasks.Add((newVault, loadingTask));
         }
 
@@ -57,5 +58,5 @@ public class VaultManager(Settings settings)
         }
     }
 
-    public Vault? GetVaultWithId(string vaultId) => Vaults.Find(vault => vault.Id == vaultId);
+    public Vault? GetVaultWithId(string vaultId) => Vaults.FirstOrDefault(vault => vault.Id == vaultId);
 }

@@ -38,7 +38,7 @@ public class Obsidian : IAsyncPlugin, ISettingProvider, IAsyncReloadable, IConte
 
         return queryData.IsNoteCreationSearch()
             ? _queryHandler.HandleNoteCreation(queryData)
-            : _queryHandler.HandleQuery(queryData);
+            : await _queryHandler.HandleQuery(queryData);
     }
 
     public async Task ReloadDataAsync()

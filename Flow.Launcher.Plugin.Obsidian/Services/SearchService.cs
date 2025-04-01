@@ -6,13 +6,10 @@ namespace Flow.Launcher.Plugin.Obsidian.Services;
 
 public class SearchService
 {
-    public List<File> ScoreAndFilterFiles(List<File> files, string search)
-    {
-        return SearchUtility.SearchAndScore(
+    public List<File> SearchAndScoreFilesByName(List<File> files, string search) =>
+        SearchUtility.SearchAndScore(
             files,
             search,
-            SearchUtility.CalculateFileRelevance,
-            file => file.Score
+            SearchUtility.CalculateFileRelevance
         );
-    }
 }

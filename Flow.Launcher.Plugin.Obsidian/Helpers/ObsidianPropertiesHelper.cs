@@ -70,13 +70,13 @@ public static class ObsidianPropertiesHelper
 
         if (useAliases && aliases?.Count > 0)
         {
-            file.Aliases = aliases.ToArray();
+            file.Aliases = aliases.ToHashSet(StringComparer.CurrentCultureIgnoreCase);
         }
 
         if (!useTags || !(tags?.Count > 0)) return file;
 
         if (tags.Count is 0 || tags.All(string.IsNullOrWhiteSpace)) return file;
-        file.Tags = tags.ToArray();
+        file.Tags = tags.ToHashSet(StringComparer.CurrentCultureIgnoreCase);
 
         return file;
     }

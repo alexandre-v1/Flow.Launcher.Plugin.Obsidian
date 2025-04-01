@@ -78,7 +78,7 @@ public class NoteCreatorService(IPublicAPI publicApi)
 
     private string GetNoteName(QueryData queryData)
     {
-        string noteName = queryData.GetCleanSearchTerms().Without(Keyword.NoteCreator).JoinToString();
+        string noteName = queryData.CleanSearchTerms.Without(Keyword.NoteCreator).JoinToString();
         return string.IsNullOrEmpty(noteName) ? "Untitled" : noteName;
     }
 
