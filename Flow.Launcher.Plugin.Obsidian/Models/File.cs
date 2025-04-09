@@ -45,5 +45,7 @@ public class File : Result
 
     public bool HasTags(HashSet<string> tagsToCheck) => Tags is not null && tagsToCheck.IsSubsetOf(Tags);
 
-    public bool HasTag(string tag) => Tags is not null && Tags.Contains(tag);
+    public bool CanSearchContent() => Path.GetExtension(FilePath) is ".md" && !HasTag("excalidraw");
+
+    private bool HasTag(string tag) => Tags is not null && Tags.Contains(tag);
 }

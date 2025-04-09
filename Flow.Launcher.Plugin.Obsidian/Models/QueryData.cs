@@ -12,17 +12,16 @@ public class QueryData
 
     public bool HasInvalidTags => InvalidTags.Count > 0;
     public bool HasValidTags => ValidTags.Count > 0;
-
-    public readonly string[] SearchTerms;
     public readonly string[] CleanSearchTerms;
 
     public HashSet<Vault> Vaults { get; private set; } = [];
+
+    private string[] SearchTerms => Query.SearchTerms;
     private Query Query { get; }
 
     private QueryData(Query query)
     {
         Query = query;
-        SearchTerms = query.SearchTerms;
         CleanSearchTerms = GetCleanSearchTerms();
     }
 
@@ -66,7 +65,7 @@ public class QueryData
 
     public string GetRawQueryWithReplaced(string newSearchTerm, int index)
     {
-        string[] searchTerms = Query.SearchTerms;
+        string[] searchTerms = SearchTerms;
         searchTerms[index] = newSearchTerm;
 
         return $"{Query.ActionKeyword} {searchTerms.JoinToString()}";
@@ -74,9 +73,9 @@ public class QueryData
 
     public int GetFirstInvalidTagIndex()
     {
-        for (int i = 0; i < Query.SearchTerms.Length; i++)
+        for (int i = 0; i < SearchTerms.Length; i++)
         {
-            if (Query.SearchTerms[i].StartsWith('#') && !ValidTags.Contains(Query.SearchTerms[i].TrimStart('#')))
+            if (SearchTerms[i].StartsWith('#') && !ValidTags.Contains(SearchTerms[i].TrimStart('#')))
             {
                 return i;
             }
@@ -85,10 +84,7 @@ public class QueryData
         return -1;
     }
 
-    // Search without tags and vaults
-    public string GetCleanSearch() => CleanSearchTerms.JoinToString();
-
-    public bool IsEmptyQuery() => Query.SearchTerms.Length is 0;
+    public bool IsEmptyQuery() => SearchTerms.Length is 0;
 
     public bool HasCleanSearchContent() => CleanSearchTerms.Length > 0;
 

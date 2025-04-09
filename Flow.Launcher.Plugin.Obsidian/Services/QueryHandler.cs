@@ -1,20 +1,20 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Flow.Launcher.Plugin.Obsidian.Extensions;
 using Flow.Launcher.Plugin.Obsidian.Models;
+using Flow.Launcher.Plugin.Obsidian.Utilities;
 
 namespace Flow.Launcher.Plugin.Obsidian.Services;
 
 public class QueryHandler(IPublicAPI publicApi, Settings settings)
 {
     private bool UseObsidianProperties => settings.UseTags;
-    private readonly SearchService _searchService = new();
     private readonly TagSearchService _tagSearchService = new(publicApi);
     private readonly NoteCreatorService _noteCreatorService = new(publicApi);
-    private readonly ContentSearchService _contentSearchService = new();
 
-    public async Task<List<Result>> HandleQuery(QueryData queryData)
+    public async Task<List<Result>> HandleQuery(QueryData queryData, CancellationToken cancellationToken)
     {
         if (queryData.IsEmptyQuery()) return [];
 
@@ -28,9 +28,11 @@ public class QueryHandler(IPublicAPI publicApi, Settings settings)
 
         if (!queryData.HasCleanSearchContent()) return files.ToResults();
 
-        string cleanSearch = queryData.GetCleanSearch();
-        files = _searchService.SearchAndScoreFilesByName(files, cleanSearch);
-        files = await _contentSearchService.SearchAndScoreFilesByContentAsync(files, cleanSearch);
+        const int minCharForSearchContent = 3;
+        bool searchContent = queryData.CleanSearchTerms.Length > 1 ||
+                             queryData.CleanSearchTerms[0].Length >= minCharForSearchContent;
+
+        files = await SearchUtility.SearchAndScoreFiles(files, queryData, searchContent, cancellationToken);
 
         files = SortAndTruncateFilesResults(files);
 
@@ -48,6 +50,9 @@ public class QueryHandler(IPublicAPI publicApi, Settings settings)
     public List<Result> HandleNoteCreation(QueryData queryData) =>
         _noteCreatorService.BuildMultiVaultNoteCreationResults(queryData);
 
+    private static List<File> SortFilesResults(List<File> files) =>
+        files.OrderByDescending(result => result.Score).ToList();
+
     private List<Result> HandleTagAutoComplete(QueryData queryData)
     {
         HashSet<string> possibleTags = queryData.GetPossibleTags();
@@ -60,7 +65,4 @@ public class QueryHandler(IPublicAPI publicApi, Settings settings)
         settings.MaxResult is 0
             ? files.Where(file => file.Score > 0).ToList()
             : SortFilesResults(files).Where(file => file.Score > 0).Take(settings.MaxResult).ToList();
-
-    private List<File> SortFilesResults(List<File> files) =>
-        files.OrderByDescending(result => result.Score).ToList();
 }
