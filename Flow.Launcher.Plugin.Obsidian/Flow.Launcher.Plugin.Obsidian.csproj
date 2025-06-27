@@ -24,6 +24,8 @@
 
   <ItemGroup>
     <PackageReference Include="Flow.Launcher.Plugin" Version="4.6.0"/>
+    <PackageReference Include="ModernWpfUI" Version="0.9.6"
+                      ExcludeAssets="runtime;contentFiles"/>
   </ItemGroup>
 
   <ItemGroup>
