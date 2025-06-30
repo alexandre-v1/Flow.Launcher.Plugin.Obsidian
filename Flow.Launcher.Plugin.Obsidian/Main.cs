@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using Flow.Launcher.Plugin.Obsidian.Managers;
 using Flow.Launcher.Plugin.Obsidian.Models;
 using Flow.Launcher.Plugin.Obsidian.Services;
+using Flow.Launcher.Plugin.Obsidian.ViewModels;
 using Flow.Launcher.Plugin.Obsidian.Views;
 using ContextMenu = Flow.Launcher.Plugin.Obsidian.Interactions.ContextMenu;
 
@@ -19,7 +20,7 @@ public class Obsidian : IAsyncPlugin, ISettingProvider, IAsyncReloadable, IConte
     private Settings? _settings;
     private IContextMenu? _contextMenu;
 
-    public async Task InitAsync(PluginInitContext context)
+    public Task InitAsync(PluginInitContext context)
     {
         _publicApi = context.API;
         _settings = _publicApi.LoadSettingJsonStorage<Settings>();
@@ -27,7 +28,7 @@ public class Obsidian : IAsyncPlugin, ISettingProvider, IAsyncReloadable, IConte
 
         _queryHandler = new QueryHandler(_publicApi, _settings);
         _contextMenu = new ContextMenu(this, _vaultManager);
-        await ReloadDataAsync();
+        return Task.CompletedTask;
     }
 
     public async Task<List<Result>> QueryAsync(Query query, CancellationToken token)
