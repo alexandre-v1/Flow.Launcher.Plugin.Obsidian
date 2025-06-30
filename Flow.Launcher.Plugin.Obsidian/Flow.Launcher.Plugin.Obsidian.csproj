@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net7.0-windows10.0.19041.0</TargetFramework>
     <AssemblyName>Flow.Launcher.Plugin.Obsidian</AssemblyName>
     <PackageId>Flow.Launcher.Plugin.Obsidian</PackageId>
     <Authors>alexandre-v1</Authors>
@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <PackageReference Include="Flow.Launcher.Plugin" Version="4.6.0"/>
-    <PackageReference Include="ModernWpfUI" Version="0.9.6"
+    <PackageReference Include="ModernWpfUI" Version="0.9.4"
                       ExcludeAssets="runtime;contentFiles"/>
   </ItemGroup>
 
