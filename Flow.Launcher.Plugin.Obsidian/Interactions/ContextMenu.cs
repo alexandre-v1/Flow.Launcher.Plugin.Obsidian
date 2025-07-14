@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Flow.Launcher.Plugin.Obsidian.Extensions;
-using Flow.Launcher.Plugin.Obsidian.Managers;
 using Flow.Launcher.Plugin.Obsidian.Models;
+using Flow.Launcher.Plugin.Obsidian.Services;
 using Flow.Launcher.Plugin.Obsidian.Utilities;
 
 namespace Flow.Launcher.Plugin.Obsidian.Interactions;

@@ -6,7 +6,7 @@ using Flow.Launcher.Plugin.Obsidian.Models;
 using Flow.Launcher.Plugin.Obsidian.Utilities;
 using File = System.IO.File;
 
-namespace Flow.Launcher.Plugin.Obsidian.Managers;
+namespace Flow.Launcher.Plugin.Obsidian.Services;
 
 public class VaultManager(Settings settings)
 {

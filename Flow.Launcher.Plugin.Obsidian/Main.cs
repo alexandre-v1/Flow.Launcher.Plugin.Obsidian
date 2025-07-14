@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
-using Flow.Launcher.Plugin.Obsidian.Managers;
 using Flow.Launcher.Plugin.Obsidian.Models;
 using Flow.Launcher.Plugin.Obsidian.Services;
 using Flow.Launcher.Plugin.Obsidian.ViewModels;

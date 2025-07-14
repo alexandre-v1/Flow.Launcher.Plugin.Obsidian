@@ -5,8 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using Flow.Launcher.Plugin.Obsidian.Extensions;
-using Flow.Launcher.Plugin.Obsidian.Managers;
 using Flow.Launcher.Plugin.Obsidian.Helpers;
+using Flow.Launcher.Plugin.Obsidian.Services;
 using Flow.Launcher.Plugin.Obsidian.Utilities;
 
 namespace Flow.Launcher.Plugin.Obsidian.Models;
@@ -37,6 +37,7 @@ public class Vault : BaseModel
             VaultSetting.OpenInNewTabByDefault = false;
         }
 
+        IsActive = true;
         Icon = IconCache.GetCachedImage(Paths.ObsidianLogo);
     }
 
