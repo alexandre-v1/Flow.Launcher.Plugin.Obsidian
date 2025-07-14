@@ -30,7 +30,7 @@ public class File : Result
             return true;
         };
         VaultId = vault.Id;
-        IcoPath = Paths.ObsidianLogo;
+        Icon = IconCache.GetCachedIconDelegate(Paths.ObsidianLogo);
         Score = 100;
     }
 

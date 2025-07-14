@@ -1,12 +1,13 @@
 {
-    "ID": "028C97F910684231AB09B5DD5997D424",
-    "ActionKeyword": "ob",
-    "Name": "Obsidian",
-    "Description": "Search all Obsidian files",
-    "Author": "alexandre-v1",
-    "Version": "1.1.1",
-    "Language": "csharp",
-    "Website": "https://github.com/alexandre-v1/Flow.Launcher.Plugin.Obsidian",
-    "IcoPath": "Icons/obsidian-logo.png",
-    "ExecuteFileName": "Flow.Launcher.Plugin.Obsidian.dll"
+  "ID": "028C97F910684231AB09B5DD5997D424",
+  "ActionKeyword": "ob",
+  "HideActionKeywordPanel": true,
+  "Name": "Obsidian",
+  "Description": "Search all Obsidian files",
+  "Author": "alexandre-v1",
+  "Version": "1.1.1",
+  "Language": "csharp",
+  "Website": "https://github.com/alexandre-v1/Flow.Launcher.Plugin.Obsidian",
+  "IcoPath": "Icons/Plugin/obsidian-logo.png",
+  "ExecuteFileName": "Flow.Launcher.Plugin.Obsidian.dll"
 }

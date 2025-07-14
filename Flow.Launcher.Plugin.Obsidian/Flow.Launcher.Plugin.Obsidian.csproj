@@ -27,21 +27,32 @@
                       ExcludeAssets="runtime;contentFiles"/>
   </ItemGroup>
 
+
   <ItemGroup>
-    <Content Include="plugin.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Resource Include="Icons\Core\*.png"/>
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Icons\*.png">
+    <Content Include="Icons\Plugin\*.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+
+    <Content Include="plugin.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+
     <Content Include="Languages\*.xaml">
       <Generator>MSBuild:Compile</Generator>
       <XamlRuntime>Wpf</XamlRuntime>
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Icons\Custom\"/>
+    <Folder Include="Services\Implementations\" />
   </ItemGroup>
 </Project>

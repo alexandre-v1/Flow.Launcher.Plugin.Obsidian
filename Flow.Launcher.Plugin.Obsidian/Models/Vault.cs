@@ -3,16 +3,19 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using Flow.Launcher.Plugin.Obsidian.Extensions;
 using Flow.Launcher.Plugin.Obsidian.Managers;
+using Flow.Launcher.Plugin.Obsidian.Helpers;
 using Flow.Launcher.Plugin.Obsidian.Utilities;
 
 namespace Flow.Launcher.Plugin.Obsidian.Models;
 
-public class Vault
+public class Vault : BaseModel
 {
     public readonly string Id;
     public readonly string Name;
+    public ImageSource Icon { get; }
     public readonly string VaultPath;
     public readonly VaultSetting VaultSetting;
     public HashSet<string> Tags { get; } = [];
@@ -33,6 +36,8 @@ public class Vault
         {
             VaultSetting.OpenInNewTabByDefault = false;
         }
+
+        Icon = IconCache.GetCachedImage(Paths.ObsidianLogo);
     }
 
     public bool OpenInNewTabByDefault()
