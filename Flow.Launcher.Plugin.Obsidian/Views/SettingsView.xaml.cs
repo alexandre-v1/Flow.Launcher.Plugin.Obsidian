@@ -1,5 +1,5 @@
 using System.Windows;
-using Flow.Launcher.Plugin.Obsidian.Services;
+using Flow.Launcher.Plugin.Obsidian.Helpers;
 using Flow.Launcher.Plugin.Obsidian.ViewModels;
 
 namespace Flow.Launcher.Plugin.Obsidian.Views;
