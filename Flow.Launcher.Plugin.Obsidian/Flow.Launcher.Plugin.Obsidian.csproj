@@ -23,8 +23,8 @@
 
   <ItemGroup>
     <PackageReference Include="Flow.Launcher.Plugin" Version="4.6.0"/>
-    <PackageReference Include="ModernWpfUI" Version="0.9.4"
-                      ExcludeAssets="runtime;contentFiles"/>
+    <PackageReference Include="ModernWpfUI" Version="0.9.4" ExcludeAssets="runtime;contentFiles"/>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0"/>
   </ItemGroup>
 
 
@@ -53,6 +53,5 @@
 
   <ItemGroup>
     <Folder Include="Icons\Custom\"/>
-    <Folder Include="Services\Implementations\" />
   </ItemGroup>
 </Project>
