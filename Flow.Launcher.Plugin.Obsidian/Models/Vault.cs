@@ -20,6 +20,7 @@ public class Vault : BaseModel
     public readonly VaultSetting VaultSetting;
     public HashSet<string> Tags { get; } = [];
     public bool HasAdvancedUri { get; }
+    public bool IsActive { get; set; }
     public List<File> Files { get; private set; } = [];
 
     private readonly VaultManager _vaultManager;

@@ -14,20 +14,26 @@ public class Obsidian : IAsyncPlugin, ISettingProvider, IAsyncReloadable, IConte
 {
     private VaultManager? _vaultManager;
     private QueryHandler? _queryHandler;
+    private SettingsViewModel? _settingsViewModel;
 
     private IPublicAPI? _publicApi;
     private Settings? _settings;
     private IContextMenu? _contextMenu;
 
-    public Task InitAsync(PluginInitContext context)
+    public async Task InitAsync(PluginInitContext context)
     {
         _publicApi = context.API;
         _settings = _publicApi.LoadSettingJsonStorage<Settings>();
         _vaultManager = new VaultManager(_settings);
 
+        //Todo: Make VaultManager be able to update one vault at the time
+        //update only if change has been made
+        //and check if the all is update only once at launch (ReloadDataAsync() is run at launch)
+        await _vaultManager.UpdateVaultListAsync();
+
         _queryHandler = new QueryHandler(_publicApi, _settings);
         _contextMenu = new ContextMenu(this, _vaultManager);
-        return Task.CompletedTask;
+        _settingsViewModel = new SettingsViewModel(this, _vaultManager);
     }
 
     public async Task<List<Result>> QueryAsync(Query query, CancellationToken token)
@@ -51,7 +57,7 @@ public class Obsidian : IAsyncPlugin, ISettingProvider, IAsyncReloadable, IConte
         _contextMenu is not null ? _contextMenu.LoadContextMenus(selectedResult) : [];
 
     public Control CreateSettingPanel() =>
-        _vaultManager is null
+        _settingsViewModel is null
             ? new Control()
-            : new SettingsView(_vaultManager, this);
+            : new SettingsView(_settingsViewModel);
 }
