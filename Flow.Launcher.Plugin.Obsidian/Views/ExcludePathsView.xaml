@@ -1,0 +1,103 @@
+<UserControl x:Class="Flow.Launcher.Plugin.Obsidian.Views.ExcludePathsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vm="clr-namespace:Flow.Launcher.Plugin.Obsidian.ViewModels"
+             d:DataContext="{d:DesignInstance vm:ExcludePathsViewModel}"
+             mc:Ignorable="d"
+             d:DesignWidth="600">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Style.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Border
+        Style="{StaticResource SettingGroupBox}"
+        Padding="0">
+        <Expander
+            BorderThickness="0"
+            ClipToBounds="True"
+            IsExpanded="True"
+            SnapsToDevicePixels="True"
+            Padding="0"
+            Margin="0"
+            Style="{DynamicResource ExpanderStyle1}">
+            <Expander.Header>
+                <!--  Negative left margin to nullify expander  -->
+                <Border Margin="-18,0,0,0" Padding="0, 20">
+                    <DockPanel
+                        HorizontalAlignment="{Binding HorizontalAlignment, RelativeSource={RelativeSource AncestorType=ContentPresenter}, Mode=OneWayToSource}"
+                        LastChildFill="False">
+                        <TextBlock
+                            Margin="20,0,0,0"
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Left"
+                            Style="{StaticResource PageTitle}"
+                            Text="Exclude paths" />
+                        <TextBlock
+                            Margin="0 0 16 0"
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Right"
+                            Style="{StaticResource PageTitle}"
+                            Text="{Binding ExcludePaths.Count}"
+                            TextAlignment="Right" />
+                    </DockPanel>
+                </Border>
+            </Expander.Header>
+            <StackPanel>
+                <ItemsControl
+                    Name="ItemsControl"
+                    Margin="0"
+                    Background="Transparent"
+                    ItemsSource="{Binding ExcludePaths}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                Padding="0 20"
+                                BorderBrush="{DynamicResource Color03B}"
+                                BorderThickness="0,1,0,0">
+                                <DockPanel LastChildFill="False">
+                                    <TextBlock
+                                        Margin="20 0 0 0"
+                                        VerticalAlignment="Center"
+                                        DockPanel.Dock="Left"
+                                        Style="{StaticResource PageTitle}"
+                                        Text="{Binding}" />
+                                    <Button DockPanel.Dock="Right" Margin="0 0 20 0"
+                                            Style="{StaticResource RemoveFromButton}"
+                                            Command="{Binding DataContext.RemoveExcludePathCommand, ElementName=ItemsControl}"
+                                            CommandParameter="{Binding}" />
+                                </DockPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <Border
+                    Padding="0 20"
+                    BorderBrush="{DynamicResource Color03B}"
+                    BorderThickness="0,1,0,0">
+                    <DockPanel LastChildFill="True">
+                        <Button DockPanel.Dock="Right" Margin="20 0 20 0"
+                                Command="{Binding AddExcludePathCommand}"
+                                Content="Add path" />
+                        <TextBox
+                            DockPanel.Dock="Left"
+                            HorizontalAlignment="Stretch" Margin="20 0 0 0"
+                            Text="{Binding ExcludePathInput, UpdateSourceTrigger=PropertyChanged}">
+                            <TextBox.InputBindings>
+                                <KeyBinding Command="{Binding AddExcludePathCommand}" Key="Enter" />
+                                <KeyBinding Command="{Binding AddExcludePathCommand}" Key="Return" />
+                            </TextBox.InputBindings>
+                        </TextBox>
+                    </DockPanel>
+                </Border>
+            </StackPanel>
+
+        </Expander>
+    </Border>
+</UserControl>

@@ -33,12 +33,15 @@ public static class StringMatcher
         int levenshteinDistance = CalculateLevenshteinDistance(source, target);
 
         int invertedDistance = source.Length - levenshteinDistance;
-        return NormalizationUtility.NormalizeToInt(invertedDistance, source.Length, 10);
+        return Normalization.NormalizeToInt(invertedDistance, source.Length, 10);
     }
 
     private static StringMatchType GetMatchType(string source, string target)
     {
-        if (source == target) return StringMatchType.Exact;
+        if (source == target)
+        {
+            return StringMatchType.Exact;
+        }
 
         if (source.StartsWith(target, StringComparison.CurrentCultureIgnoreCase))
         {
@@ -71,7 +74,10 @@ public static class StringMatcher
             return string.IsNullOrEmpty(target) ? 0 : target.Length;
         }
 
-        if (string.IsNullOrEmpty(target)) return source.Length;
+        if (string.IsNullOrEmpty(target))
+        {
+            return source.Length;
+        }
 
         if (source.Length > target.Length)
         {
@@ -82,7 +88,9 @@ public static class StringMatcher
         int[] currentRow = new int[source.Length + 1];
 
         for (int i = 0; i <= source.Length; i++)
+        {
             previousRow[i] = i;
+        }
 
         for (int j = 1; j <= target.Length; j++)
         {

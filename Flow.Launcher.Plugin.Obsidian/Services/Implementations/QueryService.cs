@@ -4,19 +4,26 @@ using System.Threading;
 using System.Threading.Tasks;
 using Flow.Launcher.Plugin.Obsidian.Extensions;
 using Flow.Launcher.Plugin.Obsidian.Models;
+using Flow.Launcher.Plugin.Obsidian.Services.Interfaces;
 using Flow.Launcher.Plugin.Obsidian.Utilities;
 
-namespace Flow.Launcher.Plugin.Obsidian.Services;
+namespace Flow.Launcher.Plugin.Obsidian.Services.Implementations;
 
-public class QueryHandler(IPublicAPI publicApi, Settings settings)
+public class QueryService(IPublicAPI publicApi, Settings settings) : IQueryHandler
 {
-    private bool UseObsidianProperties => settings.UseTags;
-    private readonly TagSearchService _tagSearchService = new(publicApi);
     private readonly NoteCreatorService _noteCreatorService = new(publicApi);
+    private readonly TagSearchService _tagSearchService = new(publicApi);
+    private bool UseObsidianProperties => settings.DefaultQuery.UseTags;
 
-    public async Task<List<Result>> HandleQuery(QueryData queryData, CancellationToken cancellationToken)
+    public async Task<List<Result>> HandleQueryAsync(
+        QueryData queryData,
+        CancellationToken cancellationToken
+    )
     {
-        if (queryData.IsEmptyQuery()) return [];
+        if (queryData.IsEmptyQuery())
+        {
+            return [];
+        }
 
         if (queryData.HasInvalidTags)
         {
@@ -26,20 +33,28 @@ public class QueryHandler(IPublicAPI publicApi, Settings settings)
         bool useTags = UseObsidianProperties && queryData.HasValidTags;
         List<File> files = useTags ? queryData.GetAllFilesWithTags() : queryData.GetAllFiles();
 
-        if (!queryData.HasCleanSearchContent()) return files.ToResults();
+        if (!queryData.HasCleanSearchContent())
+        {
+            return files.ToResults();
+        }
 
         const int minCharForSearchContent = 3;
-        bool searchContent = queryData.CleanSearchTerms.Length > 1 ||
-                             queryData.CleanSearchTerms[0].Length >= minCharForSearchContent;
+        bool searchContent =
+            queryData.CleanSearchTerms.Length > 1
+            || queryData.CleanSearchTerms[0].Length >= minCharForSearchContent;
 
-        files = await SearchUtility.SearchAndScoreFiles(files, queryData, searchContent, cancellationToken);
+        files = await SearchUtility.SearchAndScoreFiles(
+            files,
+            queryData,
+            searchContent,
+            cancellationToken
+        );
 
         files = SortAndTruncateFilesResults(files);
 
-
         List<Result> results = files.ToResults();
 
-        if (settings.AddCreateNoteOptionOnAllSearch)
+        if (settings.DefaultQuery.AddCreateNoteOptionOnAllSearch)
         {
             results.Add(_noteCreatorService.BuildSingleVaultNoteCreationResult(queryData));
         }
@@ -62,7 +77,10 @@ public class QueryHandler(IPublicAPI publicApi, Settings settings)
     }
 
     private List<File> SortAndTruncateFilesResults(List<File> files) =>
-        settings.MaxResult is 0
+        settings.DefaultQuery.MaxResult is 0
             ? files.Where(file => file.Score > 0).ToList()
-            : SortFilesResults(files).Where(file => file.Score > 0).Take(settings.MaxResult).ToList();
+            : SortFilesResults(files)
+                .Where(file => file.Score > 0)
+                .Take(settings.DefaultQuery.MaxResult)
+                .ToList();
 }

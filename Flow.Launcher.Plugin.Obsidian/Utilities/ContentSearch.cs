@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Flow.Launcher.Plugin.Obsidian.Models;
-using Flow.Launcher.Plugin.Obsidian.Utilities;
 using File = Flow.Launcher.Plugin.Obsidian.Models.File;
 
-namespace Flow.Launcher.Plugin.Obsidian.Services;
+namespace Flow.Launcher.Plugin.Obsidian.Utilities;
 
 public static class ContentSearch
 {
@@ -36,11 +35,21 @@ public static class ContentSearch
 
         while (await reader.ReadLineAsync() is { } currentLine)
         {
-            if (string.IsNullOrWhiteSpace(currentLine)) continue;
-            if (IsYamlFrontMatter(currentLine, reader.BaseStream.Position, ref inFrontMatter)) return bestMatch;
+            if (string.IsNullOrWhiteSpace(currentLine))
+            {
+                continue;
+            }
+
+            if (IsYamlFrontMatter(currentLine, reader.BaseStream.Position, ref inFrontMatter))
+            {
+                return bestMatch;
+            }
 
             string? cleanLine = CleanLine(currentLine);
-            if (cleanLine is null) continue;
+            if (cleanLine is null)
+            {
+                continue;
+            }
 
             ContentSearchMatch? bestMatchInLine = BestMatchInLine(searchTerms, cleanLine);
             if (bestMatchInLine is not null && (bestMatch is null || bestMatchInLine.Score < bestMatch.Score))
@@ -60,7 +69,10 @@ public static class ContentSearch
             return true;
         }
 
-        if (!inFrontMatter) return false;
+        if (!inFrontMatter)
+        {
+            return false;
+        }
 
         if (line.Trim() is YamlFrontMatter)
         {
@@ -76,7 +88,11 @@ public static class ContentSearch
         line = RemoveMarkdownLinks(line);
         line = line.Trim();
 
-        if (line.Length <= 3) return null;
+        if (line.Length <= 3)
+        {
+            return null;
+        }
+
         return string.IsNullOrWhiteSpace(line) ? null : line;
     }
 
@@ -151,7 +167,10 @@ public static class ContentSearch
         while (true)
         {
             int matchIndex = cleanLine.IndexOf(searchTerm, currentPosition, StringComparison.CurrentCultureIgnoreCase);
-            if (matchIndex is IndexNotFound) return bestMatch;
+            if (matchIndex is IndexNotFound)
+            {
+                return bestMatch;
+            }
 
             int score = ScoreLineMatch(searchTerm, cleanLine, matchIndex);
 
@@ -184,7 +203,10 @@ public static class ContentSearch
         int score = 0;
 
         // Same case bonus
-        if (cleanLine[matchIndex..].StartsWith(searchTerm)) score += SameCaseScore;
+        if (cleanLine[matchIndex..].StartsWith(searchTerm))
+        {
+            score += SameCaseScore;
+        }
 
         // Before search term scoring
         if (matchIndex is 0)
@@ -222,7 +244,11 @@ public static class ContentSearch
 
     private static int ScoreCharacterContext(char character)
     {
-        if (char.IsWhiteSpace(character)) return SpaceScore;
+        if (char.IsWhiteSpace(character))
+        {
+            return SpaceScore;
+        }
+
         return SearchUtility.IsWordBreakingChar(character) ? WordBreakingCharScore : 0;
     }
 }

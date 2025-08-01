@@ -2,15 +2,28 @@ using System;
 using System.Diagnostics;
 using System.Windows;
 
-namespace Flow.Launcher.Plugin.Obsidian.Helpers;
+namespace Flow.Launcher.Plugin.Obsidian.Utilities;
 
 public class StyleManager
 {
+    private static readonly object _lock = new();
+    private static StyleManager? _instance;
+
+    private ResourceDictionary? _flowLauncherStyles;
+    private bool _initialized;
+    private ResourceDictionary? _pluginStyles;
+
+    private StyleManager() => Initialize();
+
     public static StyleManager Instance
     {
         get
         {
-            if (_instance is not null) return _instance;
+            if (_instance is not null)
+            {
+                return _instance;
+            }
+
             lock (_lock)
             {
                 _instance ??= new StyleManager();
@@ -20,19 +33,11 @@ public class StyleManager
         }
     }
 
-    private static readonly object _lock = new();
-    private static StyleManager? _instance;
-
-    public bool FlowLauncherStylesLoaded { get; private set; }
-
-    private ResourceDictionary? _flowLauncherStyles;
-    private ResourceDictionary? _pluginStyles;
-    private bool _initialized;
-
-    private StyleManager() => Initialize();
+    private bool FlowLauncherStylesLoaded { get; set; }
 
     public void ApplyStylesToControl(FrameworkElement control)
     {
+        Debug.WriteLine($"Try Styles {control.GetType().Name}");
         try
         {
             bool pluginStylesAlreadyApplied = IsPluginStylesAlreadyApplied(control);
@@ -57,7 +62,10 @@ public class StyleManager
 
     private bool IsPluginStylesAlreadyApplied(FrameworkElement control)
     {
-        if (_pluginStyles?.Source is null) return false;
+        if (_pluginStyles?.Source is null)
+        {
+            return false;
+        }
 
         foreach (ResourceDictionary? dict in control.Resources.MergedDictionaries)
         {
@@ -72,13 +80,18 @@ public class StyleManager
 
     private void Initialize()
     {
-        if (_initialized) return;
+        if (_initialized)
+        {
+            return;
+        }
 
         try
         {
             _pluginStyles = new ResourceDictionary
             {
-                Source = new Uri("pack://application:,,,/Flow.Launcher.Plugin.Obsidian;component/Style.xaml")
+                Source = new Uri(
+                    "pack://application:,,,/Flow.Launcher.Plugin.Obsidian;component/Style.xaml"
+                )
             };
 
             TryLoadFlowLauncherStyles();
@@ -110,7 +123,11 @@ public class StyleManager
                 Source = new Uri("pack://application:,,,/Flow.Launcher;component/App.xaml")
             };
 
-            if (flowStyles.Count <= 0) return;
+            if (flowStyles.Count <= 0)
+            {
+                return;
+            }
+
             _flowLauncherStyles = flowStyles;
             FlowLauncherStylesLoaded = true;
             Debug.WriteLine("Flow Launcher styles loaded from direct reference");

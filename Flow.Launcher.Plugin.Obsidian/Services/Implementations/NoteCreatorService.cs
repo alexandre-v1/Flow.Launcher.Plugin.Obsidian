@@ -2,13 +2,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Flow.Launcher.Plugin.Obsidian.Extensions;
-using Flow.Launcher.Plugin.Obsidian.Helpers;
 using Flow.Launcher.Plugin.Obsidian.Models;
+using Flow.Launcher.Plugin.Obsidian.Services.Interfaces;
 using Flow.Launcher.Plugin.Obsidian.Utilities;
 
-namespace Flow.Launcher.Plugin.Obsidian.Services;
+namespace Flow.Launcher.Plugin.Obsidian.Services.Implementations;
 
-public class NoteCreatorService(IPublicAPI publicApi)
+public class NoteCreatorService(IPublicAPI publicApi) : INoteCreatorService
 {
     public Result BuildSingleVaultNoteCreationResult(QueryData queryData)
     {
@@ -68,7 +68,9 @@ public class NoteCreatorService(IPublicAPI publicApi)
 
         string content = string.Empty;
         if (queryData.HasValidTags)
-            content = ObsidianPropertiesHelper.BuildYamlFrontMatterWithTags(queryData.ValidTags);
+        {
+            content = ObsidianProperties.BuildYamlFrontMatterWithTags(queryData.ValidTags);
+        }
 
         string uri =
             ObsidianUriGenerator.GenerateNewFileUri(vault.Id, noteName, content, vault.OpenInNewTabByDefault());

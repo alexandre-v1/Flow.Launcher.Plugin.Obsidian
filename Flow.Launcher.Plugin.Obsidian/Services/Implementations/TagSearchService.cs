@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Flow.Launcher.Plugin.Obsidian.Models;
+using Flow.Launcher.Plugin.Obsidian.Services.Interfaces;
 using Flow.Launcher.Plugin.Obsidian.Utilities;
 
-namespace Flow.Launcher.Plugin.Obsidian.Services;
+namespace Flow.Launcher.Plugin.Obsidian.Services.Implementations;
 
-public class TagSearchService(IPublicAPI publicApi)
+public class TagSearchService(IPublicAPI publicApi) : ITagSearchService
 {
     public List<Result> GetMatchingTagResults(IEnumerable<string> tags, string tagToSearch, QueryData queryData) =>
         CreateTagsResults(queryData, tags)

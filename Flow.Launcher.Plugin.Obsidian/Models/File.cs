@@ -2,26 +2,24 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using Flow.Launcher.Plugin.Obsidian.Extensions;
-using Flow.Launcher.Plugin.Obsidian.Helpers;
 using Flow.Launcher.Plugin.Obsidian.Utilities;
 
 namespace Flow.Launcher.Plugin.Obsidian.Models;
 
 public class File : Result
 {
-    public readonly string Name;
+    public readonly string Extension;
     public readonly string FilePath;
     public readonly string RelativePath;
     public readonly string VaultId;
-    public HashSet<string>? Aliases { get; set; }
-    public HashSet<string>? Tags { get; set; }
 
     public File(Vault vault, string path)
     {
-        Name = Path.GetFileNameWithoutExtension(path);
-        Title = Name;
         FilePath = path;
-        RelativePath = path.Remove(vault.VaultPath).TrimStart('\\');
+        VaultId = vault.Id;
+        Extension = Path.GetExtension(path);
+        Name = Path.GetFileNameWithoutExtension(path);
+        RelativePath = path.Remove(vault.Path).TrimStart('\\');
         SubTitle = Path.Combine(vault.Name, RelativePath);
         CopyText = FilePath;
         Action = _ =>
@@ -29,13 +27,21 @@ public class File : Result
             Open(vault.OpenInNewTabByDefault());
             return true;
         };
-        VaultId = vault.Id;
         Icon = IconCache.GetCachedIconDelegate(Paths.ObsidianLogo);
         Score = 100;
     }
 
-    public File AddObsidianProperties(bool useAliases, bool useTags) =>
-        ObsidianPropertiesHelper.AddObsidianProperties(this, useAliases, useTags);
+    public string Name
+    {
+        get => Title;
+        set => Title = value;
+    }
+
+    public HashSet<string>? Aliases { get; set; }
+    public HashSet<string>? Tags { get; set; }
+
+    public File LoadObsidianProperties() =>
+        ObsidianProperties.LoadObsidianProperties(this);
 
     public void Open(bool openInNewTab = false)
     {

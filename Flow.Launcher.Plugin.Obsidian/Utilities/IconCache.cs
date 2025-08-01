@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace Flow.Launcher.Plugin.Obsidian.Helpers;
+namespace Flow.Launcher.Plugin.Obsidian.Utilities;
 
 public static class IconCache
 {
@@ -26,7 +26,11 @@ public static class IconCache
 
     private static ImageSource LoadIcon(string resourcePath)
     {
-        if (!TryLoadFromContentFile(resourcePath, out ImageSource? contentIcon)) return LoadEmbeddedIcon(resourcePath);
+        if (!TryLoadFromContentFile(resourcePath, out ImageSource? contentIcon))
+        {
+            return LoadEmbeddedIcon(resourcePath);
+        }
+
         return contentIcon ?? LoadEmbeddedIcon(resourcePath);
     }
 
@@ -61,7 +65,9 @@ public static class IconCache
     private static string GetContentFilePath(string resourcePath)
     {
         if (Path.IsPathRooted(resourcePath))
+        {
             return resourcePath;
+        }
 
         string assemblyLocation = Assembly.GetExecutingAssembly().Location;
         string assemblyDirectory = Path.GetDirectoryName(assemblyLocation) ?? string.Empty;
@@ -87,7 +93,10 @@ public static class IconCache
 
     private static ImageSource CreateDefaultIcon()
     {
-        if (_defaultIcon is not null) return _defaultIcon;
+        if (_defaultIcon is not null)
+        {
+            return _defaultIcon;
+        }
 
         const int size = 256;
 

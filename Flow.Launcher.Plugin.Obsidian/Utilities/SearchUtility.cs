@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Flow.Launcher.Plugin.Obsidian.Models;
-using Flow.Launcher.Plugin.Obsidian.Services;
 
 namespace Flow.Launcher.Plugin.Obsidian.Utilities;
 
@@ -56,22 +55,43 @@ public static class SearchUtility
             string[] tileTerms = SplitByWordBreakingChar(title);
             int score = CalculateScore(tileTerms, searchTerms);
 
-            if (score < bestScore) continue;
+            if (score < bestScore)
+            {
+                continue;
+            }
+
             bestScore = score;
             bestMatchTitle = title;
-            if (score is 100) break;
+            if (score is 100)
+            {
+                break;
+            }
         }
 
         file.Score = bestScore;
         file.Title = bestMatchTitle;
 
-        if (bestScore is 100) return file;
+        if (bestScore is 100)
+        {
+            return file;
+        }
 
-        if (!searchContent || !file.CanSearchContent()) return file;
+        if (!searchContent || !file.CanSearchContent())
+        {
+            return file;
+        }
+
         ContentSearchMatch? bestMatch = await ContentSearch.GetBestMatchInFile(file, searchTerms);
 
-        if (bestMatch is null) return file;
-        if (bestMatch.Score < file.Score) return file;
+        if (bestMatch is null)
+        {
+            return file;
+        }
+
+        if (bestMatch.Score < file.Score)
+        {
+            return file;
+        }
 
         string matchedWord = bestMatch.ExtractMatchedWord();
         file.Title = $"{file.Name} - {matchedWord}";
@@ -95,12 +115,19 @@ public static class SearchUtility
             {
                 string sourceWord = sourceTerms[index];
                 double currentScore = StringMatcher.CalculateWordScore(sourceWord, searchWord);
-                if (index is 0 && currentScore > 0) currentScore += 15;
+                if (index is 0 && currentScore > 0)
+                {
+                    currentScore += 15;
+                }
 
                 bestWordScore = Math.Max(bestWordScore, currentScore);
             }
 
-            if (!(bestWordScore > 0)) continue;
+            if (!(bestWordScore > 0))
+            {
+                continue;
+            }
+
             totalScore += bestWordScore;
             matchCount++;
         }

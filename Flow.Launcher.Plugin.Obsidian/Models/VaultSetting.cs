@@ -1,26 +1,16 @@
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
+// Keep setters to allow JSON deserialization
+
 using System.Collections.Generic;
 
 namespace Flow.Launcher.Plugin.Obsidian.Models;
 
-public class VaultSetting : GlobalVaultSetting
+public class VaultSetting
 {
-    public bool UseGlobalSetting { get; set; } = true;
-    public bool UseGlobalExcludedPaths { get; set; } = true;
-
-    public override HashSet<string> GetSearchableExtensions(Settings settings) =>
-        UseGlobalSetting
-            ? settings.GlobalVaultSetting.GetSearchableExtensions(settings)
-            : base.GetSearchableExtensions(settings);
-
-    public override List<string> GetExcludedPaths(Settings settings)
-    {
-        List<string> excludedPaths = [];
-        if (UseGlobalExcludedPaths)
-        {
-            excludedPaths.AddRange(settings.GlobalVaultSetting.GetExcludedPaths(settings));
-        }
-
-        excludedPaths.AddRange(base.GetExcludedPaths(settings));
-        return excludedPaths;
-    }
+    public bool IsActive { get; set; } = true;
+    public bool UseNoteProperties { get; set; }
+    public bool OpenInNewTabByDefault { get; set; }
+    public FileExtensionsSetting FileExtensions { get; set; } = new();
+    public IList<string> RelativeExcludePaths { get; set; } = [".obsidian", ".trash"];
 }

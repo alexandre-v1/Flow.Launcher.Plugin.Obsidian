@@ -1,12 +1,12 @@
 <UserControl
-    x:Class="Flow.Launcher.Plugin.Obsidian.Views.VaultsLists"
+    x:Class="Flow.Launcher.Plugin.Obsidian.Views.VaultsList"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:viewModels="clr-namespace:Flow.Launcher.Plugin.Obsidian.ViewModels"
     xmlns:controls="clr-namespace:ModernWpf.Controls;assembly=ModernWpf.Controls"
-    d:DataContext="{d:DesignInstance viewModels:VaultsListsViewModel}"
+    d:DataContext="{d:DesignInstance viewModels:VaultsListViewModel}"
     d:DesignWidth="550"
     mc:Ignorable="d">
 
@@ -27,7 +27,8 @@
 
         <ItemsControl.ItemTemplate>
             <DataTemplate>
-                <Button Name="ClickableVault" Click="VaultClick" HorizontalAlignment="Stretch">
+                <Button Command="{Binding OpenVaultSettingsCommand}"
+                        HorizontalAlignment="Stretch">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
                             <Border
