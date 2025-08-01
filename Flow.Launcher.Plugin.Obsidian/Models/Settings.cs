@@ -12,8 +12,8 @@ public class Settings
     public QuerySetting DefaultQuery { get; set; } = new();
     public Dictionary<string, VaultSetting> Vaults { get; set; } = new();
 
-    public double SettingWindowWidth { get; set; } = 700;
-    public double SettingWindowHeight { get; set; } = 600;
+    public double SettingWindowWidth { get; set; } = 600;
+    public double SettingWindowHeight { get; set; } = 750;
     public double? SettingWindowTop { get; set; }
     public double? SettingWindowLeft { get; set; }
     public WindowState SettingWindowState { get; set; } = WindowState.Normal;
