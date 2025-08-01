@@ -22,7 +22,7 @@ public class TagSearchService(IPublicAPI publicApi) : ITagSearchService
         {
             Title = $"#{tag}",
             SubTitle = "Tag",
-            IcoPath = Paths.ObsidianLogo,
+            Icon = IconCache.GetCachedIconDelegate(Paths.ObsidianLogo),
             Action = _ => ChangeQueryToAutoCompleteOne(queryData, tag, queryData.GetFirstInvalidTagIndex())
         };
 
