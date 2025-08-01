@@ -1,54 +1,70 @@
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using Flow.Launcher.Plugin.Obsidian.Models;
-using Flow.Launcher.Plugin.Obsidian.Services;
+using Flow.Launcher.Plugin.Obsidian.Services.Implementations;
+using Flow.Launcher.Plugin.Obsidian.Services.Interfaces;
+using Flow.Launcher.Plugin.Obsidian.ViewModels;
 using Flow.Launcher.Plugin.Obsidian.Views;
-using ContextMenu = Flow.Launcher.Plugin.Obsidian.Services.ContextMenu;
+using ContextMenuService = Flow.Launcher.Plugin.Obsidian.Services.Implementations.ContextMenuService;
 
 namespace Flow.Launcher.Plugin.Obsidian;
 
-public class Obsidian : IPlugin, ISettingProvider, IReloadable, IContextMenu
+public class Obsidian : IAsyncPlugin, ISettingProvider, IAsyncReloadable, IContextMenu
 {
-    private IPublicAPI _publicApi = null!;
-    private Settings _settings = null!;
-    private IContextMenu _contextMenu = null!;
+    private IContextMenu? _contextMenu;
 
-    public List<Result> LoadContextMenus(Result selectedResult) => _contextMenu.LoadContextMenus(selectedResult);
+    private IPublicAPI? _publicApi;
+    private IQueryHandler? _queryHandler;
+    private Settings? _settings;
+    private SettingsViewModel? _settingsViewModel;
 
-    public void Init(PluginInitContext context)
+    private IVaultManager? _vaultManager;
+    private ISettingWindowManager? _windowManager;
+
+    public async Task InitAsync(PluginInitContext context)
     {
         _publicApi = context.API;
         _settings = _publicApi.LoadSettingJsonStorage<Settings>();
-        _contextMenu = new ContextMenu(this, _settings);
-        ReloadData();
+        _vaultManager = new VaultManager(_settings);
+
+        await _vaultManager.UpdateVaultListAsync();
+
+        _queryHandler = new QueryService(_publicApi, _settings);
+        _contextMenu = new ContextMenuService(this, _vaultManager, _settings);
+
+        _windowManager = new SettingWindowManager(_settings);
+        _settingsViewModel = new SettingsViewModel(this, _vaultManager, _windowManager);
     }
 
-    public List<Result> Query(Query query)
+    public async Task<List<Result>> QueryAsync(Query query, CancellationToken token)
     {
-        string search = query.Search.Trim();
-        List<Result> results = new();
-        if (string.IsNullOrEmpty(search))
-            return results;
-
-        if (NoteCreatorService.IsCreateNewNoteQuery(search))
+        if (_queryHandler is null || _vaultManager is null)
         {
-            results = NoteCreatorService.CreateNewNoteResultsWithVaults(query).ToList();
-            return results;
+            return [];
         }
 
-        List<File> files = VaultManager.GetAllFiles();
-        results = SearchService.GetSearchResults(files, search, _settings);
-        if (_settings.MaxResult > 0)
-            results = SearchService.SortAndTruncateResults(results, _settings.MaxResult);
+        QueryData queryData = QueryData.Parse(query, _vaultManager.Vaults);
 
-        if (_settings.AddCreateNoteOptionOnAllSearch)
-            results.Add(NoteCreatorService.CreateNewNoteResult(query, _publicApi));
-
-        return results;
+        return queryData.IsNoteCreationSearch()
+            ? _queryHandler.HandleNoteCreation(queryData)
+            : await _queryHandler.HandleQueryAsync(queryData, token);
     }
 
-    public void ReloadData() => VaultManager.UpdateVaultList(_settings);
+    public async Task ReloadDataAsync()
+    {
+        if (_vaultManager is null)
+        {
+            return;
+        }
 
-    public Control CreateSettingPanel() => new SettingsView(_settings, this);
+        await _vaultManager.UpdateVaultListAsync();
+    }
+
+    public List<Result> LoadContextMenus(Result selectedResult) =>
+        _contextMenu is not null ? _contextMenu.LoadContextMenus(selectedResult) : [];
+
+    public Control CreateSettingPanel() =>
+        _settingsViewModel is null ? new Control() : new SettingsView(_settingsViewModel);
 }

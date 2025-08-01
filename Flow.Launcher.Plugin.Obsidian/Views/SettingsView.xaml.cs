@@ -1,89 +1,23 @@
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows;
-using Flow.Launcher.Plugin.Obsidian.Models;
-using Flow.Launcher.Plugin.Obsidian.Services;
+using Flow.Launcher.Plugin.Obsidian.Utilities;
+using Flow.Launcher.Plugin.Obsidian.ViewModels;
 
 namespace Flow.Launcher.Plugin.Obsidian.Views;
 
-public partial class SettingsView : INotifyPropertyChanged
+public partial class SettingsView
 {
-    public int MaxResults
+    public SettingsView(SettingsViewModel viewModel)
     {
-        get => _maxResults;
-        set
-        {
-            if (_maxResults == value) return;
-            _maxResults = value;
-            Settings.MaxResult = value;
-            OnPropertyChanged();
-        }
-    }
-
-    private Obsidian Obsidian { get; }
-    private Settings Settings { get; }
-    private int _maxResults;
-
-    public SettingsView(Settings settings, Obsidian obsidian)
-    {
-        Obsidian = obsidian;
-        Settings = settings;
+        DataContext = viewModel;
         InitializeComponent();
-        CreateVaultSettingControls(settings);
     }
 
-    private void SettingsView_OnLoaded(object sender, RoutedEventArgs e)
+    private void OnLoaded(object sender, RoutedEventArgs e) =>
+        StyleManager.Instance.ApplyStylesToControl(this);
+
+    private void OnUnloaded(object sender, RoutedEventArgs e)
     {
-        MaxResults = Settings.MaxResult;
-        UseAliases.IsChecked = Settings.UseAliases;
-        UseFileExtension.IsChecked = Settings.UseFilesExtension;
-        AddGlobalFolderExcludeToContext.IsChecked = Settings.AddGlobalFolderExcludeToContext;
-        AddLocalFolderExcludeToContext.IsChecked = Settings.AddLocalFolderExcludeToContext;
-        AddCheckBoxesToContext.IsChecked = Settings.AddCheckBoxesToContext;
-        AddCreateNoteOptionOnAllSearch.IsChecked = Settings.AddCreateNoteOptionOnAllSearch;
-
-        UseAliases.Checked += (_, _) => { Settings.UseAliases = true; };
-        UseAliases.Unchecked += (_, _) => { Settings.UseAliases = false; };
-
-        UseFileExtension.Checked += (_, _) => { Settings.UseFilesExtension = true; };
-        UseFileExtension.Unchecked += (_, _) => { Settings.UseFilesExtension = false; };
-
-        AddGlobalFolderExcludeToContext.Checked += (_, _) => { Settings.AddGlobalFolderExcludeToContext = true; };
-        AddGlobalFolderExcludeToContext.Unchecked += (_, _) => { Settings.AddGlobalFolderExcludeToContext = false; };
-
-        AddLocalFolderExcludeToContext.Checked += (_, _) => { Settings.AddLocalFolderExcludeToContext = true; };
-        AddLocalFolderExcludeToContext.Unchecked += (_, _) => { Settings.AddLocalFolderExcludeToContext = false; };
-
-        AddCheckBoxesToContext.Checked += (_, _) => { Settings.AddCheckBoxesToContext = true; };
-        AddCheckBoxesToContext.Unchecked += (_, _) => { Settings.AddCheckBoxesToContext = false; };
-
-        AddCreateNoteOptionOnAllSearch.Checked += (_, _) => { Settings.AddCreateNoteOptionOnAllSearch = true; };
-        AddCreateNoteOptionOnAllSearch.Unchecked += (_, _) => { Settings.AddCreateNoteOptionOnAllSearch = false; };
+        SettingsViewModel? settingsViewModel = DataContext as SettingsViewModel;
+        settingsViewModel?.OnUnloaded();
     }
-
-    private void SettingsView_OnUnloaded(object sender, RoutedEventArgs e) => Obsidian.ReloadData();
-
-    private void CreateVaultSettingControls(Settings settings)
-    {
-        GlobalVaultSettingView globalVaultSettingControl = new(settings);
-        GlobalVaultSettingPanel.Children.Add(globalVaultSettingControl);
-        Thickness margin = new(0, 0, 10, 0);
-        foreach (VaultSettingView? vaultSettingControl in VaultManager.Vaults.Select(vault =>
-                     new VaultSettingView(vault) { Margin = margin }))
-            VaultsSettingPanel.Children.Add(vaultSettingControl);
-    }
-
-    private void OnIncrease(object sender, RoutedEventArgs e) => MaxResults++;
-
-    private void OnDecrease(object sender, RoutedEventArgs e)
-    {
-        MaxResults--;
-        if (MaxResults < 0) MaxResults = 0;
-    }
-
-    private void OnPropertyChanged([CallerMemberName] string? propertyName = null) =>
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-    public event PropertyChangedEventHandler? PropertyChanged;
 }

@@ -1,19 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net7.0-windows10.0.19041.0</TargetFramework>
     <AssemblyName>Flow.Launcher.Plugin.Obsidian</AssemblyName>
     <PackageId>Flow.Launcher.Plugin.Obsidian</PackageId>
     <Authors>alexandre-v1</Authors>
     <PackageProjectUrl>https://github.com/alexandre-v1/Flow.Launcher.Plugin.Obsidian</PackageProjectUrl>
     <RepositoryUrl>https://github.com/alexandre-v1/Flow.Launcher.Plugin.Obsidian</RepositoryUrl>
     <PackageTags>flow-launcher flow-plugin</PackageTags>
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <UseWPF>true</UseWPF>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <Nullable>enable</Nullable>
     <WarningsAsErrors>Nullable</WarningsAsErrors>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -21,34 +21,25 @@
     <DebugType>None</DebugType>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Flow.Launcher.Plugin" Version="4.4.0"/>
+  <ItemGroup Label="Package References">
+    <PackageReference Include="Flow.Launcher.Plugin" Version="4.6.0"/>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0"/>
+    <PackageReference Include="ModernWpfUI" Version="0.9.4" ExcludeAssets="runtime;contentFiles"/>
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="plugin.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+  <ItemGroup Label="Resources">
+    <Resource Include="Icons\Core\*.png"/>
+  </ItemGroup>
+
+  <ItemGroup Label="Contents">
+    <Content Include="Icons\Plugin\*.png" CopyToOutputDirectory="PreserveNewest"/>
+    <Content Include="plugin.json" CopyToOutputDirectory="PreserveNewest"/>
+    <Content Include="Languages\*.xaml" CopyToOutputDirectory="PreserveNewest">
+      <Generator>MSBuild:Compile</Generator>
+      <XamlRuntime>Wpf</XamlRuntime>
+      <SubType>Designer</SubType>
     </Content>
-    <None Update="Icons\obsidian-logo.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <Folder Include="Icons\Custom\"/>
   </ItemGroup>
 
-  <ItemGroup>
-    <Page Update="Views\GlobalVaultSettingView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <XamlRuntime>Wpf</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\SettingsView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <XamlRuntime>Wpf</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="Views\VaultSettingView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <XamlRuntime>Wpf</XamlRuntime>
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
 </Project>

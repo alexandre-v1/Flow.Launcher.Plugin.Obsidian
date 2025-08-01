@@ -1,0 +1,103 @@
+<UserControl
+    x:Class="Flow.Launcher.Plugin.Obsidian.Views.VaultsList"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:viewModels="clr-namespace:Flow.Launcher.Plugin.Obsidian.ViewModels"
+    xmlns:controls="clr-namespace:ModernWpf.Controls;assembly=ModernWpf.Controls"
+    d:DataContext="{d:DesignInstance viewModels:VaultsListViewModel}"
+    d:DesignWidth="550"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Style.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+
+    <ItemsControl
+        ItemsSource="{Binding Vaults}"
+        Background="Transparent"
+        SnapsToDevicePixels="True"
+        Margin="0">
+
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <Button Command="{Binding OpenVaultSettingsCommand}"
+                        HorizontalAlignment="Stretch">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border
+                                x:Name="border"
+                                Width="Auto"
+                                Height="Auto"
+                                Padding="18 12 0 12"
+                                Style="{StaticResource SettingGroupBox}">
+                                <ContentPresenter />
+                            </Border>
+
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Background"
+                                            Value="{DynamicResource Color22B}" />
+                                </Trigger>
+
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Background"
+                                            Value="{DynamicResource Color23B}" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="36" MinWidth="36" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Image
+                            Grid.Column="0"
+                            MaxHeight="32"
+                            MaxWidth="32"
+                            Source="{Binding Icon, Mode=OneWay, IsAsync=True}"
+                            RenderOptions.BitmapScalingMode="HighQuality" />
+
+                        <StackPanel Grid.Column="1" Margin="16 0 14 0">
+                            <TextBlock
+                                Text="{Binding Name}"
+                                Style="{StaticResource SettingTitleLabel}" />
+
+                            <TextBlock
+                                Margin="0 2 0 0"
+                                Text="{Binding VaultPath}"
+                                Style="{StaticResource SettingSubTitleLabel}" />
+                        </StackPanel>
+
+                        <TextBlock
+                            Grid.Column="2"
+                            Text="{Binding FilesCount, StringFormat={}{0} Files }"
+                            Margin="{StaticResource SettingPanelItemRightMargin}"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Right"
+                            Style="{StaticResource SettingTitleLabel}" />
+
+                        <controls:ToggleSwitch
+                            Grid.Column="3"
+                            x:Name="OnOffControl"
+                            Margin="0 0 16 0"
+                            IsOn="{Binding IsActive}"
+                            OffContent="{DynamicResource disable}"
+                            OnContent="{DynamicResource enable}" />
+                    </Grid>
+                </Button>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
+</UserControl>

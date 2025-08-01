@@ -1,18 +1,32 @@
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
+// Keep setters to allow JSON deserialization
+
 using System.Collections.Generic;
+using System.Windows;
 
 namespace Flow.Launcher.Plugin.Obsidian.Models;
 
 public class Settings
 {
-    public int MaxResult { get; set; }
-    public bool UseAliases { get; set; } = true;
-    public bool UseFilesExtension { get; set; }
-    public bool AddCheckBoxesToContext { get; set; } = true;
-    public bool AddGlobalFolderExcludeToContext { get; set; } = true;
-    public bool AddLocalFolderExcludeToContext { get; set; }
-    public bool AddCreateNoteOptionOnAllSearch { get; set; } = true;
+    public QuerySetting DefaultQuery { get; set; } = new();
+    public Dictionary<string, VaultSetting> Vaults { get; set; } = new();
 
-    // Keep setters to allow JSON deserialization
-    public GlobalVaultSetting GlobalVaultSetting { get; set; } = new();
-    public Dictionary<string, VaultSetting> VaultsSetting { get; set; } = new();
+    public double SettingWindowWidth { get; set; } = 700;
+    public double SettingWindowHeight { get; set; } = 600;
+    public double? SettingWindowTop { get; set; }
+    public double? SettingWindowLeft { get; set; }
+    public WindowState SettingWindowState { get; set; } = WindowState.Normal;
+
+    public VaultSetting LoadVaultOrDefault(string id)
+    {
+        if (Vaults.TryGetValue(id, out VaultSetting? vaultSetting))
+        {
+            return vaultSetting;
+        }
+
+        VaultSetting newVaultSetting = new();
+        Vaults.Add(id, newVaultSetting);
+        return newVaultSetting;
+    }
 }

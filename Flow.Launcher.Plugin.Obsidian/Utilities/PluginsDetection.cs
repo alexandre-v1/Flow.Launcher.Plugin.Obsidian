@@ -1,9 +1,8 @@
 using System.IO;
-using Flow.Launcher.Plugin.Obsidian.Helpers;
 
-namespace Flow.Launcher.Plugin.Obsidian.Services;
+namespace Flow.Launcher.Plugin.Obsidian.Utilities;
 
-public static class PluginsDetectionService
+public static class PluginsDetection
 {
     private const string AdvancedUriPluginName = "obsidian-advanced-uri";
 
@@ -11,6 +10,7 @@ public static class PluginsDetectionService
     {
         string pluginsJsonPath = Paths.GetCommunityPluginsJsonPath(vaultPath);
         if (!File.Exists(pluginsJsonPath)) return false;
+
         string json = File.ReadAllText(pluginsJsonPath);
         return json.Contains(AdvancedUriPluginName);
     }

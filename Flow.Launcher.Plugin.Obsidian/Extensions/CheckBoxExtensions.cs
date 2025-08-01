@@ -1,18 +1,18 @@
 using System.Collections.Generic;
-using Flow.Launcher.Plugin.Obsidian.Helpers;
 using Flow.Launcher.Plugin.Obsidian.Models;
+using Flow.Launcher.Plugin.Obsidian.Utilities;
 
-namespace Flow.Launcher.Plugin.Obsidian.Services;
+namespace Flow.Launcher.Plugin.Obsidian.Extensions;
 
-public static class CheckBoxService
+public static class CheckBoxExtensions
 {
-    private const string MarkedCheckBox = "- [x] ";
-    private const string CheckBox = "- [ ] ";
+    private const string MarkedCheckBoxString = "- [x] ";
+    private const string CheckBoxString = "- [ ] ";
 
     public static List<Result> GetCheckBoxes(this File file)
     {
         string path = file.FilePath;
-        List<Result> checkBoxes = new();
+        List<Result> checkBoxes = [];
         string[] lines = System.IO.File.ReadAllLines(path);
 
         string prevLine = string.Empty;
@@ -21,14 +21,14 @@ public static class CheckBoxService
             string title;
             bool isChecked;
 
-            if (line.Contains(MarkedCheckBox))
+            if (line.Contains(MarkedCheckBoxString))
             {
                 isChecked = true;
-                title = line.Replace(MarkedCheckBox, "");
+                title = line.Remove(MarkedCheckBoxString);
             }
-            else if (line.Contains(CheckBox))
+            else if (line.Contains(CheckBoxString))
             {
-                title = line.Replace(CheckBox, "");
+                title = line.Remove(CheckBoxString);
                 isChecked = false;
             }
             else
@@ -40,7 +40,7 @@ public static class CheckBoxService
 
             string subTitle = string.Empty;
             string trim = prevLine.Trim();
-            if (trim.EndsWith(":")) subTitle = trim[..^1];
+            if (trim.EndsWith(':')) subTitle = trim[..^1];
 
             Result item = new()
             {
@@ -69,9 +69,9 @@ public static class CheckBoxService
             if (!lines[i].Contains(checkBoxLine)) continue;
 
             if (isChecked)
-                lines[i] = lines[i].Replace(MarkedCheckBox, CheckBox);
+                lines[i] = lines[i].Replace(MarkedCheckBoxString, CheckBoxString);
             else
-                lines[i] = lines[i].Replace(CheckBox, MarkedCheckBox);
+                lines[i] = lines[i].Replace(CheckBoxString, MarkedCheckBoxString);
             break;
         }
 
