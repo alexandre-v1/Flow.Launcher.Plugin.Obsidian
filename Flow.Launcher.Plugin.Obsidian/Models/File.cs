@@ -12,6 +12,7 @@ public class File : Result
     public readonly string FilePath;
     public readonly string RelativePath;
     public readonly string VaultId;
+    public readonly string Name;
 
     public File(Vault vault, string path)
     {
@@ -29,12 +30,6 @@ public class File : Result
         };
         Icon = IconCache.GetCachedIconDelegate(Paths.ObsidianLogo);
         Score = 100;
-    }
-
-    public string Name
-    {
-        get => Title;
-        set => Title = value;
     }
 
     public HashSet<string>? Aliases { get; set; }
