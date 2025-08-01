@@ -52,7 +52,7 @@ public class NoteCreatorService(IPublicAPI publicApi) : INoteCreatorService
         new()
         {
             Title = title,
-            IcoPath = Paths.ObsidianLogo,
+            Icon = IconCache.GetCachedIconDelegate(Paths.ObsidianLogo),
             Action = _ => CreateNoteActionHandler(queryData, noteName, vault)
         };
 
