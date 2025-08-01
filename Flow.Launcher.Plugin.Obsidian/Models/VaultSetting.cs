@@ -9,7 +9,7 @@ namespace Flow.Launcher.Plugin.Obsidian.Models;
 public class VaultSetting
 {
     public bool IsActive { get; set; } = true;
-    public bool UseNoteProperties { get; set; }
+    public bool UseNoteProperties { get; set; } = true;
     public bool OpenInNewTabByDefault { get; set; }
     public FileExtensionsSetting FileExtensions { get; set; } = new();
     public IList<string> RelativeExcludePaths { get; set; } = [".obsidian", ".trash"];
