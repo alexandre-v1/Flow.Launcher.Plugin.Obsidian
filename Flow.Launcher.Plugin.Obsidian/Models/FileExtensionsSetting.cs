@@ -1,33 +1,32 @@
-// ReSharper disable UnusedAutoPropertyAccessor.Global
-// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
-// Keep setters to allow JSON deserialization
-
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace Flow.Launcher.Plugin.Obsidian.Models;
 
 public class FileExtensionsSetting
 {
-    public HashSet<FileExtensionGroup> ExtensionGroups { get; set; } = DefaultExtensionGroups;
+    [JsonInclude]
+    public HashSet<FileExtensionGroup> ExtensionGroups { get; private set; } = DefaultExtensionGroups;
 
     // Extensions who are not in a group
-    public HashSet<FileExtension> Extensions { get; set; } = DefaultExtensions;
+    [JsonInclude]
+    public HashSet<FileExtension> Extensions { get; private set; } = DefaultExtensions;
 
     public static HashSet<FileExtensionGroup> DefaultExtensionGroups { get; } =
-        [
-            new(
-                "Image",
-                [
-                    new FileExtension("PNG", ".png"),
-                    new FileExtension("JPEG", ".jpeg"),
-                    new FileExtension("JPEG", ".jpg"),
-                    new FileExtension("GIF", ".gif"),
-                    new FileExtension("Windows bitmap", ".bmp"),
-                ]
-            ),
-            new("Video", [new FileExtension("MP4", ".mp4")]),
-        ];
+    [
+        new(
+            "Image",
+            [
+                new FileExtension("PNG", ".png"),
+                new FileExtension("JPEG", ".jpeg"),
+                new FileExtension("JPEG", ".jpg"),
+                new FileExtension("GIF", ".gif"),
+                new FileExtension("Windows bitmap", ".bmp")
+            ]
+        ),
+        new("Video", [new FileExtension("MP4", ".mp4")])
+    ];
 
     // Extensions who are not in a group
     public static HashSet<FileExtension> DefaultExtensions { get; } =
