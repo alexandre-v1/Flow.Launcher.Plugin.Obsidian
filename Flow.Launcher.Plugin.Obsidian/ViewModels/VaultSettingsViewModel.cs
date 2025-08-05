@@ -28,8 +28,8 @@ public partial class VaultSettingsViewModel : BaseModel
         vault.VaultUpdated += OnVaultUpdated;
     }
 
-    public FileExtensionsListViewModel? FileExtensionListViewModel { get; }
-    public ExcludePathsViewModel? ExcludePathsViewModel { get; }
+    public FileExtensionsListViewModel FileExtensionListViewModel { get; }
+    public ExcludePathsViewModel ExcludePathsViewModel { get; }
 
     public string Id => _vault?.Id ?? "Vault Id";
     public string Name => _vault?.Name ?? "Vault Name";

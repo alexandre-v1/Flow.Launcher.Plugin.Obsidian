@@ -6,12 +6,12 @@ namespace Flow.Launcher.Plugin.Obsidian.Models;
 
 public class FileExtensionsSetting
 {
-    [JsonInclude]
-    public HashSet<FileExtensionGroup> ExtensionGroups { get; private set; } = DefaultExtensionGroups;
-
     // Extensions who are not in a group
     [JsonInclude]
-    public HashSet<FileExtension> Extensions { get; private set; } = DefaultExtensions;
+    public HashSet<FileExtension> Extensions { get; set; } = DefaultExtensions;
+
+    [JsonInclude]
+    public HashSet<FileExtensionGroup> ExtensionGroups { get; set; } = DefaultExtensionGroups;
 
     public static HashSet<FileExtensionGroup> DefaultExtensionGroups { get; } =
     [
@@ -41,9 +41,7 @@ public class FileExtensionsSetting
             result.Add(fileExtension.Suffix);
         }
 
-        foreach (
-            FileExtension fileExtension in ExtensionGroups.SelectMany(group => group.FileExtensions)
-        )
+        foreach (FileExtension fileExtension in ExtensionGroups.SelectMany(group => group.Extensions))
         {
             result.Add(fileExtension.Suffix);
         }

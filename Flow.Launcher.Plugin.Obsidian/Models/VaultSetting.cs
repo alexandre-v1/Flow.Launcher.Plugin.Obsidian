@@ -8,13 +8,13 @@ public class VaultSetting
     public bool IsActive { get; set; } = true;
 
     [JsonInclude]
-    public bool UseNoteProperties { get; } = true;
+    public bool UseNoteProperties { get; set; } = true;
 
     public bool OpenInNewTabByDefault { get; set; }
 
     [JsonInclude]
-    public FileExtensionsSetting FileExtensions { get; } = new();
+    public FileExtensionsSetting FileExtensions { get; set; } = new();
 
     [JsonInclude]
-    public IList<string> RelativeExcludePaths { get; } = [".obsidian", ".trash"];
+    public IList<string> RelativeExcludePaths { get; set; } = [".obsidian", ".trash"];
 }
