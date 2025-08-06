@@ -28,7 +28,13 @@ public static class ContentSearch
 
     public static async Task<ContentSearchMatch?> GetBestMatchInFile(File file, string[] searchTerms)
     {
-        using StreamReader reader = new(file.FilePath);
+        string filePath = file.FilePath;
+        if (!Path.Exists(filePath))
+        {
+            return null;
+        }
+
+        using StreamReader reader = new(filePath);
 
         ContentSearchMatch? bestMatch = null;
         bool inFrontMatter = false;
