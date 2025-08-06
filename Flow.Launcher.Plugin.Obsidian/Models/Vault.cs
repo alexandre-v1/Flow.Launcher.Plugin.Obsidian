@@ -92,17 +92,16 @@ public class Vault
         IList<string> excludedPaths = Setting.RelativeExcludePaths
             .Select(excludedPath => System.IO.Path.Combine(Path, excludedPath)).ToList();
 
-        ISet<string> extensions = Setting.FileExtensions.GetAllSuffix();
+        IEnumerable<string> extensions = Setting.FileExtensions.GetActiveExtensionSuffix();
 
         Files = Directory
             .EnumerateFiles(Path, "*", SearchOption.AllDirectories)
             .AsParallel()
             .WithDegreeOfParallelism(Environment.ProcessorCount)
-            .Where(file =>
+            .Where(filePath =>
             {
-                string extension = System.IO.Path.GetExtension(file);
-                return extensions.Contains(extension)
-                       && !excludedPaths.Any(file.StartsWith);
+                string extension = System.IO.Path.GetExtension(filePath);
+                return extensions.Contains(extension) && !excludedPaths.Any(filePath.StartsWith);
             })
             .Select(filePath =>
             {

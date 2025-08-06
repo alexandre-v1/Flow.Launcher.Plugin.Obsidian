@@ -13,7 +13,7 @@ public class FileExtensionsSetting
     [JsonInclude]
     public HashSet<FileExtensionGroup> ExtensionGroups { get; set; } = DefaultExtensionGroups;
 
-    public static HashSet<FileExtensionGroup> DefaultExtensionGroups { get; } =
+    private static HashSet<FileExtensionGroup> DefaultExtensionGroups { get; } =
     [
         new(
             "Image",
@@ -29,23 +29,16 @@ public class FileExtensionsSetting
     ];
 
     // Extensions who are not in a group
-    public static HashSet<FileExtension> DefaultExtensions { get; } =
+    private static HashSet<FileExtension> DefaultExtensions { get; } =
         [new("Markdown", ".md"), new("Excalidraw", ".excalidraw"), new("Canvas", ".canvas")];
 
-    public ISet<string> GetAllSuffix()
-    {
-        HashSet<string> result = [];
+    public IEnumerable<FileExtension> GetActiveExtensions() =>
+        Extensions.Where(extension => extension.IsActive)
+            .Concat(ExtensionGroups.Where(group => group.IsActive)
+                .SelectMany(group => group.Extensions).Where(extension => extension.IsActive));
 
-        foreach (FileExtension fileExtension in Extensions)
-        {
-            result.Add(fileExtension.Suffix);
-        }
+    public IEnumerable<string> GetActiveExtensionSuffix() =>
+        GetActiveExtensions().Select(extension => extension.Suffix);
 
-        foreach (FileExtension fileExtension in ExtensionGroups.SelectMany(group => group.Extensions))
-        {
-            result.Add(fileExtension.Suffix);
-        }
-
-        return result;
     }
 }
