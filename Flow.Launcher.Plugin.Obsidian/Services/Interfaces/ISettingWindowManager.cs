@@ -1,11 +1,10 @@
-using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace Flow.Launcher.Plugin.Obsidian.Services.Interfaces;
 
 public interface ISettingWindowManager
 {
-    Task ShowViewAsync<TUserControl, TViewModel>(TViewModel viewModel)
-        where TUserControl : UserControl
+    void ShowView<TUserControl, TViewModel>(TViewModel viewModel)
+        where TUserControl : UserControl, new()
         where TViewModel : BaseModel;
 }

@@ -24,7 +24,7 @@
             Margin="0"
             Padding="0"
             Background="Transparent"
-            ItemsSource="{Binding FileExtensions}">
+            ItemsSource="{Binding Extensions}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Border Name="Border" Style="{StaticResource SettingGroupBox}">
@@ -54,28 +54,22 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
-        <ItemsControl
-            Background="Transparent"
-            ItemsSource="{Binding FileExtensionGroups}">
+        <ItemsControl Background="Transparent" ItemsSource="{Binding ExtensionGroups}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Border
-                        Style="{StaticResource SettingGroupBox}"
-                        Padding="0">
+                    <Border Padding="0" Style="{StaticResource SettingGroupBox}">
                         <Expander
+                            Margin="0"
+                            Padding="0"
                             BorderThickness="0"
                             ClipToBounds="True"
                             IsExpanded="False"
                             SnapsToDevicePixels="True"
-                            Padding="0"
-                            Margin="0"
                             Style="{DynamicResource ExpanderStyle1}">
                             <Expander.Header>
                                 <!--  Negative left margin to nullify expander  -->
-                                <Border Margin="-18,0,0,0" Padding="0, 15">
-                                    <DockPanel
-                                        HorizontalAlignment="{Binding HorizontalAlignment, RelativeSource={RelativeSource AncestorType=ContentPresenter}, Mode=OneWayToSource}"
-                                        LastChildFill="False">
+                                <Border Margin="-18,0,0,0" Padding="0,15">
+                                    <DockPanel HorizontalAlignment="{Binding HorizontalAlignment, RelativeSource={RelativeSource AncestorType=ContentPresenter}, Mode=OneWayToSource}" LastChildFill="False">
                                         <TextBlock
                                             Margin="20,0,0,0"
                                             VerticalAlignment="Center"
@@ -93,7 +87,7 @@
                                             VerticalAlignment="Center"
                                             DockPanel.Dock="Right"
                                             Style="{StaticResource PageTitle}"
-                                            Text="{Binding FileExtensions.Count}"
+                                            Text="{Binding Extensions.Count}"
                                             TextAlignment="Right" />
                                     </DockPanel>
                                 </Border>
@@ -102,11 +96,11 @@
                                 Name="ItemsControl"
                                 Margin="0"
                                 Background="Transparent"
-                                ItemsSource="{Binding FileExtensions}">
+                                ItemsSource="{Binding Extensions}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Border
-                                            Padding="0 15"
+                                            Padding="0,15"
                                             BorderBrush="{DynamicResource Color03B}"
                                             BorderThickness="0,1,0,0">
                                             <DockPanel LastChildFill="False">
@@ -119,10 +113,10 @@
                                                 <controls:ToggleSwitch
                                                     Margin="0,0,16,0"
                                                     DockPanel.Dock="Right"
+                                                    IsEnabled="{Binding DataContext.IsActive, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"
                                                     IsOn="{Binding IsActive}"
                                                     OffContent="{DynamicResource disable}"
-                                                    OnContent="{DynamicResource enable}"
-                                                    IsEnabled="{Binding DataContext.IsActive, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" />
+                                                    OnContent="{DynamicResource enable}" />
                                                 <TextBlock
                                                     Margin="0,0,16,0"
                                                     VerticalAlignment="Center"

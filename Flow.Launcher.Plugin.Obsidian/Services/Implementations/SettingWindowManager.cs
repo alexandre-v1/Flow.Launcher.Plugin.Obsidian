@@ -1,6 +1,4 @@
 using System;
-using System.Diagnostics;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using Flow.Launcher.Plugin.Obsidian.Models;
 using Flow.Launcher.Plugin.Obsidian.Services.Interfaces;
@@ -14,24 +12,26 @@ public class SettingWindowManager(Settings settings) : ISettingWindowManager
     private readonly SettingsWindowModel _settingsWindowModel = new(settings);
     private SettingsWindow? _settingsWindow;
 
-    public Task ShowViewAsync<TUserControl, TViewModel>(TViewModel viewModel)
-        where TUserControl : UserControl
+    private UserControl? OpenView
+    {
+        get => _settingsWindowModel.Content;
+        set => _settingsWindowModel.Content = value;
+    }
+
+    public void ShowView<TUserControl, TViewModel>(TViewModel viewModel)
+        where TUserControl : UserControl, new()
         where TViewModel : BaseModel
     {
-        UserControl? openView = _settingsWindowModel.Content;
-        Type viewType = typeof(TUserControl);
-        bool isSameView = openView?.GetType() == typeof(TUserControl);
+        bool isSameView = OpenView?.GetType() == typeof(TUserControl);
 
-        if (openView is not null && isSameView)
+        if (!isSameView)
         {
-            openView.DataContext = viewModel;
-            ShowWindow();
-            return Task.CompletedTask;
+            OpenView = new TUserControl();
         }
 
-        _settingsWindowModel.Content = CreateView(viewType, viewModel);
+        OpenView ??= new TUserControl();
+        OpenView.DataContext = viewModel;
         ShowWindow();
-        return Task.CompletedTask;
     }
 
     private void SettingsWindowOnClosed(object? sender, EventArgs e)
@@ -39,8 +39,6 @@ public class SettingWindowManager(Settings settings) : ISettingWindowManager
         _settingsWindowModel.Content = null;
         _settingsWindow = null;
     }
-
-    public bool IsWindowOpen() => _settingsWindow?.IsActive is true;
 
     private void ShowWindow()
     {
@@ -52,32 +50,5 @@ public class SettingWindowManager(Settings settings) : ISettingWindowManager
 
         _settingsWindow.Show();
         _settingsWindow.Activate();
-    }
-
-    private static UserControl? CreateView<TViewModel>(Type viewType, TViewModel viewModel)
-        where TViewModel : BaseModel
-    {
-        UserControl? newView = null;
-        switch (viewType.Name)
-        {
-            case nameof(VaultSettingsView):
-                if (viewModel is VaultSettingsViewModel vaultSettingsViewModel)
-                {
-                    newView = new VaultSettingsView(vaultSettingsViewModel);
-                }
-
-                break;
-            default:
-                Debug.WriteLine($"View type {viewType.Name} not supported");
-                break;
-        }
-
-        if (newView is null)
-        {
-            return null;
-        }
-
-        newView.DataContext = viewModel;
-        return newView;
     }
 }

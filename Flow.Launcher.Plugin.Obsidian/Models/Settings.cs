@@ -1,15 +1,15 @@
-// ReSharper disable UnusedAutoPropertyAccessor.Global
-// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
-// Keep setters to allow JSON deserialization
-
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using System.Windows;
 
 namespace Flow.Launcher.Plugin.Obsidian.Models;
 
 public class Settings
 {
+    [JsonInclude]
     public QuerySetting DefaultQuery { get; set; } = new();
+
+    [JsonInclude]
     public Dictionary<string, VaultSetting> Vaults { get; set; } = new();
 
     public double SettingWindowWidth { get; set; } = 600;

@@ -1,54 +1,47 @@
-// ReSharper disable UnusedAutoPropertyAccessor.Global
-// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
-// Keep setters to allow JSON deserialization
-
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace Flow.Launcher.Plugin.Obsidian.Models;
 
 public class FileExtensionsSetting
 {
-    public HashSet<FileExtensionGroup> ExtensionGroups { get; set; } = DefaultExtensionGroups;
-
     // Extensions who are not in a group
+    [JsonInclude]
     public HashSet<FileExtension> Extensions { get; set; } = DefaultExtensions;
 
-    public static HashSet<FileExtensionGroup> DefaultExtensionGroups { get; } =
-        [
-            new(
-                "Image",
-                [
-                    new FileExtension("PNG", ".png"),
-                    new FileExtension("JPEG", ".jpeg"),
-                    new FileExtension("JPEG", ".jpg"),
-                    new FileExtension("GIF", ".gif"),
-                    new FileExtension("Windows bitmap", ".bmp"),
-                ]
-            ),
-            new("Video", [new FileExtension("MP4", ".mp4")]),
-        ];
+    [JsonInclude]
+    public HashSet<FileExtensionGroup> ExtensionGroups { get; set; } = DefaultExtensionGroups;
+
+    private static HashSet<FileExtensionGroup> DefaultExtensionGroups { get; } =
+    [
+        new(
+            "Image",
+            [
+                new FileExtension("PNG", ".png"),
+                new FileExtension("JPEG", ".jpeg"),
+                new FileExtension("JPEG", ".jpg"),
+                new FileExtension("GIF", ".gif"),
+                new FileExtension("Windows bitmap", ".bmp")
+            ]
+        ),
+        new("Video", [new FileExtension("MP4", ".mp4")])
+    ];
 
     // Extensions who are not in a group
-    public static HashSet<FileExtension> DefaultExtensions { get; } =
+    private static HashSet<FileExtension> DefaultExtensions { get; } =
         [new("Markdown", ".md"), new("Excalidraw", ".excalidraw"), new("Canvas", ".canvas")];
 
-    public ISet<string> GetAllSuffix()
+    public IEnumerable<FileExtension> GetActiveExtensions() =>
+        Extensions.Where(extension => extension.IsActive)
+            .Concat(ExtensionGroups.Where(group => group.IsActive)
+                .SelectMany(group => group.Extensions).Where(extension => extension.IsActive));
+
+    public IEnumerable<string> GetActiveExtensionSuffix() =>
+        GetActiveExtensions().Select(extension => extension.Suffix);
+
+    public bool Contains(string extensionSuffix)
     {
-        HashSet<string> result = [];
-
-        foreach (FileExtension fileExtension in Extensions)
-        {
-            result.Add(fileExtension.Suffix);
-        }
-
-        foreach (
-            FileExtension fileExtension in ExtensionGroups.SelectMany(group => group.FileExtensions)
-        )
-        {
-            result.Add(fileExtension.Suffix);
-        }
-
-        return result;
+        return GetActiveExtensionSuffix().Any(suffix => suffix == extensionSuffix);
     }
 }

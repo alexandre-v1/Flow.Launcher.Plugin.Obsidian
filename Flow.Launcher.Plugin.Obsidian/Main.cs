@@ -45,7 +45,9 @@ public class Obsidian : IAsyncPlugin, ISettingProvider, IAsyncReloadable, IConte
             return [];
         }
 
-        QueryData queryData = QueryData.Parse(query, _vaultManager.Vaults);
+        FileExtensionsSetting fileExtensionsSetting =
+            _settings?.DefaultQuery.FileExtensions ?? new FileExtensionsSetting();
+        QueryData queryData = QueryData.Parse(query, fileExtensionsSetting, _vaultManager.Vaults);
 
         return queryData.IsNoteCreationSearch()
             ? _queryHandler.HandleNoteCreation(queryData)

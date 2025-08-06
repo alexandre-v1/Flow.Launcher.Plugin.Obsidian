@@ -1,30 +1,31 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.Input;
 using Flow.Launcher.Plugin.Obsidian.Models;
 
 namespace Flow.Launcher.Plugin.Obsidian.ViewModels;
 
-public class FileExtensionsListViewModel : BaseModel
+public partial class FileExtensionsListViewModel : BaseModel
 {
+    private readonly FileExtensionsSetting _extensionsSetting;
+    private readonly ObservableCollection<FileExtension> _extensions;
+    private readonly ObservableCollection<FileExtensionGroup> _extensionGroups;
+
     public FileExtensionsListViewModel()
     {
-        FileExtensions = new ObservableCollection<FileExtension>(
-            FileExtensionsSetting.DefaultExtensions
-        );
-        FileExtensionGroups = new ObservableCollection<FileExtensionGroup>(
-            FileExtensionsSetting.DefaultExtensionGroups
-        );
+        _extensionsSetting = new FileExtensionsSetting();
+        _extensions = new ObservableCollection<FileExtension>(_extensionsSetting.Extensions);
+        _extensionGroups = new ObservableCollection<FileExtensionGroup>(_extensionsSetting.ExtensionGroups);
     }
 
-    public FileExtensionsListViewModel(FileExtensionsSetting fileExtensionsSetting)
+    public FileExtensionsListViewModel(FileExtensionsSetting extensionsSetting)
     {
-        FileExtensions = new ObservableCollection<FileExtension>(fileExtensionsSetting.Extensions);
-        FileExtensionGroups = new ObservableCollection<FileExtensionGroup>(
-            fileExtensionsSetting.ExtensionGroups
-        );
+        _extensionsSetting = extensionsSetting;
+        _extensions = new ObservableCollection<FileExtension>(_extensionsSetting.Extensions);
+        _extensionGroups = new ObservableCollection<FileExtensionGroup>(_extensionsSetting.ExtensionGroups);
     }
 
-    public ICollection<FileExtension> FileExtensions { get; set; }
+    public IEnumerable<FileExtension> Extensions => _extensions;
+    public IEnumerable<FileExtensionGroup> ExtensionGroups => _extensionGroups;
 
-    public ICollection<FileExtensionGroup> FileExtensionGroups { get; set; }
 }

@@ -72,7 +72,7 @@ public partial class VaultViewModel : BaseModel
         }
 
         VaultSettingsViewModel vaultSettingsViewModel = new(_vault, _vaultManager);
-        _settingWindowManager.ShowViewAsync<VaultSettingsView, VaultSettingsViewModel>(
+        _settingWindowManager.ShowView<VaultSettingsView, VaultSettingsViewModel>(
             vaultSettingsViewModel
         );
     }
