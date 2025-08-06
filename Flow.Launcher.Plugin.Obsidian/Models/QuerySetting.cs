@@ -5,6 +5,9 @@ namespace Flow.Launcher.Plugin.Obsidian.Models;
 public class QuerySetting
 {
     [JsonInclude]
+    public FileExtensionsSetting FileExtensions { get; set; } = new();
+
+    [JsonInclude]
     public int MaxResult { get; set; }
 
     public bool UseAliases { get; set; } = true;

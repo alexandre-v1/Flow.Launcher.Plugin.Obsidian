@@ -81,6 +81,9 @@ public class Vault
         VaultUpdated?.Invoke();
     }
 
+    public IEnumerable<File> GetFiles(FileExtensionsSetting extensionsSetting) =>
+        Files.Where(file => extensionsSetting.Contains(file.Extension));
+
     public bool OpenInNewTabByDefault() => HasAdvancedUri && Setting.OpenInNewTabByDefault;
 
     public bool TagExists(string tag) => Tags.Any(t => t.EqualsIgnoreCase(tag));

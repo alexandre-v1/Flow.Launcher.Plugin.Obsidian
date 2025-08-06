@@ -15,10 +15,7 @@ public class QueryService(IPublicAPI publicApi, Settings settings) : IQueryHandl
     private readonly TagSearchService _tagSearchService = new(publicApi);
     private bool UseObsidianProperties => settings.DefaultQuery.UseTags;
 
-    public async Task<List<Result>> HandleQueryAsync(
-        QueryData queryData,
-        CancellationToken cancellationToken
-    )
+    public async Task<List<Result>> HandleQueryAsync(QueryData queryData, CancellationToken cancellationToken)
     {
         if (queryData.IsEmptyQuery())
         {
@@ -31,7 +28,7 @@ public class QueryService(IPublicAPI publicApi, Settings settings) : IQueryHandl
         }
 
         bool useTags = UseObsidianProperties && queryData.HasValidTags;
-        List<File> files = useTags ? queryData.GetAllFilesWithTags() : queryData.GetAllFiles();
+        List<File> files = useTags ? queryData.GetFilesWithTags().ToList() : queryData.GetFiles().ToList();
 
         if (!queryData.HasCleanSearchContent())
         {
@@ -39,16 +36,10 @@ public class QueryService(IPublicAPI publicApi, Settings settings) : IQueryHandl
         }
 
         const int minCharForSearchContent = 3;
-        bool searchContent =
-            queryData.CleanSearchTerms.Length > 1
-            || queryData.CleanSearchTerms[0].Length >= minCharForSearchContent;
+        bool searchContent = queryData.CleanSearchTerms.Length > 1 ||
+                             queryData.CleanSearchTerms[0].Length >= minCharForSearchContent;
 
-        files = await SearchUtility.SearchAndScoreFiles(
-            files,
-            queryData,
-            searchContent,
-            cancellationToken
-        );
+        files = await SearchUtility.SearchAndScoreFiles(files, queryData, searchContent, cancellationToken);
 
         files = SortAndTruncateFilesResults(files);
 

@@ -40,5 +40,8 @@ public class FileExtensionsSetting
     public IEnumerable<string> GetActiveExtensionSuffix() =>
         GetActiveExtensions().Select(extension => extension.Suffix);
 
+    public bool Contains(string extensionSuffix)
+    {
+        return GetActiveExtensionSuffix().Any(suffix => suffix == extensionSuffix);
     }
 }

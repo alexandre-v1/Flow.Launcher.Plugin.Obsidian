@@ -7,32 +7,38 @@ namespace Flow.Launcher.Plugin.Obsidian.Models;
 
 public class QueryData
 {
+    private readonly FileExtensionsSetting _fileExtensions;
+    public readonly string[] CleanSearchTerms;
+
+    private QueryData(Query query, FileExtensionsSetting fileExtensions)
+    {
+        Query = query;
+        _fileExtensions = fileExtensions;
+        CleanSearchTerms = GetCleanSearchTerms();
+    }
+
     public HashSet<string> ValidTags { get; } = [];
     public HashSet<string> InvalidTags { get; } = [];
 
     public bool HasInvalidTags => InvalidTags.Count > 0;
     public bool HasValidTags => ValidTags.Count > 0;
-    public readonly string[] CleanSearchTerms;
 
     public HashSet<Vault> Vaults { get; private set; } = [];
 
     private string[] SearchTerms => Query.SearchTerms;
     private Query Query { get; }
 
-    private QueryData(Query query)
+    public static QueryData Parse(Query query, FileExtensionsSetting fileExtensions, HashSet<Vault> vaults)
     {
-        Query = query;
-        CleanSearchTerms = GetCleanSearchTerms();
-    }
-
-    public static QueryData Parse(Query query, HashSet<Vault> vaults)
-    {
-        QueryData queryData = new(query);
+        QueryData queryData = new(query, fileExtensions);
         HashSet<Vault> newVaults = [];
 
         foreach (string searchTerm in query.SearchTerms)
         {
-            if (searchTerm.StartsWith('#')) continue;
+            if (searchTerm.StartsWith('#'))
+            {
+                continue;
+            }
 
             string term = searchTerm;
             foreach (Vault vault in vaults.Where(vault => vault.IsVaultName(term)))
@@ -46,7 +52,9 @@ public class QueryData
         foreach (string searchTerm in query.SearchTerms)
         {
             if (!searchTerm.StartsWith('#'))
+            {
                 continue;
+            }
 
             string tag = searchTerm.TrimStart('#');
 
@@ -99,13 +107,18 @@ public class QueryData
             .Where(tag => !ValidTags.ContainsIgnoreCase(tag))
             .ToHashSet();
 
-    public List<File> GetAllFiles() => Vaults.SelectMany(vault => vault.Files).ToList();
+    public IEnumerable<File> GetFiles()
+    {
+        List<File> result = [];
+        foreach (Vault vault in Vaults)
+        {
+            result.AddRange(vault.GetFiles(_fileExtensions));
+        }
 
-    public List<File> GetAllFilesWithTags() =>
-        Vaults
-            .SelectMany(vault => vault.Files)
-            .Where(file => file.HasTags(ValidTags))
-            .ToList();
+        return result;
+    }
+
+    public IEnumerable<File> GetFilesWithTags() => GetFiles().Where(file => file.HasTags(ValidTags));
 
     public bool IsNoteCreationSearch() => Query.Search.StartsWith(Keyword.NoteCreator);
 
