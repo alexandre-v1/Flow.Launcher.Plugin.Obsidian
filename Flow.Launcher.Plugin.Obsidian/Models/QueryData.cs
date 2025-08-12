@@ -120,7 +120,7 @@ public class QueryData
 
     public IEnumerable<File> GetFilesWithTags() => GetFiles().Where(file => file.HasTags(ValidTags));
 
-    public bool IsNoteCreationSearch() => Query.Search.StartsWith(Keyword.NoteCreator);
+    public bool IsNoteCreationQuery() => Query.Search.StartsWith(Keyword.NoteCreator);
 
     // Search terms without tags and vaults
     private string[] GetCleanSearchTerms() =>

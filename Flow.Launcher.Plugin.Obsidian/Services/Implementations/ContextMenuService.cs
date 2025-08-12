@@ -17,8 +17,6 @@ public class ContextMenuService(Obsidian obsidian, IVaultManager vaultManager, S
             return [];
         }
 
-        string path = file.RelativePath;
-
         List<Result> results = [];
         Vault? vault = vaultManager.GetVaultWithId(file.VaultId);
 
@@ -35,18 +33,14 @@ public class ContextMenuService(Obsidian obsidian, IVaultManager vaultManager, S
             }
         }
 
-        if (settings.DefaultQuery.AddCheckBoxesToContext)
+        if (settings.AddCheckBoxesToContext)
         {
             results.AddRange(file.GetCheckBoxes());
         }
 
-        if (
-            settings.DefaultQuery.AddGlobalFolderExcludeToContext
-            || settings.DefaultQuery.AddLocalFolderExcludeToContext
-        )
-        {
-            results.AddRange(ExcludeResults(path, file.VaultId));
-        }
+
+        results.AddRange(ExcludeResults(file.RelativePath, file.VaultId));
+
 
         return results;
     }
@@ -70,10 +64,7 @@ public class ContextMenuService(Obsidian obsidian, IVaultManager vaultManager, S
         for (int i = 0; i < parts.Length - 1; i++)
         {
             string directory = string.Join("\\", parts.Take(i + 1));
-            if (settings.DefaultQuery.AddLocalFolderExcludeToContext)
-            {
-                results.Add(ExcludeLocalFolderResult(directory, vaultId));
-            }
+            results.Add(ExcludeLocalFolderResult(directory, vaultId));
         }
 
         return results;

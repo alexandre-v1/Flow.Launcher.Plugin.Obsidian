@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
@@ -31,7 +32,7 @@ public class Obsidian : IAsyncPlugin, ISettingProvider, IAsyncReloadable, IConte
 
         await _vaultManager.UpdateVaultListAsync();
 
-        _queryHandler = new QueryService(_publicApi, _settings);
+        _queryHandler = new QueryService(context, _settings, _vaultManager);
         _contextMenu = new ContextMenuService(this, _vaultManager, _settings);
 
         _windowManager = new SettingWindowManager(_settings);
@@ -40,18 +41,14 @@ public class Obsidian : IAsyncPlugin, ISettingProvider, IAsyncReloadable, IConte
 
     public async Task<List<Result>> QueryAsync(Query query, CancellationToken token)
     {
-        if (_queryHandler is null || _vaultManager is null)
+        Task<IEnumerable<Result>>? queriesAsync = _queryHandler?.HandleQueriesAsync(query, token);
+        if (queriesAsync is null)
         {
             return [];
         }
 
-        FileExtensionsSetting fileExtensionsSetting =
-            _settings?.DefaultQuery.FileExtensions ?? new FileExtensionsSetting();
-        QueryData queryData = QueryData.Parse(query, fileExtensionsSetting, _vaultManager.Vaults);
-
-        return queryData.IsNoteCreationSearch()
-            ? _queryHandler.HandleNoteCreation(queryData)
-            : await _queryHandler.HandleQueryAsync(queryData, token);
+        IEnumerable<Result> results = await queriesAsync;
+        return results.ToList();
     }
 
     public async Task ReloadDataAsync()

@@ -7,7 +7,10 @@ namespace Flow.Launcher.Plugin.Obsidian.Models;
 public class Settings
 {
     [JsonInclude]
-    public QuerySetting DefaultQuery { get; set; } = new();
+    public List<BaseQuerySetting> Queries { get; set; } =
+    [
+        new FilesQuerySetting { Name = "Default Query", Keyword = "ob" }
+    ];
 
     [JsonInclude]
     public Dictionary<string, VaultSetting> Vaults { get; set; } = new();
@@ -17,6 +20,9 @@ public class Settings
     public double? SettingWindowTop { get; set; }
     public double? SettingWindowLeft { get; set; }
     public WindowState SettingWindowState { get; set; } = WindowState.Normal;
+
+    [JsonInclude]
+    public bool AddCheckBoxesToContext { get; set; } = true;
 
     public VaultSetting LoadVaultOrDefault(string id)
     {
