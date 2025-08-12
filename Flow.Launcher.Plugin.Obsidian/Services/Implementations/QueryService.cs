@@ -71,7 +71,7 @@ public class QueryService : IQueryHandler
                 _queries.Add(fileQuery);
                 break;
             default:
-                throw new NotImplementedException($"Query type {querySetting.GetType()} is not implemented");
+                throw new InvalidCastException($"Query type {querySetting.GetType()} is not implemented");
         }
     }
 
