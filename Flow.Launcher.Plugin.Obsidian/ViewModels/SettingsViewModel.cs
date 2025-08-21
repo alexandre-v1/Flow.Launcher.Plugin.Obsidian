@@ -19,9 +19,12 @@ public class SettingsViewModel : BaseModel
     {
         ReloadablePlugin = reloadablePlugin;
         VaultsListViewModel = new VaultsListViewModel(vaultManager.GetVaults(), settingWindowManager, vaultManager);
+        QueriesListViewModel =
+            new QueriesListViewModel(settings.Queries, settingWindowManager, vaultManager, queryService);
     }
 
     public VaultsListViewModel VaultsListViewModel { get; }
+    public QueriesListViewModel QueriesListViewModel { get; }
     private IAsyncReloadable? ReloadablePlugin { get; }
 
     public void OnUnloaded() => _ = ReloadPluginDataAsync();

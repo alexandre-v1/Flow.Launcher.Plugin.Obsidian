@@ -1,0 +1,70 @@
+using System;
+using System.Windows.Media;
+using CommunityToolkit.Mvvm.Input;
+using Flow.Launcher.Plugin.Obsidian.Models;
+using Flow.Launcher.Plugin.Obsidian.Services.Interfaces;
+using Flow.Launcher.Plugin.Obsidian.Utilities;
+using Flow.Launcher.Plugin.Obsidian.Views;
+using JetBrains.Annotations;
+
+namespace Flow.Launcher.Plugin.Obsidian.ViewModels;
+
+public partial class QueryViewModel(
+    ObsidianQuerySetting obsidianQuerySetting,
+    ISettingWindowManager windowManager,
+    IVaultManager vaultManager,
+    IQueryService queryService) : BaseModel
+{
+    [UsedImplicitly] // For design-time data
+    public QueryViewModel() : this(new ObsidianQuerySetting(), null!, null!, null!) { }
+
+    public string Name => obsidianQuerySetting.Name;
+
+    public ImageSource Icon => IconCache.GetCachedImage(Paths.ObsidianLogo);
+
+    public bool IsActive
+    {
+        get => obsidianQuerySetting.IsActive;
+        set
+        {
+            obsidianQuerySetting.IsActive = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string Keyword
+    {
+        get => obsidianQuerySetting.Keyword;
+        set
+        {
+            obsidianQuerySetting.Keyword = value;
+            OnPropertyChanged();
+        }
+    }
+
+    [RelayCommand]
+    private void OpenQuerySettings()
+    {
+        if (windowManager is null)
+        {
+            throw new NullReferenceException(nameof(windowManager));
+        }
+
+        switch (obsidianQuerySetting)
+        {
+            case FilesQuerySetting filesQuerySetting:
+                FilesQuerySettingsViewModel filesQuerySettingsViewModel =
+                    new(filesQuerySetting, queryService, vaultManager, windowManager);
+                windowManager.ShowView<FilesQuerySettingsView>(filesQuerySettingsViewModel);
+                break;
+        }
+    }
+
+    [RelayCommand]
+    private void SetActionKeyword()
+    {
+        ActionKeywordDialog dialog = new(obsidianQuerySetting, queryService);
+        dialog.ShowDialog();
+        OnPropertyChanged(nameof(Keyword));
+    }
+}

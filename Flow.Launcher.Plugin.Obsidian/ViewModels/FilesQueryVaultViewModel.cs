@@ -9,33 +9,36 @@ using JetBrains.Annotations;
 
 namespace Flow.Launcher.Plugin.Obsidian.ViewModels;
 
-public partial class VaultViewModel : BaseModel
+public partial class FilesQueryVaultViewModel : BaseModel
 {
+    private readonly FilesQuerySetting _querySetting;
     private readonly ISettingWindowManager _settingWindowManager;
     private readonly Vault? _vault;
     private readonly IVaultManager _vaultManager;
 
-    private bool _isActive;
-
     public string DesignName = "Vault Name";
     public string DesignPath = "Vault Path";
 
-    public VaultViewModel(Vault vault, ISettingWindowManager settingWindowManager, IVaultManager vaultManager)
+    public FilesQueryVaultViewModel(FilesQuerySetting querySetting, Vault vault,
+        ISettingWindowManager settingWindowManager, IVaultManager vaultManager)
     {
+        _querySetting = querySetting;
         _settingWindowManager = settingWindowManager;
         _vault = vault;
         _vaultManager = vaultManager;
-        _isActive = vault.IsActive;
 
         vault.VaultUpdated += OnVaultUpdated;
     }
 
     [UsedImplicitly] // For design-time data
-    public VaultViewModel()
+    public FilesQueryVaultViewModel()
     {
+        _querySetting = new FilesQuerySetting();
         _settingWindowManager = null!;
         _vaultManager = null!;
     }
+
+    private string VaultId => _vault?.Id ?? string.Empty;
 
     public static ImageSource Icon => IconCache.GetCachedImage(Paths.ObsidianLogo);
     public string Name => _vault?.Name ?? DesignName;
@@ -44,18 +47,10 @@ public partial class VaultViewModel : BaseModel
 
     public bool IsActive
     {
-        get => _vault?.IsActive ?? _isActive;
+        get => _querySetting.VaultIsActive(VaultId);
         set
         {
-            if (_vault is not null)
-            {
-                _vault.IsActive = value;
-            }
-            else
-            {
-                _isActive = value;
-            }
-
+            _querySetting.SetVaultActiveState(VaultId, value);
             OnPropertyChanged();
         }
     }

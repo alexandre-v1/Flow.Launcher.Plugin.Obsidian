@@ -18,9 +18,7 @@ public class SettingWindowManager(Settings settings) : ISettingWindowManager
         set => _settingsWindowModel.Content = value;
     }
 
-    public void ShowView<TUserControl, TViewModel>(TViewModel viewModel)
-        where TUserControl : UserControl, new()
-        where TViewModel : BaseModel
+    public void ShowView<TUserControl>(BaseModel viewModel) where TUserControl : UserControl, new()
     {
         bool isSameView = OpenView?.GetType() == typeof(TUserControl);
 

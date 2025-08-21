@@ -41,7 +41,7 @@ public class Obsidian : IAsyncPlugin, ISettingProvider, IAsyncReloadable, IConte
 
     public async Task<List<Result>> QueryAsync(Query query, CancellationToken token)
     {
-        Task<IEnumerable<Result>>? queriesAsync = _queryHandler?.HandleQueriesAsync(query, token);
+        Task<IEnumerable<Result>>? queriesAsync = _queryService?.HandleQueriesAsync(query, token);
         if (queriesAsync is null)
         {
             return [];

@@ -53,6 +53,28 @@
         </Border>
 
         <Border
+            Grid.Row="1"
+            Width="Auto"
+            Height="Auto"
+            Margin="0"
+            Padding="0"
+            BorderThickness="0, 1, 0 , 0"
+            CornerRadius="0"
+            Style="{StaticResource SettingGroupBox}">
+            <StackPanel Margin="{StaticResource SettingPanelMargin}"
+                        Orientation="Vertical">
+
+                <TextBlock
+                    Text="Queries"
+                    Margin="0, 0, 0, 15"
+                    Style="{DynamicResource SettingTitleLabel}" />
+
+                <views:QueriesListView DataContext="{Binding QueriesListViewModel}" />
+            </StackPanel>
+        </Border>
+
+
+        <Border
             Grid.Row="2"
             Width="Auto"
             Height="Auto"

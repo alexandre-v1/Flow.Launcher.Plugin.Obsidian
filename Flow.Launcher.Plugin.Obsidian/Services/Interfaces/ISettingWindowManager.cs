@@ -4,7 +4,6 @@ namespace Flow.Launcher.Plugin.Obsidian.Services.Interfaces;
 
 public interface ISettingWindowManager
 {
-    void ShowView<TUserControl, TViewModel>(TViewModel viewModel)
-        where TUserControl : UserControl, new()
-        where TViewModel : BaseModel;
+    void ShowView<TUserControl>(BaseModel viewModel)
+        where TUserControl : UserControl, new();
 }
