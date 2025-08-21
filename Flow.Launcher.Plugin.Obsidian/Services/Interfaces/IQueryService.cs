@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Flow.Launcher.Plugin.Obsidian.Services.Interfaces;
 
-public interface IQueryHandler
+public interface IQueryService
 {
     Task<IEnumerable<Result>> HandleQueriesAsync(Query flowQuery, CancellationToken token);
 }

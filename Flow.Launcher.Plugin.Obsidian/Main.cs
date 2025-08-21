@@ -17,7 +17,7 @@ public class Obsidian : IAsyncPlugin, ISettingProvider, IAsyncReloadable, IConte
     private IContextMenu? _contextMenu;
 
     private IPublicAPI? _publicApi;
-    private IQueryHandler? _queryHandler;
+    private IQueryService? _queryService;
     private Settings? _settings;
     private SettingsViewModel? _settingsViewModel;
 
@@ -32,11 +32,11 @@ public class Obsidian : IAsyncPlugin, ISettingProvider, IAsyncReloadable, IConte
 
         await _vaultManager.UpdateVaultListAsync();
 
-        _queryHandler = new QueryService(context, _settings, _vaultManager);
+        _queryService = new QueryService(context, _settings, _vaultManager);
         _contextMenu = new ContextMenuService(this, _vaultManager, _settings);
 
         _windowManager = new SettingWindowManager(_settings);
-        _settingsViewModel = new SettingsViewModel(this, _vaultManager, _windowManager);
+        _settingsViewModel = new SettingsViewModel(_settings, this, _vaultManager, _windowManager, _queryService);
     }
 
     public async Task<List<Result>> QueryAsync(Query query, CancellationToken token)

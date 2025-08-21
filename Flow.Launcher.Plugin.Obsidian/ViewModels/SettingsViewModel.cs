@@ -1,21 +1,24 @@
 using System.Threading.Tasks;
+using Flow.Launcher.Plugin.Obsidian.Models;
 using Flow.Launcher.Plugin.Obsidian.Services.Interfaces;
+using JetBrains.Annotations;
 
 namespace Flow.Launcher.Plugin.Obsidian.ViewModels;
 
 public class SettingsViewModel : BaseModel
 {
-    // For design-time data
-    public SettingsViewModel() => VaultsListViewModel = new VaultsListViewModel();
+    [UsedImplicitly] // For design-time data
+    public SettingsViewModel()
+    {
+        VaultsListViewModel = new VaultsListViewModel();
+        QueriesListViewModel = new QueriesListViewModel();
+    }
 
-    public SettingsViewModel(
-        IAsyncReloadable reloadablePlugin,
-        IVaultManager vaultManager,
-        ISettingWindowManager settingWindowManager
-    )
+    public SettingsViewModel(Settings settings, IAsyncReloadable reloadablePlugin, IVaultManager vaultManager,
+        ISettingWindowManager settingWindowManager, IQueryService queryService)
     {
         ReloadablePlugin = reloadablePlugin;
-        VaultsListViewModel = new VaultsListViewModel(vaultManager, settingWindowManager);
+        VaultsListViewModel = new VaultsListViewModel(vaultManager.GetVaults(), settingWindowManager, vaultManager);
     }
 
     public VaultsListViewModel VaultsListViewModel { get; }

@@ -7,7 +7,7 @@ namespace Flow.Launcher.Plugin.Obsidian.Models;
 public class Settings
 {
     [JsonInclude]
-    public List<BaseQuerySetting> Queries { get; set; } =
+    public List<ObsidianQuerySetting> Queries { get; set; } =
     [
         new FilesQuerySetting { Name = "Default Query", Keyword = "ob" }
     ];

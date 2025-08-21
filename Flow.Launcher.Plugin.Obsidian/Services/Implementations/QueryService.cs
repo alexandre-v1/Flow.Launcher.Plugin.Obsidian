@@ -8,14 +8,14 @@ using Flow.Launcher.Plugin.Obsidian.Services.Interfaces;
 
 namespace Flow.Launcher.Plugin.Obsidian.Services.Implementations;
 
-public class QueryService : IQueryHandler
+public class QueryService : IQueryService
 {
-    private readonly NoteCreatorService _noteCreatorService;
+    private readonly INoteCreatorService _noteCreatorService;
     private readonly PluginMetadata _pluginMetadata;
     private readonly IPublicAPI _publicApi;
-    private readonly List<BaseQuery> _queries = [];
+    private readonly List<ObsidianQuery> _queries = [];
     private readonly Settings _settings;
-    private readonly TagSearchService _tagSearchService;
+    private readonly ITagSearchService _tagSearchService;
     private readonly IVaultManager _vaultManager;
 
     public QueryService(PluginInitContext pluginContext, Settings settings, IVaultManager vaultManager)
@@ -33,7 +33,7 @@ public class QueryService : IQueryHandler
 
     public async Task<IEnumerable<Result>> HandleQueriesAsync(Query flowQuery, CancellationToken token)
     {
-        IEnumerable<BaseQuery> queriesToPerform = _queries.Where(query => query.IsSameActionKeyword(flowQuery));
+        IEnumerable<ObsidianQuery> queriesToPerform = _queries.Where(query => query.IsSameActionKeyword(flowQuery));
 
         List<Result>[] queriesResults =
             await Task.WhenAll(queriesToPerform.Select(query => query.QueryAsync(flowQuery, token)));
@@ -42,40 +42,69 @@ public class QueryService : IQueryHandler
         return groupedResults;
     }
 
+    public ObsidianQuery? GetQuery(string name) => _queries.FirstOrDefault();
+
+    public T? GetQuery<T>(string name) where T : ObsidianQuery => GetQuery(name) as T;
+
+    public T? GetQuery<T>(ObsidianQuerySetting setting) where T : ObsidianQuery => _queries
+        .Where(query => query.Setting == setting).Select(query => query as T).FirstOrDefault();
+
+    public void ReloadQuery(ObsidianQuerySetting setting) =>
+        _queries.FirstOrDefault(query => query.Setting == setting)?.Reload();
+
+    public bool TryChangeKeyword(ObsidianQuerySetting setting, string newKeyword)
+    {
+        if (setting.Keyword == newKeyword)
+        {
+            _publicApi.ShowMsgBox(_publicApi.GetTranslation("newActionKeywordsSameAsOld"));
+            return false;
+        }
+
+        if (!TryRegisterKeyword(newKeyword))
+        {
+            // Keyword assigned by another plugin
+            _publicApi.ShowMsgBox(_publicApi.GetTranslation("newActionKeywordsHasBeenAssigned"));
+            return false;
+        }
+
+        setting.Keyword = newKeyword;
+        return true;
+    }
+
     private void RegisterQueries()
     {
         Keywords.Clear();
-        foreach (BaseQuerySetting querySetting in _settings.Queries)
+        foreach (ObsidianQuerySetting querySetting in _settings.Queries)
         {
             AddQuery(querySetting);
         }
     }
 
-    private bool AddQuery(BaseQuerySetting querySetting)
+    private bool AddQuery(ObsidianQuerySetting obsidianQuerySetting)
     {
-        bool keywordRegistered = RegisterKeyword(querySetting.Keyword);
+        bool keywordRegistered = TryRegisterKeyword(obsidianQuerySetting.Keyword);
         if (keywordRegistered)
         {
-            CreateQuery(querySetting);
+            CreateQuery(obsidianQuerySetting);
         }
 
         return keywordRegistered;
     }
 
-    private void CreateQuery(BaseQuerySetting querySetting)
+    private void CreateQuery(ObsidianQuerySetting obsidianQuerySetting)
     {
-        switch (querySetting)
+        switch (obsidianQuerySetting)
         {
             case FilesQuerySetting filesQuery:
                 FilesQuery fileQuery = new(filesQuery, _noteCreatorService, _tagSearchService, _vaultManager);
                 _queries.Add(fileQuery);
                 break;
             default:
-                throw new InvalidCastException($"Query type {querySetting.GetType()} is not implemented");
+                throw new InvalidCastException($"Query type {obsidianQuerySetting.GetType()} is not implemented");
         }
     }
 
-    private bool RegisterKeyword(string keyword)
+    public bool TryRegisterKeyword(string keyword)
     {
         if (Keywords.Contains(keyword))
         {

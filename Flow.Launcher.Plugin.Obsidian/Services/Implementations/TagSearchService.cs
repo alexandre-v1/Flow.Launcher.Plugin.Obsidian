@@ -8,27 +8,29 @@ namespace Flow.Launcher.Plugin.Obsidian.Services.Implementations;
 
 public class TagSearchService(IPublicAPI publicApi) : ITagSearchService
 {
-    public List<Result> GetMatchingTagResults(IEnumerable<string> tags, string tagToSearch, QueryData queryData) =>
-        CreateTagsResults(queryData, tags)
+    public List<Result> GetMatchingTagResults(IEnumerable<string> tags, string tagToSearch,
+        FilesQueryData filesQueryData) =>
+        CreateTagsResults(filesQueryData, tags)
             .AsParallel()
             .Select(result => SearchUtility.CalculateResultRelevance(result, tagToSearch))
             .ToList();
 
-    private List<Result> CreateTagsResults(QueryData queryData, IEnumerable<string> tags) =>
-        tags.Select(tag => CreateTagResult(queryData, tag)).ToList();
+    private List<Result> CreateTagsResults(FilesQueryData filesQueryData, IEnumerable<string> tags) =>
+        tags.Select(tag => CreateTagResult(filesQueryData, tag)).ToList();
 
-    private Result CreateTagResult(QueryData queryData, string tag) =>
+    private Result CreateTagResult(FilesQueryData filesQueryData, string tag) =>
         new()
         {
             Title = $"#{tag}",
             SubTitle = "Tag",
             Icon = IconCache.GetCachedIconDelegate(Paths.ObsidianLogo),
-            Action = _ => ChangeQueryToAutoCompleteOne(queryData, tag, queryData.GetFirstInvalidTagIndex())
+            Action = _ =>
+                ChangeQueryToAutoCompleteOne(filesQueryData, tag, filesQueryData.GetFirstInvalidTagIndex())
         };
 
-    private bool ChangeQueryToAutoCompleteOne(QueryData queryData, string newTag, int index)
+    private bool ChangeQueryToAutoCompleteOne(FilesQueryData filesQueryData, string newTag, int index)
     {
-        string newQuery = queryData.GetRawQueryWithReplaced($"#{newTag}", index);
+        string newQuery = filesQueryData.GetRawQueryWithReplaced($"#{newTag}", index);
         publicApi.ChangeQuery($"{newQuery} ");
         return false;
     }

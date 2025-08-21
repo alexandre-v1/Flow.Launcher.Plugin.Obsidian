@@ -11,7 +11,11 @@ namespace Flow.Launcher.Plugin.Obsidian.Services.Implementations;
 
 public class VaultManager(Settings settings) : IVaultManager
 {
-    public HashSet<Vault> Vaults { get; private set; } = [];
+    private HashSet<Vault> _vaults = [];
+
+    public IEnumerable<Vault> GetVaults() => _vaults;
+
+    public IEnumerable<Vault> GetActiveVaults() => _vaults.Where(vault => vault.IsActive);
 
     public async Task<Vault?> GetUpdatedVaultAsync(string vaultId)
     {
@@ -33,19 +37,22 @@ public class VaultManager(Settings settings) : IVaultManager
 
     public async Task UpdateVaultListAsync()
     {
-        Vaults = [];
+        _vaults = [];
         List<(string id, string path)> vaults = await GetVaultsFromJson(Paths.VaultListJsonPath);
 
         foreach ((string id, string path) in vaults)
         {
             VaultSetting vaultSetting = settings.LoadVaultOrDefault(id);
             Vault newVault = new(id, path, vaultSetting);
-            Vaults.Add(newVault);
+            _vaults.Add(newVault);
         }
     }
 
     public Vault? GetVaultWithId(string vaultId) =>
-        Vaults.FirstOrDefault(vault => vault.Id == vaultId);
+        _vaults.FirstOrDefault(vault => vault.Id == vaultId);
+
+    public IEnumerable<Vault> GetVaultsWithIds(IEnumerable<string> vaultIds) =>
+        vaultIds.Select(GetVaultWithId).OfType<Vault>().ToList();
 
     private static async Task<List<(string id, string path)>> GetVaultsFromJson(string jsonPath)
     {

@@ -1,116 +1,145 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Flow.Launcher.Plugin.Obsidian.Extensions;
-using Flow.Launcher.Plugin.Obsidian.Services.Implementations;
 using Flow.Launcher.Plugin.Obsidian.Services.Interfaces;
 using Flow.Launcher.Plugin.Obsidian.Utilities;
 
 namespace Flow.Launcher.Plugin.Obsidian.Models;
 
-public class FilesQuery : BaseQuery
+public class FilesQuery : ObsidianQuery
 {
-    private readonly NoteCreatorService _noteCreatorService;
-    private readonly TagSearchService _tagSearchService;
+    private readonly INoteCreatorService _noteCreatorService;
+    private readonly ITagSearchService _tagSearchService;
     private readonly IVaultManager _vaultManager;
 
-    public FilesQuery(FilesQuerySetting querySetting, NoteCreatorService noteCreatorService,
-        TagSearchService tagSearchService, IVaultManager vaultManager) : base(querySetting)
+    private readonly HashSet<Vault> _vaults = [];
+    private HashSet<string> _vaultIds;
+
+    public FilesQuery(FilesQuerySetting setting, INoteCreatorService noteCreatorService,
+        ITagSearchService tagSearchService, IVaultManager vaultManager) : base(setting)
     {
-        QuerySetting = querySetting;
+        Setting = setting;
         _noteCreatorService = noteCreatorService;
         _tagSearchService = tagSearchService;
         _vaultManager = vaultManager;
-        LoadVaults();
+        RefreshVaults();
     }
 
-    private HashSet<Vault> Vaults { get; } = [];
-    protected override FilesQuerySetting QuerySetting { get; }
+    public override FilesQuerySetting Setting { get; }
 
     public override async Task<List<Result>> QueryAsync(Query query, CancellationToken cancellationToken)
     {
-        QueryData queryData = QueryData.Parse(query, QuerySetting.FileExtensions, Vaults);
-        if (queryData.IsEmptyQuery())
+        RefreshVaults();
+        FilesQueryData filesQueryData = new(query, Setting, _vaults);
+        if (filesQueryData.IsEmptyQuery())
         {
             return [];
         }
 
-        if (queryData.IsNoteCreationQuery())
+        if (filesQueryData.IsNoteCreationQuery())
         {
-            return HandleNoteCreation(queryData);
+            return HandleNoteCreation(filesQueryData);
         }
 
-        if (queryData.HasInvalidTags)
+        if (filesQueryData.HasInvalidTags)
         {
-            return HandleTagAutoComplete(queryData);
+            return HandleTagAutoComplete(filesQueryData);
         }
 
-        List<File> files = queryData.HasValidTags
-            ? queryData.GetFilesWithTags().ToList()
-            : queryData.GetFiles().ToList();
+        List<File> files = filesQueryData.HasValidTags
+            ? filesQueryData.GetFilesWithTags().ToList()
+            : filesQueryData.GetFiles().ToList();
 
-        if (!queryData.HasCleanSearchContent())
+        if (!filesQueryData.HasCleanSearchContent())
         {
             return files.ToResults();
         }
 
         const int minCharForSearchContent = 3;
-        bool searchContent = queryData.CleanSearchTerms.Length > 1 ||
-                             queryData.CleanSearchTerms[0].Length >= minCharForSearchContent;
+        bool searchContent = filesQueryData.CleanSearchTerms.Length > 1 ||
+                             filesQueryData.CleanSearchTerms[0].Length >= minCharForSearchContent;
 
-        files = await SearchUtility.SearchAndScoreFiles(files, queryData, searchContent, cancellationToken);
+        files = await SearchUtility.SearchAndScoreFiles(files, filesQueryData, searchContent, cancellationToken);
 
         files = SortAndTruncateFilesResults(files);
 
         List<Result> results = files.ToResults();
 
-        if (QuerySetting.AddCreateNoteResult)
+        if (Setting.AddCreateNoteResult)
         {
-            results.Add(_noteCreatorService.BuildSingleVaultNoteCreationResult(queryData));
+            results.Add(_noteCreatorService.BuildSingleVaultNoteCreationResult(filesQueryData));
         }
 
         return results;
     }
 
-    private void LoadVaults()
+    public override void Reload()
     {
-        if (QuerySetting.VaultIds is null)
+        RefreshVaults();
+        foreach (Vault vault in _vaults)
         {
-            QuerySetting.VaultIds = [];
-            foreach (Vault vault in _vaultManager.Vaults)
-            {
-                Vaults.Add(vault);
-                QuerySetting.VaultIds.Add(vault.Id);
-            }
-
-            return;
-        }
-
-        IEnumerable<Vault> vaults = QuerySetting.VaultIds.Select(_vaultManager.GetVaultWithId).OfType<Vault>();
-        foreach (Vault vault in vaults)
-        {
-            Vaults.Add(vault);
+            vault.UpdateVault();
         }
     }
 
-    private List<Result> HandleNoteCreation(QueryData queryData) =>
-        _noteCreatorService.BuildMultiVaultNoteCreationResults(queryData);
-
-    private List<Result> HandleTagAutoComplete(QueryData queryData)
+    [MemberNotNull(nameof(_vaultIds))]
+    private void RefreshVaults()
     {
-        HashSet<string> possibleTags = queryData.GetPossibleTags();
-        string tagToAutocomplete = queryData.InvalidTags.First();
+        Setting.VaultIds ??= _vaultManager.GetActiveVaults().Select(x => x.Id).ToHashSet();
 
-        return _tagSearchService.GetMatchingTagResults(possibleTags, tagToAutocomplete, queryData);
+        HashSet<string> vaultIdsToRemove;
+        HashSet<string> vaultIdsToAdd;
+        if (_vaultIds is not null)
+        {
+            vaultIdsToRemove = _vaultIds.Except(Setting.VaultIds).ToHashSet();
+            vaultIdsToAdd = Setting.VaultIds.Except(_vaultIds).ToHashSet();
+
+            if (vaultIdsToRemove.Count is 0 && vaultIdsToAdd.Count is 0)
+            {
+                return;
+            }
+        }
+        else
+        {
+            vaultIdsToRemove = [];
+            vaultIdsToAdd = Setting.VaultIds;
+        }
+
+        IEnumerable<Vault> vaultsToRemove = _vaultManager.GetVaultsWithIds(vaultIdsToRemove);
+        foreach (Vault vault in vaultsToRemove)
+        {
+            _vaults.Remove(vault);
+        }
+
+        IEnumerable<Vault> vaultsToAdd = _vaultManager.GetVaultsWithIds(vaultIdsToAdd);
+        foreach (Vault vault in vaultsToAdd)
+        {
+            _vaults.Add(vault);
+        }
+
+        _vaultIds = Setting.VaultIds;
+    }
+
+    private List<Result> HandleNoteCreation(FilesQueryData filesQueryData) =>
+        _noteCreatorService.BuildMultiVaultNoteCreationResults(filesQueryData);
+
+    private List<Result> HandleTagAutoComplete(FilesQueryData filesQueryData)
+    {
+        HashSet<string> possibleTags = filesQueryData.GetPossibleTags();
+        string tagToAutocomplete = filesQueryData.InvalidTags.First();
+
+        return _tagSearchService.GetMatchingTagResults(possibleTags, tagToAutocomplete, filesQueryData);
     }
 
     private List<File> SortAndTruncateFilesResults(List<File> files) =>
-        QuerySetting.MaxResult is 0
+        Setting.MaxResult is 0
             ? files.Where(file => file.Score > 0).ToList()
             : SortFilesResults(files)
                 .Where(file => file.Score > 0)
-                .Take(QuerySetting.MaxResult)
+                .Take(Setting.MaxResult)
                 .ToList();
 
     private static List<File> SortFilesResults(List<File> files) =>
