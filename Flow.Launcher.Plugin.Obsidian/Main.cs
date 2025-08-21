@@ -8,10 +8,12 @@ using Flow.Launcher.Plugin.Obsidian.Services.Implementations;
 using Flow.Launcher.Plugin.Obsidian.Services.Interfaces;
 using Flow.Launcher.Plugin.Obsidian.ViewModels;
 using Flow.Launcher.Plugin.Obsidian.Views;
+using JetBrains.Annotations;
 using ContextMenuService = Flow.Launcher.Plugin.Obsidian.Services.Implementations.ContextMenuService;
 
 namespace Flow.Launcher.Plugin.Obsidian;
 
+[UsedImplicitly]
 public class Obsidian : IAsyncPlugin, ISettingProvider, IAsyncReloadable, IContextMenu
 {
     private IContextMenu? _contextMenu;
