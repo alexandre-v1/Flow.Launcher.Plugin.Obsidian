@@ -11,7 +11,7 @@ namespace Flow.Launcher.Plugin.Obsidian.Services.Implementations;
 
 public class VaultManager(Settings settings) : IVaultManager
 {
-    private HashSet<Vault> _vaults = [];
+    private readonly HashSet<Vault> _vaults = [];
 
     public IEnumerable<Vault> GetVaults() => _vaults;
 
