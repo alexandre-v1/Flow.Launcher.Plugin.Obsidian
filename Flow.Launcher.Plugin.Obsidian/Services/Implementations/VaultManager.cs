@@ -17,30 +17,34 @@ public class VaultManager(Settings settings) : IVaultManager
 
     public IEnumerable<Vault> GetActiveVaults() => _vaults.Where(vault => vault.IsActive);
 
-    public async Task<Vault?> GetUpdatedVaultAsync(string vaultId)
-    {
-        Vault? vault = GetVaultWithId(vaultId);
-        if (vault is null)
-        {
-            return null;
-        }
-
-        await UpdateVaultAsync(vault);
-        return vault;
-    }
-
     public async Task UpdateVaultAsync(Vault vault)
     {
         vault.Path = await GetVaultPathAsync(vault.Id) ?? vault.Path;
         vault.UpdateVault();
     }
 
-    public async Task UpdateVaultListAsync()
+    public async Task ReloadVaultsAsync()
     {
-        _vaults = [];
-        List<(string id, string path)> vaults = await GetVaultsFromJson(Paths.VaultListJsonPath);
+        Dictionary<string, string> vaultsToLoad = await GetVaultsFromJson(Paths.VaultListJsonPath);
 
-        foreach ((string id, string path) in vaults)
+        foreach (var vault in _vaults)
+        {
+            string id = vault.Id;
+            bool vaultStillExists = vaultsToLoad.ContainsKey(id);
+
+            if (vaultStillExists)
+            {
+                vault.Path = vaultsToLoad[id];
+                vault.UpdateVault();
+                vaultsToLoad.Remove(id);
+            }
+            else
+            {
+                _vaults.Remove(vault);
+            }
+        }
+
+        foreach ((string id, string path) in vaultsToLoad)
         {
             VaultSetting vaultSetting = settings.LoadVaultOrDefault(id);
             Vault newVault = new(id, path, vaultSetting);
@@ -54,7 +58,7 @@ public class VaultManager(Settings settings) : IVaultManager
     public IEnumerable<Vault> GetVaultsWithIds(IEnumerable<string> vaultIds) =>
         vaultIds.Select(GetVaultWithId).OfType<Vault>().ToList();
 
-    private static async Task<List<(string id, string path)>> GetVaultsFromJson(string jsonPath)
+    private static async Task<Dictionary<string, string>> GetVaultsFromJson(string jsonPath)
     {
         string jsonString = await File.ReadAllTextAsync(jsonPath);
         using JsonDocument document = JsonDocument.Parse(jsonString);
@@ -62,7 +66,7 @@ public class VaultManager(Settings settings) : IVaultManager
         const string vaultJsonElement = "vaults";
         JsonElement vaultsJson = document.RootElement.GetProperty(vaultJsonElement);
 
-        List<(string id, string path)> vaults = [];
+        Dictionary<string, string> vaults = [];
 
         foreach (JsonProperty vaultJson in vaultsJson.EnumerateObject())
         {
@@ -78,7 +82,8 @@ public class VaultManager(Settings settings) : IVaultManager
                 continue;
             }
 
-            vaults.Add((vaultJson.Name, path));
+            string id = vaultJson.Name;
+            vaults[id] = path;
         }
 
         return vaults;
@@ -86,16 +91,7 @@ public class VaultManager(Settings settings) : IVaultManager
 
     private static async Task<string?> GetVaultPathAsync(string vaultId)
     {
-        List<(string id, string path)> vaults = await GetVaultsFromJson(Paths.VaultListJsonPath);
-
-        foreach ((string id, string path) in vaults)
-        {
-            if (vaultId == id)
-            {
-                return path;
-            }
-        }
-
-        return null;
+        Dictionary<string, string> vaults = await GetVaultsFromJson(Paths.VaultListJsonPath);
+        return vaults[vaultId];
     }
 }

@@ -32,7 +32,7 @@ public class Obsidian : IAsyncPlugin, ISettingProvider, IAsyncReloadable, IConte
         _settings = _publicApi.LoadSettingJsonStorage<Settings>();
         _vaultManager = new VaultManager(_settings);
 
-        await _vaultManager.UpdateVaultListAsync();
+        await _vaultManager.ReloadVaultsAsync();
 
         _queryService = new QueryService(context, _settings, _vaultManager);
         _contextMenu = new ContextMenuService(this, _vaultManager, _settings);
@@ -60,7 +60,7 @@ public class Obsidian : IAsyncPlugin, ISettingProvider, IAsyncReloadable, IConte
             return;
         }
 
-        await _vaultManager.UpdateVaultListAsync();
+        await _vaultManager.ReloadVaultsAsync();
     }
 
     public List<Result> LoadContextMenus(Result selectedResult) =>

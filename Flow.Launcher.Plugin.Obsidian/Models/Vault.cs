@@ -79,6 +79,7 @@ public class Vault
         UpdateFiles();
         UpdateObsidianPlugins();
         VaultUpdated?.Invoke();
+        _isDirty = false;
     }
 
     public bool OpenInNewTabByDefault() => HasAdvancedUri && Setting.OpenInNewTabByDefault;

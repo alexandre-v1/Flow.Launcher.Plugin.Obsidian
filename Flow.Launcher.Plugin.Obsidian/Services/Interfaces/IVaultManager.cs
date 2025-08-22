@@ -10,9 +10,7 @@ public interface IVaultManager
 
     IEnumerable<Vault> GetActiveVaults();
 
-    Task<Vault?> GetUpdatedVaultAsync(string vaultId);
-
-    Task UpdateVaultListAsync();
+    Task ReloadVaultsAsync();
 
     Task UpdateVaultAsync(Vault vault);
 
