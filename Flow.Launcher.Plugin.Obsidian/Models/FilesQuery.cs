@@ -11,6 +11,9 @@ namespace Flow.Launcher.Plugin.Obsidian.Models;
 
 public class FilesQuery : ObsidianQuery
 {
+    public static readonly ObsidianQueryInfo QueryInfo = new(typeof(FilesQuery), "Files",
+        "Search files, open and create them", new FluentGlyphInfo(Glyph.File));
+
     private readonly INoteCreatorService _noteCreatorService;
     private readonly ITagSearchService _tagSearchService;
     private readonly IVaultManager _vaultManager;
