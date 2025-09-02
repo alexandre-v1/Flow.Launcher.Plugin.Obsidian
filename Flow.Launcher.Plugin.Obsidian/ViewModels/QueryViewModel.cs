@@ -10,7 +10,7 @@ namespace Flow.Launcher.Plugin.Obsidian.ViewModels;
 
 public partial class QueryViewModel(
     ObsidianQuerySetting obsidianQuerySetting,
-    ISettingWindowManager windowManager,
+    ISettingsWindowManager windowManager,
     IQueryService queryService) : BaseModel
 {
     [UsedImplicitly] // For design-time data

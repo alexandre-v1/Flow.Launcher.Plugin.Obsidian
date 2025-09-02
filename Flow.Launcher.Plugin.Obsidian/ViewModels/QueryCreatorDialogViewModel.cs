@@ -12,12 +12,12 @@ public partial class QueryCreatorDialogViewModel : BaseModel
     public delegate void QueryCreatedEventHandler(ObsidianQuery query);
 
     private readonly IQueryService _queryService;
-    private readonly ISettingWindowManager _settingWindowManager;
+    private readonly ISettingsWindowManager _settingWindowManager;
 
     [UsedImplicitly] // For design-time data
     public QueryCreatorDialogViewModel() : this(null!, null!) { }
 
-    public QueryCreatorDialogViewModel(ISettingWindowManager settingWindowManager, IQueryService queryService)
+    public QueryCreatorDialogViewModel(ISettingsWindowManager settingWindowManager, IQueryService queryService)
     {
         QueryTypes.Add(new ObsidianQueryInfoViewModel(FilesQuery.QueryInfo));
         _settingWindowManager = settingWindowManager;

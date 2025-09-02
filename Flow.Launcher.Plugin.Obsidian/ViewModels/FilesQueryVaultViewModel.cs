@@ -12,17 +12,17 @@ namespace Flow.Launcher.Plugin.Obsidian.ViewModels;
 public partial class FilesQueryVaultViewModel : BaseModel
 {
     private readonly FilesQuerySetting _querySetting;
-    private readonly ISettingWindowManager _settingWindowManager;
+    private readonly ISettingsWindowManager _settingsWindowManager;
     private readonly Vault? _vault;
 
     public string DesignName = "Vault Name";
     public string DesignPath = "Vault Path";
 
     public FilesQueryVaultViewModel(FilesQuerySetting querySetting, Vault vault,
-        ISettingWindowManager settingWindowManager)
+        ISettingsWindowManager settingsWindowManager)
     {
         _querySetting = querySetting;
-        _settingWindowManager = settingWindowManager;
+        _settingsWindowManager = settingsWindowManager;
         _vault = vault;
 
         vault.VaultUpdated += OnVaultUpdated;
@@ -32,7 +32,7 @@ public partial class FilesQueryVaultViewModel : BaseModel
     public FilesQueryVaultViewModel()
     {
         _querySetting = new FilesQuerySetting();
-        _settingWindowManager = null!;
+        _settingsWindowManager = null!;
     }
 
     private string VaultId => _vault?.Id ?? string.Empty;
@@ -69,6 +69,6 @@ public partial class FilesQueryVaultViewModel : BaseModel
         }
 
         VaultSettingsViewModel vaultSettingsViewModel = new(_vault);
-        _settingWindowManager.ShowView<VaultSettingsView>(vaultSettingsViewModel);
+        _settingsWindowManager.ShowView<VaultSettingsView>(vaultSettingsViewModel);
     }
 }

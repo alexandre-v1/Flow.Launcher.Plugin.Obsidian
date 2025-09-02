@@ -12,7 +12,7 @@ public partial class QueriesListViewModel : BaseModel
 {
     private readonly List<ObsidianQuerySetting> _queriesSettings;
     private readonly IQueryService _queryService;
-    private readonly ISettingWindowManager _settingWindowManager;
+    private readonly ISettingsWindowManager _windowManager;
 
     public QueriesListViewModel() : this(
     [
@@ -21,11 +21,11 @@ public partial class QueriesListViewModel : BaseModel
     ], null!, null!) { }
 
     public QueriesListViewModel(List<ObsidianQuerySetting> queriesSettings,
-        ISettingWindowManager settingWindowManager,
+        ISettingsWindowManager windowManager,
         IQueryService queryService)
     {
         _queriesSettings = queriesSettings;
-        _settingWindowManager = settingWindowManager;
+        _windowManager = windowManager;
         _queryService = queryService;
         Queries = new ObservableCollection<QueryViewModel>(CreateQueryViewModels());
     }
@@ -34,8 +34,11 @@ public partial class QueriesListViewModel : BaseModel
 
     private IEnumerable<QueryViewModel> CreateQueryViewModels() => _queriesSettings.Select(CreateQueryViewModel);
 
-    private QueryViewModel CreateQueryViewModel(ObsidianQuerySetting querySetting) =>
-        new(querySetting, _settingWindowManager, _queryService);
+    private QueryViewModel CreateQueryViewModel(ObsidianQuerySetting querySetting)
+    {
+        QueryViewModel queryViewModel = new(querySetting, _windowManager, _queryService);
+        return queryViewModel;
+    }
 
     [RelayCommand]
     private void OpenQueryCreator()

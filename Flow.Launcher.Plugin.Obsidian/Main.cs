@@ -24,7 +24,7 @@ public class Obsidian : IAsyncPlugin, ISettingProvider, IAsyncReloadable, IConte
     private SettingsViewModel? _settingsViewModel;
 
     private IVaultManager? _vaultManager;
-    private ISettingWindowManager? _windowManager;
+    private ISettingsWindowManager? _windowManager;
 
     public async Task InitAsync(PluginInitContext context)
     {
@@ -37,7 +37,7 @@ public class Obsidian : IAsyncPlugin, ISettingProvider, IAsyncReloadable, IConte
         _queryService = new QueryService(context, _settings, _vaultManager);
         _contextMenu = new ContextMenuService(this, _vaultManager, _settings);
 
-        _windowManager = new SettingWindowManager(_settings);
+        _windowManager = new SettingsWindowManager(_settings);
         _settingsViewModel = new SettingsViewModel(_settings, this, _vaultManager, _windowManager, _queryService);
     }
 
