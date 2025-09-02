@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using Flow.Launcher.Plugin.Obsidian.Models;
-using Flow.Launcher.Plugin.Obsidian.Services.Interfaces;
+using JetBrains.Annotations;
 
 namespace Flow.Launcher.Plugin.Obsidian.ViewModels;
 
@@ -9,6 +9,7 @@ public partial class VaultSettingsViewModel : BaseModel
 {
     private readonly Vault? _vault;
 
+    [UsedImplicitly] // For design-time data
     public VaultSettingsViewModel()
     {
         FileExtensionListViewModel = new FileExtensionsListViewModel();
