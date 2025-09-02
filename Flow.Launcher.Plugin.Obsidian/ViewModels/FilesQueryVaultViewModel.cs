@@ -14,18 +14,16 @@ public partial class FilesQueryVaultViewModel : BaseModel
     private readonly FilesQuerySetting _querySetting;
     private readonly ISettingWindowManager _settingWindowManager;
     private readonly Vault? _vault;
-    private readonly IVaultManager _vaultManager;
 
     public string DesignName = "Vault Name";
     public string DesignPath = "Vault Path";
 
     public FilesQueryVaultViewModel(FilesQuerySetting querySetting, Vault vault,
-        ISettingWindowManager settingWindowManager, IVaultManager vaultManager)
+        ISettingWindowManager settingWindowManager)
     {
         _querySetting = querySetting;
         _settingWindowManager = settingWindowManager;
         _vault = vault;
-        _vaultManager = vaultManager;
 
         vault.VaultUpdated += OnVaultUpdated;
     }
@@ -35,7 +33,6 @@ public partial class FilesQueryVaultViewModel : BaseModel
     {
         _querySetting = new FilesQuerySetting();
         _settingWindowManager = null!;
-        _vaultManager = null!;
     }
 
     private string VaultId => _vault?.Id ?? string.Empty;
@@ -71,7 +68,7 @@ public partial class FilesQueryVaultViewModel : BaseModel
             return;
         }
 
-        VaultSettingsViewModel vaultSettingsViewModel = new(_vault, _vaultManager);
+        VaultSettingsViewModel vaultSettingsViewModel = new(_vault);
         _settingWindowManager.ShowView<VaultSettingsView>(vaultSettingsViewModel);
     }
 }

@@ -9,13 +9,10 @@ namespace Flow.Launcher.Plugin.Obsidian.ViewModels;
 public class VaultsListViewModel : BaseModel
 {
     private readonly ISettingWindowManager _settingWindowManager;
-    private readonly IVaultManager _vaultManager;
 
-    public VaultsListViewModel(IEnumerable<Vault> vaults, ISettingWindowManager settingWindowManager,
-        IVaultManager vaultManager)
+    public VaultsListViewModel(IEnumerable<Vault> vaults, ISettingWindowManager settingWindowManager)
     {
         _settingWindowManager = settingWindowManager;
-        _vaultManager = vaultManager;
         Vaults = CreateVaultViewModels(vaults);
     }
 
@@ -23,7 +20,6 @@ public class VaultsListViewModel : BaseModel
     public VaultsListViewModel()
     {
         _settingWindowManager = null!;
-        _vaultManager = null!;
         Vaults =
         [
             new VaultViewModel { DesignName = "Sample Vault 1", DesignPath = @"C:\Vaults\Sample1", IsActive = true },
@@ -35,5 +31,5 @@ public class VaultsListViewModel : BaseModel
     public HashSet<VaultViewModel> Vaults { get; }
 
     private HashSet<VaultViewModel> CreateVaultViewModels(IEnumerable<Vault> vaults) => vaults
-        .Select(vault => new VaultViewModel(vault, _settingWindowManager, _vaultManager)).ToHashSet();
+        .Select(vault => new VaultViewModel(vault, _settingWindowManager)).ToHashSet();
 }

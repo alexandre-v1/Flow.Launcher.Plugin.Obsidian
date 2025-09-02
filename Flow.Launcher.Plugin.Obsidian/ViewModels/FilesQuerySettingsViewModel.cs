@@ -13,13 +13,11 @@ public partial class FilesQuerySettingsViewModel : BaseModel
     private readonly IQueryService _queryService;
     private readonly FilesQuerySetting _setting;
     private readonly ISettingWindowManager _settingWindowManager;
-    private readonly IVaultManager _vaultManager;
 
     public FilesQuerySettingsViewModel(FilesQuerySetting setting, IQueryService queryService,
         IVaultManager vaultManager, ISettingWindowManager settingWindowManager)
     {
         _setting = setting;
-        _vaultManager = vaultManager;
         _settingWindowManager = settingWindowManager;
         _queryService = queryService;
 
@@ -33,7 +31,6 @@ public partial class FilesQuerySettingsViewModel : BaseModel
     public FilesQuerySettingsViewModel()
     {
         _settingWindowManager = null!;
-        _vaultManager = null!;
         _queryService = null!;
 
         Vaults =
@@ -82,7 +79,7 @@ public partial class FilesQuerySettingsViewModel : BaseModel
     public HashSet<FilesQueryVaultViewModel> Vaults { get; }
 
     private IEnumerable<FilesQueryVaultViewModel> CreateVaultViewModels(IEnumerable<Vault> vaults) => vaults
-        .Select(vault => new FilesQueryVaultViewModel(_setting, vault, _settingWindowManager, _vaultManager));
+        .Select(vault => new FilesQueryVaultViewModel(_setting, vault, _settingWindowManager));
 
     [RelayCommand]
     private void ReloadQuery() => _queryService.ReloadQuery(_setting);

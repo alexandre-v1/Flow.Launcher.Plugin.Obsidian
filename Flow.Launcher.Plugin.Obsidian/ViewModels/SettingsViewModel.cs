@@ -18,7 +18,7 @@ public class SettingsViewModel : BaseModel
         ISettingWindowManager settingWindowManager, IQueryService queryService)
     {
         ReloadablePlugin = reloadablePlugin;
-        VaultsListViewModel = new VaultsListViewModel(vaultManager.GetVaults(), settingWindowManager, vaultManager);
+        VaultsListViewModel = new VaultsListViewModel(vaultManager.GetVaults(), settingWindowManager);
         QueriesListViewModel =
             new QueriesListViewModel(settings.Queries, settingWindowManager, vaultManager, queryService);
     }

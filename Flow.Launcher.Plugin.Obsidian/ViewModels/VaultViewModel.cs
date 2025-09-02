@@ -13,29 +13,23 @@ public partial class VaultViewModel : BaseModel
 {
     private readonly ISettingWindowManager _settingWindowManager;
     private readonly Vault? _vault;
-    private readonly IVaultManager _vaultManager;
 
     private bool _isActive;
 
     public string DesignName = "Vault Name";
     public string DesignPath = "Vault Path";
 
-    public VaultViewModel(Vault vault, ISettingWindowManager settingWindowManager, IVaultManager vaultManager)
+    public VaultViewModel(Vault vault, ISettingWindowManager settingWindowManager)
     {
         _settingWindowManager = settingWindowManager;
         _vault = vault;
-        _vaultManager = vaultManager;
         _isActive = vault.IsActive;
 
         vault.VaultUpdated += OnVaultUpdated;
     }
 
     [UsedImplicitly] // For design-time data
-    public VaultViewModel()
-    {
-        _settingWindowManager = null!;
-        _vaultManager = null!;
-    }
+    public VaultViewModel() => _settingWindowManager = null!;
 
     public static ImageSource Icon => IconCache.GetCachedImage(Paths.ObsidianLogo);
     public string Name => _vault?.Name ?? DesignName;
@@ -76,7 +70,7 @@ public partial class VaultViewModel : BaseModel
             return;
         }
 
-        VaultSettingsViewModel vaultSettingsViewModel = new(_vault, _vaultManager);
+        VaultSettingsViewModel vaultSettingsViewModel = new(_vault);
         _settingWindowManager.ShowView<VaultSettingsView>(vaultSettingsViewModel);
     }
 }
