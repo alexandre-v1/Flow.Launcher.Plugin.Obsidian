@@ -49,7 +49,7 @@ public class ContextMenuService(Obsidian obsidian, IVaultManager vaultManager, S
         new()
         {
             Title = "Open in new tab",
-            Glyph = new GlyphInfo(Font.Family, Font.OpenInNewTabGlyph),
+            Glyph = new GlyphInfo(Glyph.Family, Glyph.OpenInNewTab),
             Action = _ =>
             {
                 file.Open(true);
@@ -75,7 +75,7 @@ public class ContextMenuService(Obsidian obsidian, IVaultManager vaultManager, S
         {
             Title = $"Exclude {folder} folder locally",
             Action = _ => TryToExcludeLocalFolder(folder, vaultId),
-            Glyph = new GlyphInfo(Font.Family, Font.ExcludeGlyph)
+            Glyph = new GlyphInfo(Glyph.Family, Glyph.Exclude)
         };
 
     private bool TryToExcludeLocalFolder(string folder, string? vaultId)
