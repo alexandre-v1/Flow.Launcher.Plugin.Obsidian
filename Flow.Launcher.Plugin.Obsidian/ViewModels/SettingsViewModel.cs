@@ -20,7 +20,7 @@ public class SettingsViewModel : BaseModel
         ReloadablePlugin = reloadablePlugin;
         VaultsListViewModel = new VaultsListViewModel(vaultManager.GetVaults(), settingWindowManager);
         QueriesListViewModel =
-            new QueriesListViewModel(settings.Queries, settingWindowManager, vaultManager, queryService);
+            new QueriesListViewModel(settings.Queries, settingWindowManager, queryService);
     }
 
     public VaultsListViewModel VaultsListViewModel { get; }

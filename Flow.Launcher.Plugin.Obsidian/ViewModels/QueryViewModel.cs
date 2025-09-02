@@ -1,4 +1,3 @@
-using System;
 using System.Windows.Media;
 using CommunityToolkit.Mvvm.Input;
 using Flow.Launcher.Plugin.Obsidian.Models;
@@ -12,11 +11,10 @@ namespace Flow.Launcher.Plugin.Obsidian.ViewModels;
 public partial class QueryViewModel(
     ObsidianQuerySetting obsidianQuerySetting,
     ISettingWindowManager windowManager,
-    IVaultManager vaultManager,
     IQueryService queryService) : BaseModel
 {
     [UsedImplicitly] // For design-time data
-    public QueryViewModel() : this(new ObsidianQuerySetting(), null!, null!, null!) { }
+    public QueryViewModel() : this(new ObsidianQuerySetting(), null!, null!) { }
 
     public string Name => obsidianQuerySetting.Name;
 
@@ -43,22 +41,7 @@ public partial class QueryViewModel(
     }
 
     [RelayCommand]
-    private void OpenQuerySettings()
-    {
-        if (windowManager is null)
-        {
-            throw new NullReferenceException(nameof(windowManager));
-        }
-
-        switch (obsidianQuerySetting)
-        {
-            case FilesQuerySetting filesQuerySetting:
-                FilesQuerySettingsViewModel filesQuerySettingsViewModel =
-                    new(filesQuerySetting, queryService, vaultManager, windowManager);
-                windowManager.ShowView<FilesQuerySettingsView>(filesQuerySettingsViewModel);
-                break;
-        }
-    }
+    private void OpenQuerySettings() => queryService.ShowQuerySettingView(obsidianQuerySetting, windowManager);
 
     [RelayCommand]
     private void SetActionKeyword()

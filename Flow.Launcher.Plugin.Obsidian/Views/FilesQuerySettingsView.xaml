@@ -27,6 +27,7 @@
             <RowDefinition Height="73" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+
         <TextBlock
             Grid.Row="0"
             MaxWidth="1000"
@@ -134,11 +135,13 @@
 
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter TargetName="border" Property="Background" Value="{DynamicResource Color22B}" />
+                                                <Setter TargetName="border" Property="Background"
+                                                        Value="{DynamicResource Color22B}" />
                                             </Trigger>
 
                                             <Trigger Property="IsPressed" Value="True">
-                                                <Setter TargetName="border" Property="Background" Value="{DynamicResource Color23B}" />
+                                                <Setter TargetName="border" Property="Background"
+                                                        Value="{DynamicResource Color23B}" />
                                             </Trigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>

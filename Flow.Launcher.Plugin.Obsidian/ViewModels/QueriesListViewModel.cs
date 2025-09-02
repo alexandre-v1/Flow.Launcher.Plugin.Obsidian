@@ -1,45 +1,55 @@
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using CommunityToolkit.Mvvm.Input;
 using Flow.Launcher.Plugin.Obsidian.Models;
 using Flow.Launcher.Plugin.Obsidian.Services.Interfaces;
+using Flow.Launcher.Plugin.Obsidian.Views;
 
 namespace Flow.Launcher.Plugin.Obsidian.ViewModels;
 
-public class QueriesListViewModel : BaseModel
+public partial class QueriesListViewModel : BaseModel
 {
+    private readonly List<ObsidianQuerySetting> _queriesSettings;
     private readonly IQueryService _queryService;
     private readonly ISettingWindowManager _settingWindowManager;
-    private readonly IVaultManager _vaultManager;
 
-    public QueriesListViewModel(List<ObsidianQuerySetting> queriesSettings, ISettingWindowManager settingWindowManager,
-        IVaultManager vaultManager, IQueryService queryService)
+    public QueriesListViewModel() : this(
+    [
+        new FilesQuerySetting { Name = "Default Query", Keyword = "ob" },
+        new FilesQuerySetting { Name = "Another Query", Keyword = "another keyword" }
+    ], null!, null!) { }
+
+    public QueriesListViewModel(List<ObsidianQuerySetting> queriesSettings,
+        ISettingWindowManager settingWindowManager,
+        IQueryService queryService)
     {
+        _queriesSettings = queriesSettings;
         _settingWindowManager = settingWindowManager;
-        _vaultManager = vaultManager;
         _queryService = queryService;
-        Queries = CreateQueriesViewModelList(queriesSettings);
+        Queries = new ObservableCollection<QueryViewModel>(CreateQueryViewModels());
     }
 
+    public ObservableCollection<QueryViewModel> Queries { get; set; }
 
-    public QueriesListViewModel()
+    private IEnumerable<QueryViewModel> CreateQueryViewModels() => _queriesSettings.Select(CreateQueryViewModel);
+
+    private QueryViewModel CreateQueryViewModel(ObsidianQuerySetting querySetting) =>
+        new(querySetting, _settingWindowManager, _queryService);
+
+    [RelayCommand]
+    private void OpenQueryCreator()
     {
-        _settingWindowManager = null!;
-        _vaultManager = null!;
-        _queryService = null!;
-
-        List<ObsidianQuerySetting> queriesSettings =
-        [
-            new FilesQuerySetting { Name = "Default Query", Keyword = "ob" },
-            new FilesQuerySetting { Name = "Another Query", Keyword = "another keyword" }
-        ];
-        Queries = CreateQueriesViewModelList(queriesSettings);
+        QueryCreatorDialogViewModel viewModel = new(_settingWindowManager, _queryService);
+        QueryCreatorDialog queryCreator = new() { DataContext = viewModel };
+        viewModel.OnRequestClose += (_, _) => queryCreator.Close();
+        viewModel.OnQueryCreated += OnQueryCreated;
+        queryCreator.ShowDialog();
     }
 
-    public List<QueryViewModel> Queries { get; }
-
-    private List<QueryViewModel> CreateQueriesViewModelList(List<ObsidianQuerySetting> queriesSettings) =>
-        queriesSettings
-            .Select(querySetting =>
-                new QueryViewModel(querySetting, _settingWindowManager, _vaultManager, _queryService))
-            .ToList();
+    private void OnQueryCreated(ObsidianQuery query)
+    {
+        QueryViewModel queryViewModel = CreateQueryViewModel(query.Setting);
+        Queries.Add(queryViewModel);
+    }
 }

@@ -9,7 +9,7 @@ public class ObsidianQuerySetting
     public string Name { get; set; } = "Query Name";
 
     [JsonInclude]
-    public string Keyword { get; set; } = "Keyword";
+    public string Keyword { get; set; } = "*";
 
     [JsonInclude]
     public bool IsActive { get; set; } = true;

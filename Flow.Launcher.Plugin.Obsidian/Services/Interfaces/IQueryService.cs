@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,4 +19,10 @@ public interface IQueryService
     void ReloadQuery(ObsidianQuerySetting setting);
 
     bool TryChangeKeyword(ObsidianQuerySetting setting, string newKeyword);
+
+    void ShowQuerySettingView(ObsidianQuerySetting querySetting, ISettingWindowManager windowManager);
+
+    ObsidianQuery CreateQuery(ObsidianQuerySetting obsidianQuerySetting);
+
+    ObsidianQuery CreateQuery(Type type, string name);
 }

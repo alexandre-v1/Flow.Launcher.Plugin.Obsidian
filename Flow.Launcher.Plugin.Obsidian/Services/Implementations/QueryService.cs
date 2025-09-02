@@ -5,6 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Flow.Launcher.Plugin.Obsidian.Models;
 using Flow.Launcher.Plugin.Obsidian.Services.Interfaces;
+using Flow.Launcher.Plugin.Obsidian.ViewModels;
+using Flow.Launcher.Plugin.Obsidian.Views;
 
 namespace Flow.Launcher.Plugin.Obsidian.Services.Implementations;
 
@@ -71,36 +73,60 @@ public class QueryService : IQueryService
         return true;
     }
 
+    public void ShowQuerySettingView(ObsidianQuerySetting querySetting, ISettingWindowManager windowManager)
+    {
+        switch (querySetting)
+        {
+            case FilesQuerySetting setting:
+                FilesQuerySettingsViewModel viewModel = new(setting, this, _vaultManager, windowManager);
+                windowManager.ShowView<FilesQuerySettingsView>(viewModel);
+                break;
+            default:
+                throw new ArgumentException($"{nameof(querySetting)} is not supported");
+        }
+    }
+
+    public ObsidianQuery CreateQuery(ObsidianQuerySetting obsidianQuerySetting)
+    {
+        ObsidianQuery obsidianQuery = obsidianQuerySetting switch
+        {
+            FilesQuerySetting setting => new FilesQuery(setting, _noteCreatorService, _tagSearchService, _vaultManager),
+            _ => throw new ArgumentException($"{nameof(obsidianQuerySetting)} is not supported")
+        };
+
+        _queries.Add(obsidianQuery);
+        return obsidianQuery;
+    }
+
+    public ObsidianQuery CreateQuery(Type type, string name)
+    {
+        if (!type.IsSubclassOf(typeof(ObsidianQuery)))
+        {
+            throw new Exception($"Query type must be a subclass of {nameof(ObsidianQuery)}");
+        }
+
+        if (type == typeof(FilesQuery))
+        {
+            FilesQuerySetting setting = new() { Name = name };
+            return new FilesQuery(setting, _noteCreatorService, _tagSearchService, _vaultManager);
+        }
+
+        throw new ArgumentException($"{type.Name} is not supported");
+    }
+
     private void RegisterQueries()
     {
         Keywords.Clear();
         foreach (ObsidianQuerySetting querySetting in _settings.Queries)
         {
-            AddQuery(querySetting);
-        }
-    }
+            bool keywordRegistered = TryRegisterKeyword(querySetting.Keyword);
+            if (!keywordRegistered)
+            {
+                continue;
+            }
 
-    private bool AddQuery(ObsidianQuerySetting obsidianQuerySetting)
-    {
-        bool keywordRegistered = TryRegisterKeyword(obsidianQuerySetting.Keyword);
-        if (keywordRegistered)
-        {
-            CreateQuery(obsidianQuerySetting);
-        }
-
-        return keywordRegistered;
-    }
-
-    private void CreateQuery(ObsidianQuerySetting obsidianQuerySetting)
-    {
-        switch (obsidianQuerySetting)
-        {
-            case FilesQuerySetting filesQuery:
-                FilesQuery fileQuery = new(filesQuery, _noteCreatorService, _tagSearchService, _vaultManager);
-                _queries.Add(fileQuery);
-                break;
-            default:
-                throw new InvalidCastException($"Query type {obsidianQuerySetting.GetType()} is not implemented");
+            ObsidianQuery newQuery = CreateQuery(querySetting);
+            _queries.Add(newQuery);
         }
     }
 
