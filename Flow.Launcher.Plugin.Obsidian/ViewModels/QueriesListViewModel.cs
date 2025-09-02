@@ -30,23 +30,24 @@ public partial class QueriesListViewModel : BaseModel
         Queries = new ObservableCollection<QueryViewModel>(CreateQueryViewModels());
     }
 
-    public ObservableCollection<QueryViewModel> Queries { get; set; }
+    public ObservableCollection<QueryViewModel> Queries { get; }
 
     private IEnumerable<QueryViewModel> CreateQueryViewModels() => _queriesSettings.Select(CreateQueryViewModel);
 
     private QueryViewModel CreateQueryViewModel(ObsidianQuerySetting querySetting)
     {
         QueryViewModel queryViewModel = new(querySetting, _windowManager, _queryService);
+        queryViewModel.QueryDeleted += OnQueryDeleted;
         return queryViewModel;
     }
 
     [RelayCommand]
     private void OpenQueryCreator()
     {
-        QueryCreatorDialogViewModel viewModel = new(_settingWindowManager, _queryService);
+        QueryCreatorDialogViewModel viewModel = new(_queryService);
         QueryCreatorDialog queryCreator = new() { DataContext = viewModel };
-        viewModel.OnRequestClose += (_, _) => queryCreator.Close();
-        viewModel.OnQueryCreated += OnQueryCreated;
+        viewModel.RequestClose += queryCreator.Close;
+        viewModel.QueryCreated += OnQueryCreated;
         queryCreator.ShowDialog();
     }
 
@@ -54,5 +55,12 @@ public partial class QueriesListViewModel : BaseModel
     {
         QueryViewModel queryViewModel = CreateQueryViewModel(query.Setting);
         Queries.Add(queryViewModel);
+        queryViewModel.OpenQuerySettingsCommand.Execute(null);
+    }
+
+    private void OnQueryDeleted(QueryViewModel queryViewModel)
+    {
+        queryViewModel.QueryDeleted -= OnQueryDeleted;
+        Queries.Remove(queryViewModel);
     }
 }

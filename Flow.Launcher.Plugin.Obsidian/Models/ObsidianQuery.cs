@@ -6,6 +6,8 @@ namespace Flow.Launcher.Plugin.Obsidian.Models;
 
 public abstract class ObsidianQuery(ObsidianQuerySetting setting)
 {
+    public string Name => Setting.Name;
+
     public virtual ObsidianQuerySetting Setting { get; } = setting;
 
     public bool IsSameActionKeyword(Query query) => Setting.Keyword == query.ActionKeyword;

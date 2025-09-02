@@ -13,6 +13,8 @@ public partial class QueryViewModel(
     ISettingsWindowManager windowManager,
     IQueryService queryService) : BaseModel
 {
+    public delegate void QueryDeletedEventHandler(QueryViewModel queryViewModel);
+
     [UsedImplicitly] // For design-time data
     public QueryViewModel() : this(new ObsidianQuerySetting(), null!, null!) { }
 
@@ -40,8 +42,33 @@ public partial class QueryViewModel(
         }
     }
 
+    public event QueryDeletedEventHandler? QueryDeleted;
+
     [RelayCommand]
-    private void OpenQuerySettings() => queryService.ShowQuerySettingView(obsidianQuerySetting, windowManager);
+    private void OpenQuerySettings()
+    {
+        queryService.ShowQuerySettingView(obsidianQuerySetting, windowManager);
+        windowManager.ViewClosed += OnQuerySettingViewClosed;
+    }
+
+    private void OnQuerySettingViewClosed()
+    {
+        ObsidianQuery? query = queryService.GetQuery(obsidianQuerySetting);
+        if (query is null)
+        {
+            windowManager.ViewClosed -= Update;
+            QueryDeleted?.Invoke(this);
+        }
+
+        Update();
+    }
+
+    private void Update()
+    {
+        windowManager.ViewClosed -= Update;
+        OnPropertyChanged(nameof(IsActive));
+        OnPropertyChanged(nameof(Keyword));
+    }
 
     [RelayCommand]
     private void SetActionKeyword()

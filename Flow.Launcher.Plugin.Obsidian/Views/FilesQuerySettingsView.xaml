@@ -105,6 +105,31 @@
                     </Grid>
                 </Border>
 
+                <!--  Delete query  -->
+                <Border Padding="0,14" Style="{StaticResource SettingGroupBox}">
+                    <Grid>
+                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                            <ui:FontIcon
+                                Margin="20,0,0,0"
+                                VerticalAlignment="Center"
+                                FontFamily="Segoe Fluent Icons"
+                                Foreground="{DynamicResource Color05B}"
+                                Glyph="&#xE74D;" />
+                            <TextBlock
+                                Margin="20,0,0,0"
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource Color05B}"
+                                Text="Delete query" />
+                        </StackPanel>
+
+                        <Button
+                            Margin="20,0"
+                            HorizontalAlignment="Right"
+                            Command="{Binding DeleteQueryCommand}"
+                            Content="Delete" />
+                    </Grid>
+                </Border>
+
                 <TextBlock
                     Margin="0,40,0,0"
                     FontWeight="Bold"

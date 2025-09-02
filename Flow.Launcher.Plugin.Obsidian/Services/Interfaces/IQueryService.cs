@@ -10,19 +10,15 @@ public interface IQueryService
 {
     Task<IEnumerable<Result>> HandleQueriesAsync(Query flowQuery, CancellationToken token);
 
-    ObsidianQuery? GetQuery(string name);
-
-    T? GetQuery<T>(string name) where T : ObsidianQuery;
-
-    T? GetQuery<T>(ObsidianQuerySetting setting) where T : ObsidianQuery;
+    ObsidianQuery? GetQuery(ObsidianQuerySetting setting);
 
     void ReloadQuery(ObsidianQuerySetting setting);
 
     bool TryChangeKeyword(ObsidianQuerySetting setting, string newKeyword);
 
-    void ShowQuerySettingView(ObsidianQuerySetting querySetting, ISettingWindowManager windowManager);
-
-    ObsidianQuery CreateQuery(ObsidianQuerySetting obsidianQuerySetting);
+    void ShowQuerySettingView(ObsidianQuerySetting querySetting, ISettingsWindowManager windowManager);
 
     ObsidianQuery CreateQuery(Type type, string name);
+
+    void DeleteQuery(ObsidianQuerySetting setting);
 }

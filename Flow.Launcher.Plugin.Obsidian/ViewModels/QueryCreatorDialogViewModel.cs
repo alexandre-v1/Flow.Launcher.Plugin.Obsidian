@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using CommunityToolkit.Mvvm.Input;
 using Flow.Launcher.Plugin.Obsidian.Models;
@@ -11,16 +10,16 @@ public partial class QueryCreatorDialogViewModel : BaseModel
 {
     public delegate void QueryCreatedEventHandler(ObsidianQuery query);
 
+    public delegate void RequestCloseEventHandler();
+
     private readonly IQueryService _queryService;
-    private readonly ISettingsWindowManager _settingWindowManager;
 
     [UsedImplicitly] // For design-time data
-    public QueryCreatorDialogViewModel() : this(null!, null!) { }
+    public QueryCreatorDialogViewModel() : this(null!) { }
 
-    public QueryCreatorDialogViewModel(ISettingsWindowManager settingWindowManager, IQueryService queryService)
+    public QueryCreatorDialogViewModel(IQueryService queryService)
     {
         QueryTypes.Add(new ObsidianQueryInfoViewModel(FilesQuery.QueryInfo));
-        _settingWindowManager = settingWindowManager;
         _queryService = queryService;
     }
 
@@ -29,8 +28,8 @@ public partial class QueryCreatorDialogViewModel : BaseModel
 
     public List<ObsidianQueryInfoViewModel> QueryTypes { get; } = [];
 
-    public event EventHandler? OnRequestClose;
-    public event QueryCreatedEventHandler? OnQueryCreated;
+    public event RequestCloseEventHandler? RequestClose;
+    public event QueryCreatedEventHandler? QueryCreated;
 
     [RelayCommand]
     private void CreateQuery(object? queryInfoObject)
@@ -42,9 +41,8 @@ public partial class QueryCreatorDialogViewModel : BaseModel
 
         ObsidianQueryInfoViewModel queryInfo = (ObsidianQueryInfoViewModel)queryInfoObject;
         ObsidianQuery query = _queryService.CreateQuery(queryInfo.QueryType, QueryNameInput);
-        _queryService.ShowQuerySettingView(query.Setting, _settingWindowManager);
 
-        OnQueryCreated?.Invoke(query);
-        OnRequestClose?.Invoke(this, EventArgs.Empty);
+        QueryCreated?.Invoke(query);
+        RequestClose?.Invoke();
     }
 }

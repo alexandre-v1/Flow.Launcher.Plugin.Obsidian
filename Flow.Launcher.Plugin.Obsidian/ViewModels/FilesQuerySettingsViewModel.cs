@@ -10,6 +10,8 @@ namespace Flow.Launcher.Plugin.Obsidian.ViewModels;
 
 public partial class FilesQuerySettingsViewModel : BaseModel
 {
+    public delegate void RequestCloseEventHandler();
+
     private readonly IQueryService _queryService;
     private readonly FilesQuerySetting _setting;
     private readonly ISettingsWindowManager _windowManager;
@@ -77,6 +79,7 @@ public partial class FilesQuerySettingsViewModel : BaseModel
     }
 
     public HashSet<FilesQueryVaultViewModel> Vaults { get; }
+    public event RequestCloseEventHandler? RequestClose;
 
     private IEnumerable<FilesQueryVaultViewModel> CreateVaultViewModels(IEnumerable<Vault> vaults) => vaults
         .Select(vault => new FilesQueryVaultViewModel(_setting, vault, _windowManager));
@@ -90,5 +93,12 @@ public partial class FilesQuerySettingsViewModel : BaseModel
         ActionKeywordDialog dialog = new(_setting, _queryService);
         dialog.ShowDialog();
         OnPropertyChanged(nameof(Keyword));
+    }
+
+    [RelayCommand]
+    private void DeleteQuery()
+    {
+        _queryService.DeleteQuery(_setting);
+        RequestClose?.Invoke();
     }
 }

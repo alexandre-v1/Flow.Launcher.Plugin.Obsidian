@@ -44,12 +44,8 @@ public class QueryService : IQueryService
         return groupedResults;
     }
 
-    public ObsidianQuery? GetQuery(string name) => _queries.FirstOrDefault();
-
-    public T? GetQuery<T>(string name) where T : ObsidianQuery => GetQuery(name) as T;
-
-    public T? GetQuery<T>(ObsidianQuerySetting setting) where T : ObsidianQuery => _queries
-        .Where(query => query.Setting == setting).Select(query => query as T).FirstOrDefault();
+    public ObsidianQuery? GetQuery(ObsidianQuerySetting setting) =>
+        _queries.FirstOrDefault(query => query.Setting == setting);
 
     public void ReloadQuery(ObsidianQuerySetting setting) =>
         _queries.FirstOrDefault(query => query.Setting == setting)?.Reload();
@@ -73,18 +69,53 @@ public class QueryService : IQueryService
         return true;
     }
 
-    public void ShowQuerySettingView(ObsidianQuerySetting querySetting, ISettingWindowManager windowManager)
+    public void ShowQuerySettingView(ObsidianQuerySetting querySetting, ISettingsWindowManager windowManager)
     {
         switch (querySetting)
         {
             case FilesQuerySetting setting:
                 FilesQuerySettingsViewModel viewModel = new(setting, this, _vaultManager, windowManager);
+                viewModel.RequestClose += windowManager.CloseWindow;
                 windowManager.ShowView<FilesQuerySettingsView>(viewModel);
                 break;
             default:
                 throw new ArgumentException($"{nameof(querySetting)} is not supported");
         }
     }
+
+    public ObsidianQuery CreateQuery(Type type, string name)
+    {
+        if (!type.IsSubclassOf(typeof(ObsidianQuery)))
+        {
+            throw new Exception($"Query type must be a subclass of {nameof(ObsidianQuery)}");
+        }
+
+        ObsidianQuery? query = null;
+
+        if (type == typeof(FilesQuery))
+        {
+            FilesQuerySetting setting = new() { Name = name };
+            query = CreateQuery(setting);
+        }
+
+        return query ?? throw new ArgumentException($"{type.Name} is not supported");
+    }
+
+    public void DeleteQuery(ObsidianQuerySetting setting)
+    {
+        ObsidianQuery? query = GetQuery(setting);
+        if (query is null)
+        {
+            return;
+        }
+
+        _queries.Remove(query);
+    }
+
+    public ObsidianQuery? GetQuery(string name) => _queries.FirstOrDefault(query => query.Name == name);
+
+    public bool IsQueryExists(ObsidianQuerySetting querySetting) =>
+        _queries.Any(query => query.Setting == querySetting);
 
     public ObsidianQuery CreateQuery(ObsidianQuerySetting obsidianQuerySetting)
     {
@@ -96,22 +127,6 @@ public class QueryService : IQueryService
 
         _queries.Add(obsidianQuery);
         return obsidianQuery;
-    }
-
-    public ObsidianQuery CreateQuery(Type type, string name)
-    {
-        if (!type.IsSubclassOf(typeof(ObsidianQuery)))
-        {
-            throw new Exception($"Query type must be a subclass of {nameof(ObsidianQuery)}");
-        }
-
-        if (type == typeof(FilesQuery))
-        {
-            FilesQuerySetting setting = new() { Name = name };
-            return new FilesQuery(setting, _noteCreatorService, _tagSearchService, _vaultManager);
-        }
-
-        throw new ArgumentException($"{type.Name} is not supported");
     }
 
     private void RegisterQueries()
