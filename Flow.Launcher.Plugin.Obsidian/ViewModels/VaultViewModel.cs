@@ -11,7 +11,7 @@ namespace Flow.Launcher.Plugin.Obsidian.ViewModels;
 
 public partial class VaultViewModel : BaseModel
 {
-    private readonly ISettingWindowManager _settingWindowManager;
+    private readonly ISettingsWindowManager _settingWindowManager;
     private readonly Vault? _vault;
 
     private bool _isActive;
@@ -19,7 +19,7 @@ public partial class VaultViewModel : BaseModel
     public string DesignName = "Vault Name";
     public string DesignPath = "Vault Path";
 
-    public VaultViewModel(Vault vault, ISettingWindowManager settingWindowManager)
+    public VaultViewModel(Vault vault, ISettingsWindowManager settingWindowManager)
     {
         _settingWindowManager = settingWindowManager;
         _vault = vault;

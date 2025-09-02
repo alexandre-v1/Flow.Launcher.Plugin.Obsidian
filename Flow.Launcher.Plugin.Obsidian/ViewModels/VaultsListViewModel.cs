@@ -8,9 +8,9 @@ namespace Flow.Launcher.Plugin.Obsidian.ViewModels;
 
 public class VaultsListViewModel : BaseModel
 {
-    private readonly ISettingWindowManager _settingWindowManager;
+    private readonly ISettingsWindowManager _settingWindowManager;
 
-    public VaultsListViewModel(IEnumerable<Vault> vaults, ISettingWindowManager settingWindowManager)
+    public VaultsListViewModel(IEnumerable<Vault> vaults, ISettingsWindowManager settingWindowManager)
     {
         _settingWindowManager = settingWindowManager;
         Vaults = CreateVaultViewModels(vaults);
