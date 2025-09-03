@@ -112,11 +112,6 @@ public class QueryService : IQueryService
         _queries.Remove(query);
     }
 
-    public ObsidianQuery? GetQuery(string name) => _queries.FirstOrDefault(query => query.Name == name);
-
-    public bool IsQueryExists(ObsidianQuerySetting querySetting) =>
-        _queries.Any(query => query.Setting == querySetting);
-
     public ObsidianQuery CreateQuery(ObsidianQuerySetting obsidianQuerySetting)
     {
         ObsidianQuery obsidianQuery = obsidianQuerySetting switch
