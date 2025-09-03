@@ -15,7 +15,7 @@ public class QueryService : IQueryService
     private readonly INoteCreatorService _noteCreatorService;
     private readonly PluginMetadata _pluginMetadata;
     private readonly IPublicAPI _publicApi;
-    private readonly List<ObsidianQuery> _queries = [];
+    private readonly HashSet<ObsidianQuery> _queries = [];
     private readonly Settings _settings;
     private readonly ITagSearchService _tagSearchService;
     private readonly IVaultManager _vaultManager;
@@ -137,8 +137,7 @@ public class QueryService : IQueryService
                 continue;
             }
 
-            ObsidianQuery newQuery = CreateQuery(querySetting);
-            _queries.Add(newQuery);
+            CreateQuery(querySetting);
         }
     }
 
