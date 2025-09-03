@@ -47,6 +47,8 @@ public class QueryService : IQueryService
     public ObsidianQuery? GetQuery(ObsidianQuerySetting setting) =>
         _queries.FirstOrDefault(query => query.Setting == setting);
 
+    public bool QueryExist(string name) => _queries.Any(query => query.Name == name);
+
     public void ReloadQuery(ObsidianQuerySetting setting) =>
         _queries.FirstOrDefault(query => query.Setting == setting)?.Reload();
 

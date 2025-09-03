@@ -12,6 +12,8 @@ public interface IQueryService
 
     ObsidianQuery? GetQuery(ObsidianQuerySetting setting);
 
+    bool QueryExist(string name);
+
     void ReloadQuery(ObsidianQuerySetting setting);
 
     bool TryChangeKeyword(ObsidianQuerySetting setting, string newKeyword);
