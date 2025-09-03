@@ -1,0 +1,108 @@
+<Window
+    x:Class="Flow.Launcher.Plugin.Obsidian.Views.ValueChangeDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:Flow.Launcher.Plugin.Obsidian.ViewModels"
+    Title="{Binding OperationTitle}"
+    Width="500"
+    Height="Auto"
+    d:DataContext="{d:DesignInstance vm:ValueChangeDialogViewModel}"
+    Background="{DynamicResource PopuBGColor}"
+    FontFamily="{DynamicResource SettingWindowFont}"
+    Foreground="{DynamicResource PopupTextColor}"
+    Icon="..\Icons\Core\obsidian-logo.png"
+    ResizeMode="NoResize"
+    SizeToContent="Height"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="32" ResizeBorderThickness="{x:Static SystemParameters.WindowResizeBorderThickness}" />
+    </WindowChrome.WindowChrome>
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Style.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <StackPanel>
+        <Button
+            HorizontalAlignment="Right"
+            Command="{Binding CancelOperationCommand}"
+            Style="{DynamicResource TitleBarCloseButtonStyle}">
+            <Path
+                Width="46"
+                Height="32"
+                Data="M 18,11 27,20 M 18,20 27,11"
+                Stroke="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"
+                StrokeThickness="1">
+                <Path.Style>
+                    <Style TargetType="Path">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=IsActive, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" Value="False">
+                                <Setter Property="Opacity" Value="0.5" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Path.Style>
+            </Path>
+        </Button>
+
+        <TextBlock
+            Margin="26,12,26,12"
+            FontSize="20"
+            FontWeight="SemiBold"
+            Text="{Binding OperationTitle}"
+            TextAlignment="Left" />
+
+        <DockPanel LastChildFill="True">
+            <TextBlock
+                Margin="26,6,10,12"
+                VerticalAlignment="Center"
+                DockPanel.Dock="Left"
+                FontSize="14"
+                Text="{Binding ValueName, StringFormat=New {0}}" />
+            <TextBox
+                Margin="10,6,26,10"
+                VerticalAlignment="Center"
+                DockPanel.Dock="Right"
+                Text="{Binding NewValueInput, UpdateSourceTrigger=PropertyChanged}" />
+        </DockPanel>
+
+        <TextBlock
+            Margin="26,6,10,12"
+            VerticalAlignment="Center"
+            FontSize="14"
+            Foreground="{StaticResource Color11B}"
+            Text="{Binding ErrorMessage}"
+            Visibility="{Binding ErrorMessageVisibility}" />
+
+        <Border
+            Height="80"
+            Margin="0,10,0,0"
+            Background="{DynamicResource PopupButtonAreaBGColor}"
+            BorderBrush="{DynamicResource PopupButtonAreaBorderColor}"
+            BorderThickness="0,1,0,0">
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                <Button
+                    Width="145"
+                    Height="38"
+                    Margin="10,0,10,0"
+                    Command="{Binding CancelOperationCommand}"
+                    Content="{DynamicResource cancel}" />
+                <Button
+                    Width="145"
+                    Height="38"
+                    Margin="10,0,10,0"
+                    Command="{Binding ValidateCommand}"
+                    Style="{StaticResource AccentButtonStyle}">
+                    <TextBlock Text="{DynamicResource done}" />
+                </Button>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</Window>
