@@ -68,6 +68,7 @@ public partial class QueryViewModel(
         windowManager.ViewClosed -= Update;
         OnPropertyChanged(nameof(IsActive));
         OnPropertyChanged(nameof(Keyword));
+        OnPropertyChanged(nameof(Name));
     }
 
     [RelayCommand]

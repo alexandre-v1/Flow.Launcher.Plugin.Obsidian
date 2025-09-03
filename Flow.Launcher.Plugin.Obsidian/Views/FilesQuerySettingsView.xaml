@@ -105,6 +105,31 @@
                     </Grid>
                 </Border>
 
+                <!--  Rename query  -->
+                <Border Padding="0,14" Style="{StaticResource SettingGroupBox}">
+                    <Grid>
+                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                            <ui:FontIcon
+                                Margin="20,0,0,0"
+                                VerticalAlignment="Center"
+                                FontFamily="Segoe Fluent Icons"
+                                Foreground="{DynamicResource Color05B}"
+                                Glyph="&#xE8AC;" />
+                            <TextBlock
+                                Margin="20,0,0,0"
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource Color05B}"
+                                Text="Rename query" />
+                        </StackPanel>
+
+                        <Button
+                            Margin="20,0"
+                            HorizontalAlignment="Right"
+                            Command="{Binding RenameQueryCommand}"
+                            Content="Rename" />
+                    </Grid>
+                </Border>
+
                 <!--  Delete query  -->
                 <Border Padding="0,14" Style="{StaticResource SettingGroupBox}">
                     <Grid>

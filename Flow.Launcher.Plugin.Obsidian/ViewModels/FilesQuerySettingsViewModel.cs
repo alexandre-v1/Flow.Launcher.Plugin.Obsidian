@@ -61,7 +61,7 @@ public partial class FilesQuerySettingsViewModel : BaseModel
     public string Name
     {
         get => _setting.Name;
-        set
+        private set
         {
             _setting.Name = value;
             OnPropertyChanged();
@@ -96,9 +96,34 @@ public partial class FilesQuerySettingsViewModel : BaseModel
     }
 
     [RelayCommand]
+    private void RenameQuery()
+    {
+        ValueChangeDialogViewModel valueChangeDialogViewModel = new(Name, "Rename query", "query name", CanRenameQuery);
+        ValueChangeDialog valueChangeDialog = new() { DataContext = valueChangeDialogViewModel };
+        valueChangeDialogViewModel.ValueChanged += OnQueryNameChanged;
+        valueChangeDialogViewModel.RequestClose += valueChangeDialog.Close;
+        valueChangeDialog.ShowDialog();
+    }
+
+    [RelayCommand]
     private void DeleteQuery()
     {
         _queryService.DeleteQuery(_setting);
         RequestClose?.Invoke();
     }
+
+    private ResultMessage CanRenameQuery(string proposedName)
+    {
+        if (proposedName == Name)
+        {
+            return ResultMessage.Fail("This is the same name, please choose a different name.");
+        }
+
+        bool queryAlreadyExists = _queryService.QueryExist(proposedName);
+        return queryAlreadyExists
+            ? ResultMessage.Fail("Query with this name already exists.")
+            : ResultMessage.Success();
+    }
+
+    private void OnQueryNameChanged(string newName) => Name = newName;
 }
