@@ -14,12 +14,12 @@
     FontFamily="{DynamicResource SettingWindowFont}"
     Foreground="{DynamicResource PopupTextColor}"
     Icon="..\Icons\Core\obsidian-logo.png"
+    ResizeMode="NoResize"
     SizeToContent="Height"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
     <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="32"
-                      ResizeBorderThickness="{x:Static SystemParameters.WindowResizeBorderThickness}" />
+        <WindowChrome CaptionHeight="32" ResizeBorderThickness="{x:Static SystemParameters.WindowResizeBorderThickness}" />
     </WindowChrome.WindowChrome>
 
     <Window.Resources>
@@ -51,9 +51,7 @@
                 <Path.Style>
                     <Style TargetType="Path">
                         <Style.Triggers>
-                            <DataTrigger
-                                Binding="{Binding Path=IsActive, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
-                                Value="False">
+                            <DataTrigger Binding="{Binding Path=IsActive, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" Value="False">
                                 <Setter Property="Opacity" Value="0.5" />
                             </DataTrigger>
                         </Style.Triggers>
@@ -161,13 +159,10 @@
                     <Button.Style>
                         <Style BasedOn="{StaticResource AccentButtonStyle}" TargetType="Button">
                             <Style.Triggers>
-                                <DataTrigger
-                                    Binding="{Binding ElementName=QueryTypeListBox, Path=SelectedIndex, Mode=OneWay}"
-                                    Value="-1">
+                                <DataTrigger Binding="{Binding ElementName=QueryTypeListBox, Path=SelectedIndex, Mode=OneWay}" Value="-1">
                                     <Setter Property="Button.IsEnabled" Value="False" />
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding ElementName=QueryNameTextBox, Path=Text, Mode=OneWay}"
-                                             Value="{x:Static sys:String.Empty}">
+                                <DataTrigger Binding="{Binding ElementName=QueryNameTextBox, Path=Text, Mode=OneWay}" Value="{x:Static sys:String.Empty}">
                                     <Setter Property="Button.IsEnabled" Value="False" />
                                 </DataTrigger>
                             </Style.Triggers>

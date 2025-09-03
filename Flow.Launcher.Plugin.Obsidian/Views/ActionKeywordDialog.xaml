@@ -12,6 +12,7 @@
     Foreground="{DynamicResource PopupTextColor}"
     Icon="..\Icons\Core\obsidian-logo.png"
     Loaded="ActionKeyword_OnLoaded"
+    ResizeMode="NoResize"
     SizeToContent="Height"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
