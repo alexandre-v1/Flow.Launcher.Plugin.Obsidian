@@ -1,0 +1,176 @@
+<Window
+    x:Class="Flow.Launcher.Plugin.Obsidian.Views.QueryCreatorDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:viewModels="clr-namespace:Flow.Launcher.Plugin.Obsidian.ViewModels"
+    Title="{DynamicResource actionKeywordsTitle}"
+    Width="450"
+    d:DataContext="{d:DesignInstance viewModels:QueryCreatorDialogViewModel}"
+    Background="{DynamicResource PopuBGColor}"
+    FontFamily="{DynamicResource SettingWindowFont}"
+    Foreground="{DynamicResource PopupTextColor}"
+    Icon="..\Icons\Core\obsidian-logo.png"
+    ResizeMode="NoResize"
+    SizeToContent="Height"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="32" ResizeBorderThickness="{x:Static SystemParameters.WindowResizeBorderThickness}" />
+    </WindowChrome.WindowChrome>
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Style.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition Height="80" />
+        </Grid.RowDefinitions>
+
+        <Button
+            Grid.Row="0"
+            HorizontalAlignment="Right"
+            Click="BtnCancel_OnClick"
+            Style="{DynamicResource TitleBarCloseButtonStyle}">
+            <Path
+                Width="46"
+                Height="32"
+                Data="M 18,11 27,20 M 18,20 27,11"
+                Stroke="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType={x:Type Button}}}"
+                StrokeThickness="1">
+                <Path.Style>
+                    <Style TargetType="Path">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=IsActive, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" Value="False">
+                                <Setter Property="Opacity" Value="0.5" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Path.Style>
+            </Path>
+        </Button>
+
+        <StackPanel
+            Grid.Row="1"
+            Margin="26,0"
+            Orientation="Vertical">
+
+            <TextBlock
+                Margin="0,12,26,0"
+                FontSize="20"
+                FontWeight="SemiBold"
+                Text="Create a new query"
+                TextAlignment="Left" />
+
+            <TextBlock
+                Margin="0,36,0,0"
+                FontWeight="Bold"
+                Style="{StaticResource PageTitle}"
+                Text="Query type"
+                TextAlignment="Left" />
+
+            <ListBox
+                Name="QueryTypeListBox"
+                Margin="0"
+                HorizontalContentAlignment="Stretch"
+                VerticalContentAlignment="Stretch"
+                ItemsSource="{Binding QueryTypes}"
+                SelectedItem="{Binding SelectedQueryType, Mode=TwoWay}"
+                Style="{StaticResource CardListBox}">
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Name="Panel" Orientation="Horizontal">
+                            <ui:FontIcon
+                                Margin="20,0,0,0"
+                                VerticalAlignment="Center"
+                                FontFamily="{StaticResource SegoeFluentIcons}"
+                                FontSize="20"
+                                Foreground="{DynamicResource Color05B}"
+                                Glyph="{Binding Glyph.Glyph}" />
+
+                            <StackPanel Margin="16,0,14,0">
+                                <TextBlock Style="{StaticResource SettingTitleLabel}" Text="{Binding DisplayName}" />
+
+                                <TextBlock
+                                    Margin="0,2,0,0"
+                                    Style="{StaticResource SettingSubTitleLabel}"
+                                    Text="{Binding Description}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <TextBlock
+                Margin="0,36,0,0"
+                FontWeight="Bold"
+                Style="{StaticResource PageTitle}"
+                Text="Info"
+                TextAlignment="Left" />
+            <Border Style="{StaticResource SettingGroupBox}">
+                <DockPanel LastChildFill="True">
+                    <TextBlock
+                        Margin="16,0"
+                        VerticalAlignment="Center"
+                        DockPanel.Dock="Left"
+                        Style="{StaticResource SettingTitleLabel}"
+                        Text="Query Name" />
+                    <TextBox
+                        Name="QueryNameTextBox"
+                        Margin="20,0"
+                        HorizontalAlignment="Stretch"
+                        DockPanel.Dock="Right"
+                        Text="{Binding QueryNameInput, UpdateSourceTrigger=PropertyChanged}" />
+                </DockPanel>
+            </Border>
+        </StackPanel>
+
+        <Border
+            Grid.Row="2"
+            Margin="0,24,0,0"
+            Background="{DynamicResource PopupButtonAreaBGColor}"
+            BorderBrush="{DynamicResource PopupButtonAreaBorderColor}"
+            BorderThickness="0,1,0,0">
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                <Button
+                    Width="145"
+                    Height="38"
+                    Margin="10,0,10,0"
+                    Click="BtnCancel_OnClick"
+                    Content="{DynamicResource cancel}" />
+                <Button
+                    Width="145"
+                    Height="38"
+                    Margin="10,0,10,0"
+                    Command="{Binding CreateQueryCommand}"
+                    CommandParameter="{Binding ElementName=QueryTypeListBox, Path=SelectedItem}">
+
+                    <Button.Style>
+                        <Style BasedOn="{StaticResource AccentButtonStyle}" TargetType="Button">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=QueryTypeListBox, Path=SelectedIndex, Mode=OneWay}" Value="-1">
+                                    <Setter Property="Button.IsEnabled" Value="False" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding ElementName=QueryNameTextBox, Path=Text, Mode=OneWay}" Value="{x:Static sys:String.Empty}">
+                                    <Setter Property="Button.IsEnabled" Value="False" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                    <TextBlock Text="{DynamicResource done}" />
+                </Button>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

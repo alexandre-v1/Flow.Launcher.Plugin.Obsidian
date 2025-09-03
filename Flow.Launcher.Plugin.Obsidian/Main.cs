@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
@@ -7,21 +8,23 @@ using Flow.Launcher.Plugin.Obsidian.Services.Implementations;
 using Flow.Launcher.Plugin.Obsidian.Services.Interfaces;
 using Flow.Launcher.Plugin.Obsidian.ViewModels;
 using Flow.Launcher.Plugin.Obsidian.Views;
+using JetBrains.Annotations;
 using ContextMenuService = Flow.Launcher.Plugin.Obsidian.Services.Implementations.ContextMenuService;
 
 namespace Flow.Launcher.Plugin.Obsidian;
 
+[UsedImplicitly]
 public class Obsidian : IAsyncPlugin, ISettingProvider, IAsyncReloadable, IContextMenu
 {
     private IContextMenu? _contextMenu;
 
     private IPublicAPI? _publicApi;
-    private IQueryHandler? _queryHandler;
+    private IQueryService? _queryService;
     private Settings? _settings;
     private SettingsViewModel? _settingsViewModel;
 
     private IVaultManager? _vaultManager;
-    private ISettingWindowManager? _windowManager;
+    private ISettingsWindowManager? _windowManager;
 
     public async Task InitAsync(PluginInitContext context)
     {
@@ -29,29 +32,25 @@ public class Obsidian : IAsyncPlugin, ISettingProvider, IAsyncReloadable, IConte
         _settings = _publicApi.LoadSettingJsonStorage<Settings>();
         _vaultManager = new VaultManager(_settings);
 
-        await _vaultManager.UpdateVaultListAsync();
+        await _vaultManager.ReloadVaultsAsync();
 
-        _queryHandler = new QueryService(_publicApi, _settings);
+        _queryService = new QueryService(context, _settings, _vaultManager);
         _contextMenu = new ContextMenuService(this, _vaultManager, _settings);
 
-        _windowManager = new SettingWindowManager(_settings);
-        _settingsViewModel = new SettingsViewModel(this, _vaultManager, _windowManager);
+        _windowManager = new SettingsWindowManager(_settings);
+        _settingsViewModel = new SettingsViewModel(_settings, this, _vaultManager, _windowManager, _queryService);
     }
 
     public async Task<List<Result>> QueryAsync(Query query, CancellationToken token)
     {
-        if (_queryHandler is null || _vaultManager is null)
+        Task<IEnumerable<Result>>? queriesAsync = _queryService?.HandleQueriesAsync(query, token);
+        if (queriesAsync is null)
         {
             return [];
         }
 
-        FileExtensionsSetting fileExtensionsSetting =
-            _settings?.DefaultQuery.FileExtensions ?? new FileExtensionsSetting();
-        QueryData queryData = QueryData.Parse(query, fileExtensionsSetting, _vaultManager.Vaults);
-
-        return queryData.IsNoteCreationSearch()
-            ? _queryHandler.HandleNoteCreation(queryData)
-            : await _queryHandler.HandleQueryAsync(queryData, token);
+        IEnumerable<Result> results = await queriesAsync;
+        return results.ToList();
     }
 
     public async Task ReloadDataAsync()
@@ -61,7 +60,7 @@ public class Obsidian : IAsyncPlugin, ISettingProvider, IAsyncReloadable, IConte
             return;
         }
 
-        await _vaultManager.UpdateVaultListAsync();
+        await _vaultManager.ReloadVaultsAsync();
     }
 
     public List<Result> LoadContextMenus(Result selectedResult) =>

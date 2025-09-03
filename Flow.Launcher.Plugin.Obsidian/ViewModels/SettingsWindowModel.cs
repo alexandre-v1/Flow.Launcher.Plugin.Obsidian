@@ -8,6 +8,8 @@ namespace Flow.Launcher.Plugin.Obsidian.ViewModels;
 
 public class SettingsWindowModel(Settings settings) : BaseModel
 {
+    public delegate void ContentChangedEventHandler();
+
     private UserControl? _content;
 
     public UserControl? Content
@@ -17,6 +19,7 @@ public class SettingsWindowModel(Settings settings) : BaseModel
         {
             _content = value;
             OnPropertyChanged();
+            ContentChanged?.Invoke();
         }
     }
 
@@ -51,4 +54,6 @@ public class SettingsWindowModel(Settings settings) : BaseModel
         get => settings.SettingWindowLeft;
         set => settings.SettingWindowLeft = value;
     }
+
+    public event ContentChangedEventHandler? ContentChanged;
 }

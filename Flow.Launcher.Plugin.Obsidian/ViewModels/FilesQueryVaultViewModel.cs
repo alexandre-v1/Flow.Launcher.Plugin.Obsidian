@@ -9,27 +9,33 @@ using JetBrains.Annotations;
 
 namespace Flow.Launcher.Plugin.Obsidian.ViewModels;
 
-public partial class VaultViewModel : BaseModel
+public partial class FilesQueryVaultViewModel : BaseModel
 {
-    private readonly ISettingsWindowManager _settingWindowManager;
+    private readonly FilesQuerySetting _querySetting;
+    private readonly ISettingsWindowManager _settingsWindowManager;
     private readonly Vault? _vault;
-
-    private bool _isActive;
 
     public string DesignName = "Vault Name";
     public string DesignPath = "Vault Path";
 
-    public VaultViewModel(Vault vault, ISettingsWindowManager settingWindowManager)
+    public FilesQueryVaultViewModel(FilesQuerySetting querySetting, Vault vault,
+        ISettingsWindowManager settingsWindowManager)
     {
-        _settingWindowManager = settingWindowManager;
+        _querySetting = querySetting;
+        _settingsWindowManager = settingsWindowManager;
         _vault = vault;
-        _isActive = vault.IsActive;
 
         vault.VaultUpdated += OnVaultUpdated;
     }
 
     [UsedImplicitly] // For design-time data
-    public VaultViewModel() => _settingWindowManager = null!;
+    public FilesQueryVaultViewModel()
+    {
+        _querySetting = new FilesQuerySetting();
+        _settingsWindowManager = null!;
+    }
+
+    private string VaultId => _vault?.Id ?? string.Empty;
 
     public static ImageSource Icon => IconCache.GetCachedImage(Paths.ObsidianLogo);
     public string Name => _vault?.Name ?? DesignName;
@@ -38,18 +44,10 @@ public partial class VaultViewModel : BaseModel
 
     public bool IsActive
     {
-        get => _vault?.IsActive ?? _isActive;
+        get => _querySetting.VaultIsActive(VaultId);
         set
         {
-            if (_vault is not null)
-            {
-                _vault.IsActive = value;
-            }
-            else
-            {
-                _isActive = value;
-            }
-
+            _querySetting.SetVaultActiveState(VaultId, value);
             OnPropertyChanged();
         }
     }
@@ -71,6 +69,6 @@ public partial class VaultViewModel : BaseModel
         }
 
         VaultSettingsViewModel vaultSettingsViewModel = new(_vault);
-        _settingWindowManager.ShowView<VaultSettingsView>(vaultSettingsViewModel);
+        _settingsWindowManager.ShowView<VaultSettingsView>(vaultSettingsViewModel);
     }
 }

@@ -34,17 +34,23 @@ public static class CheckBoxExtensions
             else
             {
                 if (line.Length > 0)
+                {
                     prevLine = line;
+                }
+
                 continue;
             }
 
             string subTitle = string.Empty;
             string trim = prevLine.Trim();
-            if (trim.EndsWith(':')) subTitle = trim[..^1];
+            if (trim.EndsWith(':'))
+            {
+                subTitle = trim[..^1];
+            }
 
             Result item = new()
             {
-                Glyph = new GlyphInfo(Font.Family, isChecked ? Font.MarkedCheckBoxGlyph : Font.CheckBoxGlyph),
+                Glyph = new GlyphInfo(Glyph.Family, isChecked ? Glyph.MarkedCheckBox : Glyph.CheckBox),
                 Title = title.Trim(),
                 SubTitle = subTitle,
                 Action = _ =>
@@ -66,12 +72,20 @@ public static class CheckBoxExtensions
 
         for (int i = 0; i < lines.Length; i++)
         {
-            if (!lines[i].Contains(checkBoxLine)) continue;
+            if (!lines[i].Contains(checkBoxLine))
+            {
+                continue;
+            }
 
             if (isChecked)
+            {
                 lines[i] = lines[i].Replace(MarkedCheckBoxString, CheckBoxString);
+            }
             else
+            {
                 lines[i] = lines[i].Replace(CheckBoxString, MarkedCheckBoxString);
+            }
+
             break;
         }
 

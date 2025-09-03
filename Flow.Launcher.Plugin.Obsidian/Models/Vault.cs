@@ -79,16 +79,12 @@ public class Vault
         UpdateFiles();
         UpdateObsidianPlugins();
         VaultUpdated?.Invoke();
+        _isDirty = false;
     }
-
-    public IEnumerable<File> GetFiles(FileExtensionsSetting extensionsSetting) =>
-        Files.Where(file => extensionsSetting.Contains(file.Extension));
 
     public bool OpenInNewTabByDefault() => HasAdvancedUri && Setting.OpenInNewTabByDefault;
 
     public bool TagExists(string tag) => Tags.Any(t => t.EqualsIgnoreCase(tag));
-
-    public bool IsVaultName(string vaultName) => Name.EqualsIgnoreCase(vaultName);
 
     private void UpdateFiles()
     {

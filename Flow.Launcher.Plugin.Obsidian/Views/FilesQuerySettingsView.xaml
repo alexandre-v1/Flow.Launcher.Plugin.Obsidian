@@ -1,0 +1,262 @@
+<UserControl
+    x:Class="Flow.Launcher.Plugin.Obsidian.Views.FilesQuerySettingsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:views="clr-namespace:Flow.Launcher.Plugin.Obsidian.Views"
+    xmlns:vm="clr-namespace:Flow.Launcher.Plugin.Obsidian.ViewModels"
+    x:Name="VaultSettingsControl"
+    d:DataContext="{d:DesignInstance vm:FilesQuerySettingsViewModel}"
+    d:DesignHeight="1000"
+    d:DesignWidth="600"
+    Background="{DynamicResource Color01B}"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Style.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="73" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TextBlock
+            Grid.Row="0"
+            MaxWidth="1000"
+            Margin="25,23,0,0"
+            FontSize="30"
+            Style="{StaticResource PageTitle}"
+            Text="{Binding Name}"
+            TextAlignment="Left" />
+
+        <ScrollViewer
+            Grid.Row="1"
+            Margin="0"
+            CanContentScroll="False"
+            FontSize="14"
+            VirtualizingPanel.ScrollUnit="Pixel"
+            VirtualizingStackPanel.IsVirtualizing="True">
+
+            <StackPanel
+                MaxWidth="1000"
+                Margin="25,0,25,40"
+                Orientation="Vertical">
+                <!--  Reload query  -->
+                <Border Padding="0,14" Style="{StaticResource SettingGroupBox}">
+                    <Grid>
+                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                            <ui:FontIcon
+                                Margin="20,0,0,0"
+                                VerticalAlignment="Center"
+                                FontFamily="Segoe Fluent Icons"
+                                Foreground="{DynamicResource Color05B}"
+                                Glyph="&#xE72C;" />
+                            <TextBlock
+                                Margin="20,0,0,0"
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource Color05B}"
+                                Text="Reload query" />
+                        </StackPanel>
+
+                        <Button
+                            Margin="20,0"
+                            HorizontalAlignment="Right"
+                            Command="{Binding ReloadQueryCommand}"
+                            Content="Reload" />
+                    </Grid>
+                </Border>
+
+                <!--  Keyword  -->
+                <Border Padding="0,20" Style="{StaticResource SettingGroupBox}">
+                    <Grid>
+                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                            <ui:FontIcon
+                                Margin="20,0,0,0"
+                                VerticalAlignment="Center"
+                                FontFamily="Segoe Fluent Icons"
+                                Foreground="{DynamicResource Color05B}"
+                                Glyph="&#xe819;" />
+                            <TextBlock
+                                Margin="20,0,0,0"
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource Color05B}"
+                                Text="Action keyword" />
+                        </StackPanel>
+
+                        <Button
+                            Width="Auto"
+                            MinWidth="100"
+                            Margin="0,-4.5,20,-4.5"
+                            HorizontalAlignment="Right"
+                            Command="{Binding SetActionKeywordCommand}"
+                            Content="{Binding Keyword}"
+                            Cursor="Hand"
+                            DockPanel.Dock="Right"
+                            FontWeight="Bold"
+                            ToolTip="{DynamicResource actionKeywordsTooltip}" />
+                    </Grid>
+                </Border>
+
+                <!--  Rename query  -->
+                <Border Padding="0,14" Style="{StaticResource SettingGroupBox}">
+                    <Grid>
+                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                            <ui:FontIcon
+                                Margin="20,0,0,0"
+                                VerticalAlignment="Center"
+                                FontFamily="Segoe Fluent Icons"
+                                Foreground="{DynamicResource Color05B}"
+                                Glyph="&#xE8AC;" />
+                            <TextBlock
+                                Margin="20,0,0,0"
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource Color05B}"
+                                Text="Rename query" />
+                        </StackPanel>
+
+                        <Button
+                            Margin="20,0"
+                            HorizontalAlignment="Right"
+                            Command="{Binding RenameQueryCommand}"
+                            Content="Rename" />
+                    </Grid>
+                </Border>
+
+                <!--  Delete query  -->
+                <Border Padding="0,14" Style="{StaticResource SettingGroupBox}">
+                    <Grid>
+                        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                            <ui:FontIcon
+                                Margin="20,0,0,0"
+                                VerticalAlignment="Center"
+                                FontFamily="Segoe Fluent Icons"
+                                Foreground="{DynamicResource Color05B}"
+                                Glyph="&#xE74D;" />
+                            <TextBlock
+                                Margin="20,0,0,0"
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource Color05B}"
+                                Text="Delete query" />
+                        </StackPanel>
+
+                        <Button
+                            Margin="20,0"
+                            HorizontalAlignment="Right"
+                            Command="{Binding DeleteQueryCommand}"
+                            Content="Delete" />
+                    </Grid>
+                </Border>
+
+                <TextBlock
+                    Margin="0,40,0,0"
+                    FontWeight="Bold"
+                    Style="{StaticResource PageTitle}"
+                    Text="Vaults"
+                    TextAlignment="Left" />
+
+                <!--  Vaults  -->
+                <ItemsControl
+                    Margin="0"
+                    Background="Transparent"
+                    ItemsSource="{Binding Vaults}"
+                    SnapsToDevicePixels="True">
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button HorizontalAlignment="Stretch" Command="{Binding OpenVaultSettingsCommand}">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border
+                                            x:Name="border"
+                                            Width="Auto"
+                                            Height="Auto"
+                                            Padding="18,12,0,12"
+                                            Style="{StaticResource SettingGroupBox}">
+                                            <ContentPresenter />
+                                        </Border>
+
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="border" Property="Background"
+                                                        Value="{DynamicResource Color22B}" />
+                                            </Trigger>
+
+                                            <Trigger Property="IsPressed" Value="True">
+                                                <Setter TargetName="border" Property="Background"
+                                                        Value="{DynamicResource Color23B}" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="36" MinWidth="36" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Image
+                                        Grid.Column="0"
+                                        MaxWidth="32"
+                                        MaxHeight="32"
+                                        RenderOptions.BitmapScalingMode="HighQuality"
+                                        Source="{Binding Icon, Mode=OneWay, IsAsync=True}" />
+
+                                    <StackPanel Grid.Column="1" Margin="16,0,14,0">
+                                        <TextBlock Style="{StaticResource SettingTitleLabel}" Text="{Binding Name}" />
+
+                                        <TextBlock
+                                            Margin="0,2,0,0"
+                                            Style="{StaticResource SettingSubTitleLabel}"
+                                            Text="{Binding VaultPath}" />
+                                    </StackPanel>
+
+                                    <TextBlock
+                                        Grid.Column="2"
+                                        Margin="{StaticResource SettingPanelItemRightMargin}"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        Style="{StaticResource SettingTitleLabel}"
+                                        Text="{Binding FilesCount, StringFormat={}{0} Files}" />
+
+                                    <ui:ToggleSwitch
+                                        x:Name="OnOffControl"
+                                        Grid.Column="3"
+                                        Margin="0,0,16,0"
+                                        IsOn="{Binding IsActive}"
+                                        OffContent="{DynamicResource disable}"
+                                        OnContent="{DynamicResource enable}" />
+                                </Grid>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <TextBlock
+                    Margin="0,40,0,0"
+                    FontWeight="Bold"
+                    Style="{StaticResource PageTitle}"
+                    Text="Files"
+                    TextAlignment="Left" />
+
+                <!--  Files extension  -->
+                <views:FileExtensionsList DataContext="{Binding FileExtensionListViewModel}" />
+
+                <!--  Exclude paths  -->
+                <views:ExcludePathsView DataContext="{Binding ExcludePathsViewModel}" />
+
+            </StackPanel>
+
+        </ScrollViewer>
+    </Grid>
+</UserControl>
