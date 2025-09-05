@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:utils="clr-namespace:Flow.Launcher.Plugin.Obsidian.Utilities"
     xmlns:views="clr-namespace:Flow.Launcher.Plugin.Obsidian.Views"
     xmlns:vm="clr-namespace:Flow.Launcher.Plugin.Obsidian.ViewModels"
     x:Name="VaultSettingsControl"
@@ -15,11 +16,7 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../Style.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
+        <utils:SharedResourceDictionary Source="pack://application:,,,/Flow.Launcher.Plugin.Obsidian;component/Style.xaml" />
     </UserControl.Resources>
 
     <Grid>
@@ -185,13 +182,11 @@
 
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter TargetName="border" Property="Background"
-                                                        Value="{DynamicResource Color22B}" />
+                                                <Setter TargetName="border" Property="Background" Value="{DynamicResource Color22B}" />
                                             </Trigger>
 
                                             <Trigger Property="IsPressed" Value="True">
-                                                <Setter TargetName="border" Property="Background"
-                                                        Value="{DynamicResource Color23B}" />
+                                                <Setter TargetName="border" Property="Background" Value="{DynamicResource Color23B}" />
                                             </Trigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>

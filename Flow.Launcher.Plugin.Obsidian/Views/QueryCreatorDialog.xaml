@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sys="clr-namespace:System;assembly=System.Runtime"
     xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:utils="clr-namespace:Flow.Launcher.Plugin.Obsidian.Utilities"
     xmlns:viewModels="clr-namespace:Flow.Launcher.Plugin.Obsidian.ViewModels"
     Title="{DynamicResource actionKeywordsTitle}"
     Width="450"
@@ -23,11 +24,7 @@
     </WindowChrome.WindowChrome>
 
     <Window.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../Style.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
+        <utils:SharedResourceDictionary Source="pack://application:,,,/Flow.Launcher.Plugin.Obsidian;component/Style.xaml" />
     </Window.Resources>
 
     <Grid>
@@ -90,22 +87,24 @@
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
+
                         <StackPanel Name="Panel" Orientation="Horizontal">
                             <ui:FontIcon
                                 Margin="20,0,0,0"
                                 VerticalAlignment="Center"
                                 FontFamily="{StaticResource SegoeFluentIcons}"
                                 FontSize="20"
-                                Foreground="{DynamicResource Color05B}"
                                 Glyph="{Binding Glyph.Glyph}" />
 
                             <StackPanel Margin="16,0,14,0">
-                                <TextBlock Style="{StaticResource SettingTitleLabel}" Text="{Binding DisplayName}" />
+                                <TextBlock Text="{Binding DisplayName}" TextWrapping="Wrap" />
 
                                 <TextBlock
                                     Margin="0,2,0,0"
-                                    Style="{StaticResource SettingSubTitleLabel}"
-                                    Text="{Binding Description}" />
+                                    Padding="0,0,24,0"
+                                    FontSize="12"
+                                    Text="{Binding Description}"
+                                    TextWrapping="WrapWithOverflow" />
                             </StackPanel>
                         </StackPanel>
                     </DataTemplate>

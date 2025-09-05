@@ -5,19 +5,15 @@
     xmlns:controls="http://schemas.modernwpf.com/2019"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:utils="clr-namespace:Flow.Launcher.Plugin.Obsidian.Utilities"
     xmlns:viewModels="clr-namespace:Flow.Launcher.Plugin.Obsidian.ViewModels"
     d:DataContext="{d:DesignInstance viewModels:FileExtensionsListViewModel}"
     d:DesignWidth="600"
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../Style.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
+        <utils:SharedResourceDictionary Source="pack://application:,,,/Flow.Launcher.Plugin.Obsidian;component/Style.xaml" />
     </UserControl.Resources>
-
 
     <StackPanel>
         <ItemsControl

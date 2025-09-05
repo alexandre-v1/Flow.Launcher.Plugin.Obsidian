@@ -4,21 +4,16 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:utils="clr-namespace:Flow.Launcher.Plugin.Obsidian.Utilities"
     xmlns:views="clr-namespace:Flow.Launcher.Plugin.Obsidian.Views"
     xmlns:vm="clr-namespace:Flow.Launcher.Plugin.Obsidian.ViewModels"
     d:DataContext="{d:DesignInstance vm:SettingsViewModel}"
     d:DesignWidth="550"
     Unloaded="OnUnloaded"
-    Loaded="OnLoaded"
     mc:Ignorable="d">
 
-
     <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Flow.Launcher.Plugin.Obsidian;component/Style.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
+        <utils:SharedResourceDictionary Source="pack://application:,,,/Flow.Launcher.Plugin.Obsidian;component/Style.xaml" />
     </UserControl.Resources>
 
     <Grid>
@@ -28,25 +23,23 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <!-- Top Border is added by Flow Launcher -->
+        <!--  Top Border is added by Flow Launcher  -->
         <Border
             Grid.Row="0"
             Width="Auto"
             Height="Auto"
             Margin="0"
-            Padding="0 0 0 10"
+            Padding="0,0,0,10"
             BorderThickness="0"
             CornerRadius="0"
             Style="{StaticResource SettingGroupBox}">
 
-            <StackPanel
-                Margin="{StaticResource SettingPanelMargin}"
-                Orientation="Vertical">
+            <StackPanel Margin="{StaticResource SettingPanelMargin}" Orientation="Vertical">
 
                 <TextBlock
-                    Text="Vaults"
-                    Margin="0, 0, 0, 15"
-                    Style="{DynamicResource SettingTitleLabel}" />
+                    Margin="0,0,0,15"
+                    Style="{DynamicResource SettingTitleLabel}"
+                    Text="Vaults" />
 
                 <views:VaultsList DataContext="{Binding VaultsListViewModel}" />
             </StackPanel>
@@ -58,16 +51,15 @@
             Height="Auto"
             Margin="0"
             Padding="0"
-            BorderThickness="0, 1, 0 , 0"
+            BorderThickness="0,1,0,0"
             CornerRadius="0"
             Style="{StaticResource SettingGroupBox}">
-            <StackPanel Margin="{StaticResource SettingPanelMargin}"
-                        Orientation="Vertical">
+            <StackPanel Margin="{StaticResource SettingPanelMargin}" Orientation="Vertical">
 
                 <TextBlock
-                    Text="Queries"
-                    Margin="0, 0, 0, 15"
-                    Style="{DynamicResource SettingTitleLabel}" />
+                    Margin="0,0,0,15"
+                    Style="{DynamicResource SettingTitleLabel}"
+                    Text="Queries" />
 
                 <views:QueriesListView DataContext="{Binding QueriesListViewModel}" />
             </StackPanel>
@@ -80,7 +72,7 @@
             Height="Auto"
             Margin="0"
             Padding="0"
-            BorderThickness="0, 1, 0 , 0"
+            BorderThickness="0,1,0,0"
             CornerRadius="0"
             Style="{StaticResource SettingGroupBox}">
 

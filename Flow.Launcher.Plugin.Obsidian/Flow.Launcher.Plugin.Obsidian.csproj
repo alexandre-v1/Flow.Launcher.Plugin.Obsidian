@@ -42,4 +42,23 @@
     <Folder Include="Icons\Custom\"/>
   </ItemGroup>
 
+  <ItemGroup Label="Design Preview">
+    <ApplicationDefinition Update="Properties\DesignPreview.xaml" Condition="false">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+
+    <Page Update="Properties\DesignTimeResources.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <ContainsDesignTimeResources>true</ContainsDesignTimeResources>
+    </Page>
+
+    <Page Update="Properties\FlowTheme.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <XamlRuntime>Wpf</XamlRuntime>
+      <SubType>Designer</SubType>
+      <ContainsDesignTimeResources>true</ContainsDesignTimeResources>
+    </Page>
+  </ItemGroup>
 </Project>

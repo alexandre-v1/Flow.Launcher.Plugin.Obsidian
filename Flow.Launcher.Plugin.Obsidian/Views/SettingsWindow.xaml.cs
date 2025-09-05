@@ -5,7 +5,6 @@ using System;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
-using Flow.Launcher.Plugin.Obsidian.Utilities;
 using Flow.Launcher.Plugin.Obsidian.ViewModels;
 
 namespace Flow.Launcher.Plugin.Obsidian.Views;
@@ -18,10 +17,8 @@ public partial class SettingsWindow
     {
         _viewModel = viewModel;
         DataContext = _viewModel;
-        // Since WindowStartupLocation is set to Manual, initialize the window position before calling InitializeComponent
         UpdatePositionAndState();
         InitializeComponent();
-        StyleManager.Instance.ApplyStylesToControl(this);
     }
 
     #region Window Events

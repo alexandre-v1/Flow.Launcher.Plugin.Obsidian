@@ -5,17 +5,14 @@
     xmlns:controls="clr-namespace:ModernWpf.Controls;assembly=ModernWpf.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:utils="clr-namespace:Flow.Launcher.Plugin.Obsidian.Utilities"
     xmlns:viewModels="clr-namespace:Flow.Launcher.Plugin.Obsidian.ViewModels"
     d:DataContext="{d:DesignInstance viewModels:QueriesListViewModel}"
     d:DesignWidth="550"
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../Style.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
+        <utils:SharedResourceDictionary Source="pack://application:,,,/Flow.Launcher.Plugin.Obsidian;component/Style.xaml" />
     </UserControl.Resources>
 
     <StackPanel Orientation="Vertical">
@@ -41,13 +38,11 @@
 
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="border" Property="Background"
-                                                Value="{DynamicResource Color22B}" />
+                                        <Setter TargetName="border" Property="Background" Value="{DynamicResource Color22B}" />
                                     </Trigger>
 
                                     <Trigger Property="IsPressed" Value="True">
-                                        <Setter TargetName="border" Property="Background"
-                                                Value="{DynamicResource Color23B}" />
+                                        <Setter TargetName="border" Property="Background" Value="{DynamicResource Color23B}" />
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
@@ -111,11 +106,11 @@
                 <Button
                     Width="Auto"
                     MinWidth="100"
-                    Margin="20, -4.5"
+                    Margin="20,-4.5"
                     HorizontalAlignment="Right"
                     Command="{Binding OpenQueryCreatorCommand}"
-                    Cursor="Hand"
                     Content="Create query"
+                    Cursor="Hand"
                     DockPanel.Dock="Right" />
 
             </Grid>
