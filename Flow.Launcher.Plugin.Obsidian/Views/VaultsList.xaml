@@ -7,23 +7,27 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:utils="clr-namespace:Flow.Launcher.Plugin.Obsidian.Utilities"
     xmlns:viewModels="clr-namespace:Flow.Launcher.Plugin.Obsidian.ViewModels"
+    xmlns:views="clr-namespace:Flow.Launcher.Plugin.Obsidian.Views"
+    Background="{StaticResource Color00B}"
     d:DataContext="{d:DesignInstance viewModels:VaultsListViewModel}"
     d:DesignWidth="550"
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <utils:SharedResourceDictionary Source="pack://application:,,,/Flow.Launcher.Plugin.Obsidian;component/Style.xaml" />
+        <utils:SharedResourceDictionary
+            Source="pack://application:,,,/Flow.Launcher.Plugin.Obsidian;component/Style.xaml" />
     </UserControl.Resources>
 
     <ItemsControl
         Margin="0"
-        Background="Transparent"
         ItemsSource="{Binding Vaults}"
         SnapsToDevicePixels="True">
 
         <ItemsControl.ItemTemplate>
             <DataTemplate>
-                <Button HorizontalAlignment="Stretch" Command="{Binding OpenVaultSettingsCommand}">
+                <Button HorizontalAlignment="Stretch"
+                        Command="{Binding OpenVaultSettingsCommand}"
+                        Background="{Binding BorderBackground, RelativeSource={RelativeSource AncestorType={x:Type views:VaultsList}}}">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
                             <Border
@@ -31,17 +35,20 @@
                                 Width="Auto"
                                 Height="Auto"
                                 Padding="18,12,0,12"
-                                Style="{StaticResource SettingGroupBox}">
+                                Style="{StaticResource SettingGroupBox}"
+                                Background="{TemplateBinding Background}">
                                 <ContentPresenter />
                             </Border>
 
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="border" Property="Background" Value="{DynamicResource Color22B}" />
+                                    <Setter TargetName="border" Property="Background"
+                                            Value="{DynamicResource Color22B}" />
                                 </Trigger>
 
                                 <Trigger Property="IsPressed" Value="True">
-                                    <Setter TargetName="border" Property="Background" Value="{DynamicResource Color23B}" />
+                                    <Setter TargetName="border" Property="Background"
+                                            Value="{DynamicResource Color23B}" />
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
@@ -73,7 +80,7 @@
 
                         <TextBlock
                             Grid.Column="2"
-                            Margin="{StaticResource SettingPanelItemRightMargin}"
+                            Margin="0,0,16,0"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
                             Style="{StaticResource SettingTitleLabel}"

@@ -58,27 +58,44 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Background" Property="Background" Value="{DynamicResource ButtonMouseOver}" />
-                            <Setter TargetName="Background" Property="BorderThickness" Value="{DynamicResource CustomButtonOutBorderThickness}" />
-                            <Setter TargetName="Background" Property="BorderBrush" Value="{DynamicResource ButtonOutBorder}" />
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource ButtonInsideBorder}" />
-                            <Setter TargetName="Border" Property="BorderThickness" Value="{DynamicResource CustomButtonInsideBorderThickness}" />
+                            <Setter TargetName="Background" Property="Background"
+                                    Value="{DynamicResource ButtonMouseOver}" />
+                            <Setter TargetName="Background" Property="BorderThickness"
+                                    Value="{DynamicResource CustomButtonOutBorderThickness}" />
+                            <Setter TargetName="Background" Property="BorderBrush"
+                                    Value="{DynamicResource ButtonOutBorder}" />
+                            <Setter TargetName="Border" Property="BorderBrush"
+                                    Value="{DynamicResource ButtonInsideBorder}" />
+                            <Setter TargetName="Border" Property="BorderThickness"
+                                    Value="{DynamicResource CustomButtonInsideBorderThickness}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="Background" Property="Background" Value="{DynamicResource ButtonMousePressed}" />
-                            <Setter TargetName="Background" Property="BorderThickness" Value="{DynamicResource PressedCustomButtonOutBorderThickness}" />
-                            <Setter TargetName="Background" Property="BorderBrush" Value="{DynamicResource ButtonMousePressedInsideBorder}" />
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource ButtonInsideMouseOverBorder}" />
-                            <Setter TargetName="Border" Property="BorderThickness" Value="{DynamicResource PressedCustomButtonInsideBorderThickness}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ButtonMousePressedText}" />
+                            <Setter TargetName="Background" Property="Background"
+                                    Value="{DynamicResource ButtonMousePressed}" />
+                            <Setter TargetName="Background" Property="BorderThickness"
+                                    Value="{DynamicResource PressedCustomButtonOutBorderThickness}" />
+                            <Setter TargetName="Background" Property="BorderBrush"
+                                    Value="{DynamicResource ButtonMousePressedInsideBorder}" />
+                            <Setter TargetName="Border" Property="BorderBrush"
+                                    Value="{DynamicResource ButtonInsideMouseOverBorder}" />
+                            <Setter TargetName="Border" Property="BorderThickness"
+                                    Value="{DynamicResource PressedCustomButtonInsideBorderThickness}" />
+                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground"
+                                    Value="{DynamicResource ButtonMousePressedText}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="Background" Property="Background" Value="{DynamicResource ButtonBackgroundDisabledColor}" />
-                            <Setter TargetName="Background" Property="BorderThickness" Value="{DynamicResource DisabledCustomButtonOutBorderThickness}" />
-                            <Setter TargetName="Background" Property="BorderBrush" Value="{DynamicResource ButtonOutBorder}" />
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource ButtonInsideBorderDisabled}" />
-                            <Setter TargetName="Border" Property="BorderThickness" Value="{DynamicResource DisabledCustomButtonInsideBorderThickness}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ButtonDisabledText}" />
+                            <Setter TargetName="Background" Property="Background"
+                                    Value="{DynamicResource ButtonBackgroundDisabledColor}" />
+                            <Setter TargetName="Background" Property="BorderThickness"
+                                    Value="{DynamicResource DisabledCustomButtonOutBorderThickness}" />
+                            <Setter TargetName="Background" Property="BorderBrush"
+                                    Value="{DynamicResource ButtonOutBorder}" />
+                            <Setter TargetName="Border" Property="BorderBrush"
+                                    Value="{DynamicResource ButtonInsideBorderDisabled}" />
+                            <Setter TargetName="Border" Property="BorderThickness"
+                                    Value="{DynamicResource DisabledCustomButtonInsideBorderThickness}" />
+                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground"
+                                    Value="{DynamicResource ButtonDisabledText}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -123,22 +140,33 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Background" Property="Background" Value="{DynamicResource AccentButtonBackgroundPointerOver}" />
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AccentButtonBorderBrushPointerOver}" />
-                            <Setter TargetName="Overlay" Property="Background" Value="{DynamicResource AccentButtonBorderBGPointerOver}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource AccentButtonForegroundPointerOver}" />
+                            <Setter TargetName="Background" Property="Background"
+                                    Value="{DynamicResource AccentButtonBackgroundPointerOver}" />
+                            <Setter TargetName="Border" Property="BorderBrush"
+                                    Value="{DynamicResource AccentButtonBorderBrushPointerOver}" />
+                            <Setter TargetName="Overlay" Property="Background"
+                                    Value="{DynamicResource AccentButtonBorderBGPointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground"
+                                    Value="{DynamicResource AccentButtonForegroundPointerOver}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="Background" Property="Background" Value="{DynamicResource AccentButtonBackgroundPressed}" />
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AccentButtonBorderBrushPressed}" />
-                            <Setter TargetName="Overlay" Property="Background" Value="{DynamicResource AccentButtonBorderBGPressed}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource AccentButtonForegroundPressed}" />
+                            <Setter TargetName="Background" Property="Background"
+                                    Value="{DynamicResource AccentButtonBackgroundPressed}" />
+                            <Setter TargetName="Border" Property="BorderBrush"
+                                    Value="{DynamicResource AccentButtonBorderBrushPressed}" />
+                            <Setter TargetName="Overlay" Property="Background"
+                                    Value="{DynamicResource AccentButtonBorderBGPressed}" />
+                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground"
+                                    Value="{DynamicResource AccentButtonForegroundPressed}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="Background" Property="Background" Value="{DynamicResource AccentButtonBackgroundDisabled}" />
-                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AccentButtonBorderBrushDisabled}" />
+                            <Setter TargetName="Background" Property="Background"
+                                    Value="{DynamicResource AccentButtonBackgroundDisabled}" />
+                            <Setter TargetName="Border" Property="BorderBrush"
+                                    Value="{DynamicResource AccentButtonBorderBrushDisabled}" />
                             <Setter TargetName="Overlay" Property="Background" Value="transparent" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource AccentButtonForegroundDisabled}" />
+                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground"
+                                    Value="{DynamicResource AccentButtonForegroundDisabled}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -151,7 +179,9 @@
         <Setter Property="BorderBrush" Value="{DynamicResource WindowBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Style.Triggers>
-            <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=WindowState}" Value="Maximized">
+            <DataTrigger
+                Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=WindowState}"
+                Value="Maximized">
                 <Setter Property="BorderThickness" Value="0" />
                 <Setter Property="Padding" Value="6" />
             </DataTrigger>
@@ -216,20 +246,19 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="true">
                             <Setter TargetName="border" Property="Background" Value="{DynamicResource Color10B}" />
-                            <Setter Property="Foreground" Value="{DynamicResource MouseOverWindowCloseButtonForegroundBrush}" />
+                            <Setter Property="Foreground"
+                                    Value="{DynamicResource MouseOverWindowCloseButtonForegroundBrush}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="true">
                             <Setter TargetName="border" Property="Background" Value="{DynamicResource Color11B}" />
-                            <Setter Property="Foreground" Value="{DynamicResource MouseOverWindowCloseButtonForegroundBrush}" />
+                            <Setter Property="Foreground"
+                                    Value="{DynamicResource MouseOverWindowCloseButtonForegroundBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
-
-    <Thickness x:Key="SettingPanelMargin">70,13.5,18,13.5</Thickness>
-    <Thickness x:Key="SettingPanelItemRightMargin">0,0,9,0</Thickness>
 
     <!--  SettingWindowStyle.xaml  -->
     <Style x:Key="SettingGroupBox" TargetType="Border">
