@@ -5,29 +5,30 @@
     xmlns:controls="clr-namespace:ModernWpf.Controls;assembly=ModernWpf.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:utils="clr-namespace:Flow.Launcher.Plugin.Obsidian.Utilities"
     xmlns:viewModels="clr-namespace:Flow.Launcher.Plugin.Obsidian.ViewModels"
+    xmlns:views="clr-namespace:Flow.Launcher.Plugin.Obsidian.Views"
+    Background="{StaticResource Color00B}"
     d:DataContext="{d:DesignInstance viewModels:QueriesListViewModel}"
     d:DesignWidth="550"
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../Style.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
+        <utils:SharedResourceDictionary
+            Source="pack://application:,,,/Flow.Launcher.Plugin.Obsidian;component/Style.xaml" />
     </UserControl.Resources>
 
     <StackPanel Orientation="Vertical">
         <ItemsControl
             Margin="0"
-            Background="Transparent"
             ItemsSource="{Binding Queries}"
             SnapsToDevicePixels="True">
 
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Button HorizontalAlignment="Stretch" Command="{Binding OpenQuerySettingsCommand}">
+                    <Button HorizontalAlignment="Stretch"
+                            Command="{Binding OpenQuerySettingsCommand}"
+                            Background="{Binding BorderBackground, RelativeSource={RelativeSource AncestorType={x:Type views:QueriesListView}}}">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Border
@@ -35,6 +36,7 @@
                                     Width="Auto"
                                     Height="Auto"
                                     Padding="18,12,0,12"
+                                    Background="{TemplateBinding Background}"
                                     Style="{StaticResource SettingGroupBox}">
                                     <ContentPresenter />
                                 </Border>
@@ -100,7 +102,9 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
-        <Border Padding="0,20" Style="{StaticResource SettingGroupBox}">
+        <Border Padding="0,20"
+                Style="{StaticResource SettingGroupBox}"
+                Background="{Binding BorderBackground, RelativeSource={RelativeSource AncestorType={x:Type views:QueriesListView}}}">
             <Grid>
                 <TextBlock
                     Margin="20,0,0,0"
@@ -111,11 +115,11 @@
                 <Button
                     Width="Auto"
                     MinWidth="100"
-                    Margin="20, -4.5"
+                    Margin="20,-4.5"
                     HorizontalAlignment="Right"
                     Command="{Binding OpenQueryCreatorCommand}"
-                    Cursor="Hand"
                     Content="Create query"
+                    Cursor="Hand"
                     DockPanel.Dock="Right" />
 
             </Grid>

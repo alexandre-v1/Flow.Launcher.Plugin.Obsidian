@@ -5,6 +5,9 @@ namespace Flow.Launcher.Plugin.Obsidian.Utilities;
 
 public static class Paths
 {
+    public static readonly Uri PluginStyle =
+        new("pack://application:,,,/Flow.Launcher.Plugin.Obsidian;component/Style.xaml", UriKind.Absolute);
+
     public static readonly string ObsidianLogo = Path.Combine("Icons", "Core", "obsidian-logo.png");
 
     public static readonly string VaultListJsonPath = Path.Combine(

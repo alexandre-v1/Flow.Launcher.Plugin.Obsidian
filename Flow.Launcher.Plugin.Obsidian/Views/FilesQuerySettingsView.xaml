@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:utils="clr-namespace:Flow.Launcher.Plugin.Obsidian.Utilities"
     xmlns:views="clr-namespace:Flow.Launcher.Plugin.Obsidian.Views"
     xmlns:vm="clr-namespace:Flow.Launcher.Plugin.Obsidian.ViewModels"
     x:Name="VaultSettingsControl"
@@ -15,11 +16,8 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../Style.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
+        <utils:SharedResourceDictionary
+            Source="pack://application:,,,/Flow.Launcher.Plugin.Obsidian;component/Style.xaml" />
     </UserControl.Resources>
 
     <Grid>
@@ -223,7 +221,7 @@
 
                                     <TextBlock
                                         Grid.Column="2"
-                                        Margin="{StaticResource SettingPanelItemRightMargin}"
+                                        Margin="8,0"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         Style="{StaticResource SettingTitleLabel}"
@@ -232,7 +230,7 @@
                                     <ui:ToggleSwitch
                                         x:Name="OnOffControl"
                                         Grid.Column="3"
-                                        Margin="0,0,16,0"
+                                        Margin="8,0,16,0"
                                         IsOn="{Binding IsActive}"
                                         OffContent="{DynamicResource disable}"
                                         OnContent="{DynamicResource enable}" />

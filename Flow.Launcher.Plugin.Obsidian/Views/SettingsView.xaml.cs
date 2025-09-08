@@ -1,5 +1,4 @@
 using System.Windows;
-using Flow.Launcher.Plugin.Obsidian.Utilities;
 using Flow.Launcher.Plugin.Obsidian.ViewModels;
 
 namespace Flow.Launcher.Plugin.Obsidian.Views;
@@ -11,9 +10,6 @@ public partial class SettingsView
         DataContext = viewModel;
         InitializeComponent();
     }
-
-    private void OnLoaded(object sender, RoutedEventArgs e) =>
-        StyleManager.Instance.ApplyStylesToControl(this);
 
     private void OnUnloaded(object sender, RoutedEventArgs e)
     {

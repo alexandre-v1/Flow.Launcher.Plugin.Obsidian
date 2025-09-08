@@ -5,8 +5,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
-    xmlns:vm="clr-namespace:Flow.Launcher.Plugin.Obsidian.ViewModels"
+    xmlns:utils="clr-namespace:Flow.Launcher.Plugin.Obsidian.Utilities"
     xmlns:views="clr-namespace:Flow.Launcher.Plugin.Obsidian.Views"
+    xmlns:vm="clr-namespace:Flow.Launcher.Plugin.Obsidian.ViewModels"
     x:Name="VaultSettingsControl"
     d:DataContext="{d:DesignInstance vm:VaultSettingsViewModel}"
     d:DesignHeight="900"
@@ -15,11 +16,7 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="../Style.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
+        <utils:SharedResourceDictionary Source="pack://application:,,,/Flow.Launcher.Plugin.Obsidian;component/Style.xaml" />
     </UserControl.Resources>
 
     <Grid>
@@ -44,9 +41,12 @@
             VirtualizingPanel.ScrollUnit="Pixel"
             VirtualizingStackPanel.IsVirtualizing="True">
 
-            <StackPanel Margin="25,0,25,40" Orientation="Vertical" MaxWidth="1000">
+            <StackPanel
+                MaxWidth="1000"
+                Margin="25,0,25,40"
+                Orientation="Vertical">
 
-                <!-- Information -->
+                <!--  Information  -->
                 <Border
                     Margin="0"
                     Padding="0"
@@ -85,8 +85,7 @@
                             BorderThickness="0,1,0,0">
 
                             <StackPanel Margin="60,0,45,0" Orientation="Vertical">
-                                <StackPanel
-                                    Orientation="{Binding AutoHorizontalOrientation, ElementName=VaultSettingsControl}">
+                                <StackPanel Orientation="{Binding AutoHorizontalOrientation, ElementName=VaultSettingsControl}">
                                     <TextBlock
                                         Width="80"
                                         Margin="0,7"
@@ -99,8 +98,7 @@
                                         Text="{Binding Name}" />
                                 </StackPanel>
 
-                                <StackPanel
-                                    Orientation="{Binding AutoHorizontalOrientation, ElementName=VaultSettingsControl}">
+                                <StackPanel Orientation="{Binding AutoHorizontalOrientation, ElementName=VaultSettingsControl}">
                                     <TextBlock
                                         Width="80"
                                         Margin="0,7"
@@ -113,8 +111,7 @@
                                         Text="{Binding Path}" />
                                 </StackPanel>
 
-                                <StackPanel
-                                    Orientation="{Binding AutoHorizontalOrientation, ElementName=VaultSettingsControl}">
+                                <StackPanel Orientation="{Binding AutoHorizontalOrientation, ElementName=VaultSettingsControl}">
                                     <TextBlock
                                         Width="80"
                                         Margin="0,7"
@@ -131,7 +128,7 @@
                     </Expander>
                 </Border>
 
-                <!-- Files count -->
+                <!--  Files count  -->
                 <Border Padding="0,20" Style="{StaticResource SettingGroupBox}">
                     <Grid>
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
@@ -165,10 +162,10 @@
                     Text="Files"
                     TextAlignment="Left" />
 
-                <!-- Files extension -->
+                <!--  Files extension  -->
                 <views:FileExtensionsList DataContext="{Binding FileExtensionListViewModel}" />
 
-                <!-- Exclude paths -->
+                <!--  Exclude paths  -->
                 <views:ExcludePathsView DataContext="{Binding ExcludePathsViewModel}" />
 
             </StackPanel>
