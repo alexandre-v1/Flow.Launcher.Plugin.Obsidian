@@ -115,12 +115,14 @@
                                 <StackPanel Orientation="{Binding AutoHorizontalOrientation, ElementName=VaultSettingsControl}">
                                     <TextBlock
                                         Width="80"
-                                        Margin="0,7"
+                                        Margin="0,8"
                                         HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
                                         Style="{StaticResource Body}"
                                         Text="ID" />
                                     <TextBlock
-                                        Margin="0,7"
+                                        Margin="0,8"
+                                        VerticalAlignment="Center"
                                         Style="{StaticResource Caption}"
                                         Text="{Binding Id}" />
                                 </StackPanel>
@@ -155,11 +157,7 @@
                     </Grid>
                 </Border>
 
-                <TextBlock
-                    Margin="0,40,0,0"
-                    Style="{StaticResource BodyStrong}"
-                    Text="Files"
-                    TextAlignment="Left" />
+                <TextBlock Style="{StaticResource CardGroupTitle}" Text="Files" />
 
                 <!--  Files extension  -->
                 <views:FileExtensionsList DataContext="{Binding FileExtensionListViewModel}" />

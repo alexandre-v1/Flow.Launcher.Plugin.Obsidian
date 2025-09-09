@@ -8,14 +8,13 @@
     xmlns:views="clr-namespace:Flow.Launcher.Plugin.Obsidian.Views"
     xmlns:vm="clr-namespace:Flow.Launcher.Plugin.Obsidian.ViewModels"
     Height="Auto"
-    Background="{StaticResource Color00B}"
     d:DataContext="{d:DesignInstance vm:SettingsViewModel}"
+    Background="{StaticResource Color00B}"
     Unloaded="OnUnloaded"
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <utils:SharedResourceDictionary
-            Source="pack://application:,,,/Flow.Launcher.Plugin.Obsidian;component/Style.xaml" />
+        <utils:SharedResourceDictionary Source="pack://application:,,,/Flow.Launcher.Plugin.Obsidian;component/Style.xaml" />
     </UserControl.Resources>
 
     <Grid>
@@ -24,26 +23,13 @@
             Margin="36,0,36,36"
             Orientation="Vertical">
 
-            <TextBlock
-                Margin="0,40,0,12"
-                Style="{StaticResource BodyStrong}"
-                Text="Vaults" />
-            <views:VaultsList DataContext="{Binding VaultsListViewModel}" BorderBackground="{DynamicResource Color09B}" />
+            <TextBlock Style="{StaticResource CardGroupTitle}" Text="Vaults" />
+            <views:VaultsList BorderBackground="{DynamicResource Color09B}" DataContext="{Binding VaultsListViewModel}" />
 
-            <TextBlock
-                Margin="0,40,0,12"
-                Style="{StaticResource BodyStrong}"
-                Text="Queries" />
+            <TextBlock Style="{StaticResource CardGroupTitle}" Text="Queries" />
+            <views:QueriesListView BorderBackground="{DynamicResource Color09B}" DataContext="{Binding QueriesListViewModel}" />
 
-            <views:QueriesListView DataContext="{Binding QueriesListViewModel}"
-                                   BorderBackground="{DynamicResource Color09B}" />
-
-
-            <TextBlock
-                Margin="0,40,0,12"
-                Style="{StaticResource BodyStrong}"
-                Text="Other" />
-
+            <TextBlock Style="{StaticResource CardGroupTitle}" Text="Other" />
             <Border Background="{DynamicResource Color09B}" Style="{StaticResource SettingGroupBox}">
                 <DockPanel>
                     <TextBlock

@@ -153,11 +153,7 @@
                     </Grid>
                 </Border>
 
-                <TextBlock
-                    Margin="0,40,0,0"
-                    Style="{StaticResource BodyStrong}"
-                    Text="Vaults"
-                    TextAlignment="Left" />
+                <TextBlock Style="{StaticResource CardGroupTitle}" Text="Vaults" />
 
                 <!--  Vaults  -->
                 <ItemsControl
@@ -237,11 +233,7 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
-                <TextBlock
-                    Margin="0,40,0,0"
-                    Style="{StaticResource BodyStrong}"
-                    Text="Files"
-                    TextAlignment="Left" />
+                <TextBlock Style="{StaticResource CardGroupTitle}" Text="Files" />
 
                 <!--  Files extension  -->
                 <views:FileExtensionsList DataContext="{Binding FileExtensionListViewModel}" />

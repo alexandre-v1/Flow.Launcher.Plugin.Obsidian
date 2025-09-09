@@ -72,6 +72,15 @@
         <Setter Property="TextWrapping" Value="WrapWithOverflow" />
     </Style>
 
+    <Style
+        x:Key="CardGroupTitle"
+        BasedOn="{StaticResource BodyStrong}"
+        TargetType="{x:Type TextBlock}">
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Margin" Value="0,34,0,0" />
+        <Setter Property="TextAlignment" Value="Left" />
+    </Style>
+
     <Style x:Key="RemoveFromButton" TargetType="Button">
         <Setter Property="Template">
             <Setter.Value>

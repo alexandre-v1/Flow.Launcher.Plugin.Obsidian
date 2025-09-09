@@ -68,11 +68,7 @@
                 Text="Create a new query"
                 TextAlignment="Left" />
 
-            <TextBlock
-                Margin="0,36,0,0"
-                Style="{StaticResource BodyStrong}"
-                Text="Query type"
-                TextAlignment="Left" />
+            <TextBlock Style="{StaticResource CardGroupTitle}" Text="Query type" />
 
             <ListBox
                 Name="QueryTypeListBox"
@@ -114,11 +110,7 @@
                 </ListBox.ItemTemplate>
             </ListBox>
 
-            <TextBlock
-                Margin="0,36,0,0"
-                Style="{StaticResource BodyStrong}"
-                Text="Info"
-                TextAlignment="Left" />
+            <TextBlock Style="{StaticResource CardGroupTitle}" Text="Info" />
             <Border Style="{StaticResource SettingGroupBox}">
                 <DockPanel LastChildFill="True">
                     <TextBlock
