@@ -5,17 +5,17 @@
     xmlns:controls="clr-namespace:ModernWpf.Controls;assembly=ModernWpf.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:utils="clr-namespace:Flow.Launcher.Plugin.Obsidian.Utilities"
     xmlns:viewModels="clr-namespace:Flow.Launcher.Plugin.Obsidian.ViewModels"
     xmlns:views="clr-namespace:Flow.Launcher.Plugin.Obsidian.Views"
-    Background="{StaticResource Color00B}"
     d:DataContext="{d:DesignInstance viewModels:VaultsListViewModel}"
     d:DesignWidth="550"
+    Background="{StaticResource Color00B}"
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <utils:SharedResourceDictionary
-            Source="pack://application:,,,/Flow.Launcher.Plugin.Obsidian;component/Style.xaml" />
+        <utils:SharedResourceDictionary Source="pack://application:,,,/Flow.Launcher.Plugin.Obsidian;component/Style.xaml" />
     </UserControl.Resources>
 
     <ItemsControl
@@ -25,9 +25,10 @@
 
         <ItemsControl.ItemTemplate>
             <DataTemplate>
-                <Button HorizontalAlignment="Stretch"
-                        Command="{Binding OpenVaultSettingsCommand}"
-                        Background="{Binding BorderBackground, RelativeSource={RelativeSource AncestorType={x:Type views:VaultsList}}}">
+                <Button
+                    HorizontalAlignment="Stretch"
+                    Background="{Binding BorderBackground, RelativeSource={RelativeSource AncestorType={x:Type views:VaultsList}}}"
+                    Command="{Binding OpenVaultSettingsCommand}">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
                             <Border
@@ -35,67 +36,62 @@
                                 Width="Auto"
                                 Height="Auto"
                                 Padding="18,12,0,12"
-                                Style="{StaticResource SettingGroupBox}"
-                                Background="{TemplateBinding Background}">
+                                Background="{TemplateBinding Background}"
+                                Style="{StaticResource SettingGroupBox}">
                                 <ContentPresenter />
                             </Border>
 
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="border" Property="Background"
-                                            Value="{DynamicResource Color22B}" />
+                                    <Setter TargetName="border" Property="Background" Value="{DynamicResource Color22B}" />
                                 </Trigger>
 
                                 <Trigger Property="IsPressed" Value="True">
-                                    <Setter TargetName="border" Property="Background"
-                                            Value="{DynamicResource Color23B}" />
+                                    <Setter TargetName="border" Property="Background" Value="{DynamicResource Color23B}" />
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Button.Template>
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="36" MinWidth="36" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
+                    <DockPanel LastChildFill="True">
+                        <ui:FontIcon
+                            Margin="0,0,16,0"
+                            DockPanel.Dock="Right"
+                            Glyph="&#xE974;"
+                            Style="{StaticResource FluentFontIcon}" />
+
+                        <controls:ToggleSwitch
+                            x:Name="OnOffControl"
+                            Margin="0,0,16,0"
+                            DockPanel.Dock="Right"
+                            IsOn="{Binding IsActive}"
+                            OffContent="{DynamicResource disable}"
+                            OnContent="{DynamicResource enable}" />
+
+                        <TextBlock
+                            Margin="0,0,16,0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Right"
+                            Style="{StaticResource Body}"
+                            Text="{Binding FilesCount, StringFormat={}{0} Files}" />
 
                         <Image
-                            Grid.Column="0"
                             MaxWidth="32"
                             MaxHeight="32"
+                            DockPanel.Dock="Left"
                             RenderOptions.BitmapScalingMode="HighQuality"
                             Source="{Binding Icon, Mode=OneWay, IsAsync=True}" />
 
-                        <StackPanel Grid.Column="1" Margin="16,0,14,0">
-                            <TextBlock
-                                Style="{StaticResource Body}"
-                                Text="{Binding Name}" />
+                        <StackPanel Margin="16,0,14,0" DockPanel.Dock="Left">
+                            <TextBlock Style="{StaticResource Body}" Text="{Binding Name}" />
 
                             <TextBlock
                                 Margin="0,2,0,0"
                                 Style="{StaticResource Caption}"
                                 Text="{Binding VaultPath}" />
                         </StackPanel>
-
-                        <TextBlock
-                            Grid.Column="2"
-                            Margin="0,0,16,0"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            Style="{StaticResource Body}"
-                            Text="{Binding FilesCount, StringFormat={}{0} Files}" />
-
-                        <controls:ToggleSwitch
-                            x:Name="OnOffControl"
-                            Grid.Column="3"
-                            Margin="0,0,16,0"
-                            IsOn="{Binding IsActive}"
-                            OffContent="{DynamicResource disable}"
-                            OnContent="{DynamicResource enable}" />
-                    </Grid>
+                    </DockPanel>
                 </Button>
             </DataTemplate>
         </ItemsControl.ItemTemplate>

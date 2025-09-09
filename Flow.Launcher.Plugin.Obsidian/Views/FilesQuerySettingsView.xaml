@@ -168,22 +168,37 @@
                                     </ControlTemplate>
                                 </Button.Template>
 
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="36" MinWidth="36" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
+                                <DockPanel LastChildFill="True">
+                                    <ui:FontIcon
+                                        Margin="0,0,16,0"
+                                        DockPanel.Dock="Right"
+                                        Glyph="&#xE974;"
+                                        Style="{StaticResource FluentFontIcon}" />
+
+                                    <ui:ToggleSwitch
+                                        x:Name="OnOffControl"
+                                        Margin="8,0,16,0"
+                                        DockPanel.Dock="Right"
+                                        IsOn="{Binding IsActive}"
+                                        OffContent="{DynamicResource disable}"
+                                        OnContent="{DynamicResource enable}" />
+
+                                    <TextBlock
+                                        Margin="8,0"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        DockPanel.Dock="Right"
+                                        Style="{StaticResource Body}"
+                                        Text="{Binding FilesCount, StringFormat={}{0} Files}" />
 
                                     <Image
-                                        Grid.Column="0"
                                         MaxWidth="32"
                                         MaxHeight="32"
+                                        DockPanel.Dock="Left"
                                         RenderOptions.BitmapScalingMode="HighQuality"
                                         Source="{Binding Icon, Mode=OneWay, IsAsync=True}" />
 
-                                    <StackPanel Grid.Column="1" Margin="16,0,14,0">
+                                    <StackPanel Margin="16,0,14,0" DockPanel.Dock="Left">
                                         <TextBlock Style="{StaticResource Body}" Text="{Binding Name}" />
 
                                         <TextBlock
@@ -191,23 +206,7 @@
                                             Style="{StaticResource Caption}"
                                             Text="{Binding VaultPath}" />
                                     </StackPanel>
-
-                                    <TextBlock
-                                        Grid.Column="2"
-                                        Margin="8,0"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        Style="{StaticResource Body}"
-                                        Text="{Binding FilesCount, StringFormat={}{0} Files}" />
-
-                                    <ui:ToggleSwitch
-                                        x:Name="OnOffControl"
-                                        Grid.Column="3"
-                                        Margin="8,0,16,0"
-                                        IsOn="{Binding IsActive}"
-                                        OffContent="{DynamicResource disable}"
-                                        OnContent="{DynamicResource enable}" />
-                                </Grid>
+                                </DockPanel>
                             </Button>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
