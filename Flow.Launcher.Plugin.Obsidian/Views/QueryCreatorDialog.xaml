@@ -83,12 +83,7 @@
                     <DataTemplate>
 
                         <StackPanel Name="Panel" Orientation="Horizontal">
-                            <ui:FontIcon
-                                Margin="20,0,0,0"
-                                VerticalAlignment="Center"
-                                FontFamily="{StaticResource SegoeFluentIcons}"
-                                FontSize="20"
-                                Glyph="{Binding Glyph.Glyph}" />
+                            <ui:FontIcon Glyph="{Binding Glyph.Glyph}" Style="{StaticResource FluentFontIcon}" />
 
                             <StackPanel Margin="16,0,14,0">
                                 <TextBlock

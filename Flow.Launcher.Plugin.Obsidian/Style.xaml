@@ -81,14 +81,23 @@
         <Setter Property="TextAlignment" Value="Left" />
     </Style>
 
+    <Style x:Key="FluentFontIcon" TargetType="{x:Type m:FontIcon}">
+        <Setter Property="Margin" Value="20,0,0,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="FontFamily" Value="{StaticResource SegoeFluentIcons}" />
+        <Setter Property="Foreground" Value="{DynamicResource Color05B}" />
+    </Style>
+
     <Style x:Key="RemoveFromButton" TargetType="Button">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <m:FontIcon
                         x:Name="FontIcon"
-                        Foreground="{DynamicResource Color05B}"
-                        Glyph="&#xECC9;" />
+                        Glyph="&#xECC9;"
+                        Style="{StaticResource FluentFontIcon}" />
 
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">

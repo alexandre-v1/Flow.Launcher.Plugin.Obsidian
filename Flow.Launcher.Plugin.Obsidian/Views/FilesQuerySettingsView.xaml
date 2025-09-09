@@ -51,12 +51,7 @@
                     Style="{StaticResource SettingGroupBox}">
                     <Grid>
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                            <ui:FontIcon
-                                Margin="20,0,0,0"
-                                VerticalAlignment="Center"
-                                FontFamily="Segoe Fluent Icons"
-                                Foreground="{DynamicResource Color05B}"
-                                Glyph="&#xE72C;" />
+                            <ui:FontIcon Glyph="&#xE72C;" Style="{StaticResource FluentFontIcon}" />
                             <TextBlock
                                 Margin="20,0,0,0"
                                 VerticalAlignment="Center"
@@ -76,12 +71,7 @@
                 <Border Padding="0,20" Style="{StaticResource SettingGroupBox}">
                     <Grid>
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                            <ui:FontIcon
-                                Margin="20,0,0,0"
-                                VerticalAlignment="Center"
-                                FontFamily="Segoe Fluent Icons"
-                                Foreground="{DynamicResource Color05B}"
-                                Glyph="&#xe819;" />
+                            <ui:FontIcon Glyph="&#xe819;" Style="{StaticResource FluentFontIcon}" />
                             <TextBlock
                                 Margin="20,0,0,0"
                                 VerticalAlignment="Center"
@@ -107,12 +97,7 @@
                 <Border Padding="0,14" Style="{StaticResource SettingGroupBox}">
                     <Grid>
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                            <ui:FontIcon
-                                Margin="20,0,0,0"
-                                VerticalAlignment="Center"
-                                FontFamily="Segoe Fluent Icons"
-                                Foreground="{DynamicResource Color05B}"
-                                Glyph="&#xE8AC;" />
+                            <ui:FontIcon Glyph="&#xE8AC;" Style="{StaticResource FluentFontIcon}" />
                             <TextBlock
                                 Margin="20,0,0,0"
                                 VerticalAlignment="Center"
@@ -132,12 +117,7 @@
                 <Border Padding="0,14" Style="{StaticResource SettingGroupBox}">
                     <Grid>
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                            <ui:FontIcon
-                                Margin="20,0,0,0"
-                                VerticalAlignment="Center"
-                                FontFamily="Segoe Fluent Icons"
-                                Foreground="{DynamicResource Color05B}"
-                                Glyph="&#xE74D;" />
+                            <ui:FontIcon Glyph="&#xE74D;" Style="{StaticResource FluentFontIcon}" />
                             <TextBlock
                                 Margin="20,0,0,0"
                                 VerticalAlignment="Center"

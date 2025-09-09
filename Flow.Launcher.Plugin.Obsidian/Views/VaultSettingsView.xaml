@@ -60,13 +60,7 @@
                             <!--  Negative left margin to nullify expander  -->
                             <Border Margin="-18,0,0,0" Padding="0,20">
                                 <StackPanel Orientation="Horizontal">
-                                    <ui:FontIcon
-                                        Margin="20,0,0,0"
-                                        VerticalAlignment="Center"
-                                        FontFamily="Segoe Fluent Icons"
-                                        FontSize="20"
-                                        Foreground="{DynamicResource Color05B}"
-                                        Glyph="&#xe946;" />
+                                    <ui:FontIcon Glyph="&#xe946;" Style="{StaticResource FluentFontIcon}" />
                                     <TextBlock
                                         Margin="20,0,0,0"
                                         VerticalAlignment="Center"
@@ -135,13 +129,7 @@
                 <Border Padding="0,20" Style="{StaticResource SettingGroupBox}">
                     <Grid>
                         <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                            <ui:FontIcon
-                                Margin="20,0,0,0"
-                                VerticalAlignment="Center"
-                                FontFamily="Segoe Fluent Icons"
-                                FontSize="20"
-                                Foreground="{DynamicResource Color05B}"
-                                Glyph="&#xE8A5;" />
+                            <ui:FontIcon Glyph="&#xE8A5;" Style="{StaticResource FluentFontIcon}" />
                             <TextBlock
                                 Margin="20,0,0,0"
                                 VerticalAlignment="Center"
