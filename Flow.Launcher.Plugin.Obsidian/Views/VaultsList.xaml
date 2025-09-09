@@ -70,11 +70,13 @@
                             Source="{Binding Icon, Mode=OneWay, IsAsync=True}" />
 
                         <StackPanel Grid.Column="1" Margin="16,0,14,0">
-                            <TextBlock Style="{StaticResource SettingTitleLabel}" Text="{Binding Name}" />
+                            <TextBlock
+                                Style="{StaticResource Body}"
+                                Text="{Binding Name}" />
 
                             <TextBlock
                                 Margin="0,2,0,0"
-                                Style="{StaticResource SettingSubTitleLabel}"
+                                Style="{StaticResource Caption}"
                                 Text="{Binding VaultPath}" />
                         </StackPanel>
 
@@ -83,7 +85,7 @@
                             Margin="0,0,16,0"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
-                            Style="{StaticResource SettingTitleLabel}"
+                            Style="{StaticResource Body}"
                             Text="{Binding FilesCount, StringFormat={}{0} Files}" />
 
                         <controls:ToggleSwitch

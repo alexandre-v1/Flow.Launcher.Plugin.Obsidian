@@ -35,7 +35,58 @@
     <!--  Plugin local styles  -->
     <FontFamily x:Key="SegoeFluentIcons">Segoe Fluent Icons, /Resources/#Segoe Fluent Icons</FontFamily>
 
-    <Style x:Key="PageTitle" TargetType="{x:Type TextBlock}">
+    <Style x:Key="Title" TargetType="{x:Type TextBlock}">
+        <Setter Property="Foreground" Value="{DynamicResource Color05B}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="LineHeight" Value="36" />
+        <Setter Property="FontSize" Value="28" />
+    </Style>
+
+    <Style x:Key="Subtitle" TargetType="{x:Type TextBlock}">
+        <Setter Property="Foreground" Value="{DynamicResource Color05B}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="LineHeight" Value="28" />
+    </Style>
+
+    <Style x:Key="BodyStrong" TargetType="{x:Type TextBlock}">
+        <Setter Property="Foreground" Value="{DynamicResource Color05B}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="LineHeight" Value="20" />
+    </Style>
+
+    <Style x:Key="Body" TargetType="{x:Type TextBlock}">
+        <Setter Property="Foreground" Value="{DynamicResource Color05B}" />
+        <Setter Property="FontWeight" Value="Regular" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="LineHeight" Value="20" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+
+    <Style x:Key="Caption" TargetType="{x:Type TextBlock}">
+        <Setter Property="Foreground" Value="{DynamicResource Color04B}" />
+        <Setter Property="FontWeight" Value="Regular" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="LineHeight" Value="16" />
+        <Setter Property="TextWrapping" Value="WrapWithOverflow" />
+    </Style>
+
+    <Style
+        x:Key="CardGroupTitle"
+        BasedOn="{StaticResource BodyStrong}"
+        TargetType="{x:Type TextBlock}">
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Margin" Value="0,34,0,0" />
+        <Setter Property="TextAlignment" Value="Left" />
+    </Style>
+
+    <Style x:Key="FluentFontIcon" TargetType="{x:Type m:FontIcon}">
+        <Setter Property="Margin" Value="20,0,0,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="FontFamily" Value="{StaticResource SegoeFluentIcons}" />
         <Setter Property="Foreground" Value="{DynamicResource Color05B}" />
     </Style>
 
@@ -45,8 +96,8 @@
                 <ControlTemplate TargetType="Button">
                     <m:FontIcon
                         x:Name="FontIcon"
-                        Foreground="{DynamicResource Color05B}"
-                        Glyph="&#xECC9;" />
+                        Glyph="&#xECC9;"
+                        Style="{StaticResource FluentFontIcon}" />
 
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">

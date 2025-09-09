@@ -64,17 +64,11 @@
 
             <TextBlock
                 Margin="0,12,26,0"
-                FontSize="20"
-                FontWeight="SemiBold"
+                Style="{StaticResource Subtitle}"
                 Text="Create a new query"
                 TextAlignment="Left" />
 
-            <TextBlock
-                Margin="0,36,0,0"
-                FontWeight="Bold"
-                Style="{StaticResource PageTitle}"
-                Text="Query type"
-                TextAlignment="Left" />
+            <TextBlock Style="{StaticResource CardGroupTitle}" Text="Query type" />
 
             <ListBox
                 Name="QueryTypeListBox"
@@ -89,41 +83,36 @@
                     <DataTemplate>
 
                         <StackPanel Name="Panel" Orientation="Horizontal">
-                            <ui:FontIcon
-                                Margin="20,0,0,0"
-                                VerticalAlignment="Center"
-                                FontFamily="{StaticResource SegoeFluentIcons}"
-                                FontSize="20"
-                                Glyph="{Binding Glyph.Glyph}" />
+                            <ui:FontIcon Glyph="{Binding Glyph.Glyph}" Style="{StaticResource FluentFontIcon}" />
 
                             <StackPanel Margin="16,0,14,0">
-                                <TextBlock Text="{Binding DisplayName}" TextWrapping="Wrap" />
+                                <TextBlock
+                                    FontSize="14"
+                                    FontWeight="Regular"
+                                    LineHeight="20"
+                                    Text="{Binding DisplayName}" />
 
                                 <TextBlock
                                     Margin="0,2,0,0"
                                     Padding="0,0,24,0"
                                     FontSize="12"
-                                    Text="{Binding Description}"
-                                    TextWrapping="WrapWithOverflow" />
+                                    FontWeight="Regular"
+                                    LineHeight="16"
+                                    Text="{Binding Description}" />
                             </StackPanel>
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
 
-            <TextBlock
-                Margin="0,36,0,0"
-                FontWeight="Bold"
-                Style="{StaticResource PageTitle}"
-                Text="Info"
-                TextAlignment="Left" />
+            <TextBlock Style="{StaticResource CardGroupTitle}" Text="Info" />
             <Border Style="{StaticResource SettingGroupBox}">
                 <DockPanel LastChildFill="True">
                     <TextBlock
                         Margin="16,0"
                         VerticalAlignment="Center"
                         DockPanel.Dock="Left"
-                        Style="{StaticResource SettingTitleLabel}"
+                        Style="{StaticResource Body}"
                         Text="Query Name" />
                     <TextBox
                         Name="QueryNameTextBox"
@@ -167,7 +156,7 @@
                             </Style.Triggers>
                         </Style>
                     </Button.Style>
-                    <TextBlock Text="{DynamicResource done}" />
+                    <TextBlock Style="{StaticResource Body}" Text="{DynamicResource done}" />
                 </Button>
             </StackPanel>
         </Border>
