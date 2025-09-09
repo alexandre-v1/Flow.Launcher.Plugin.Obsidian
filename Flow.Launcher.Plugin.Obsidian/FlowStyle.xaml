@@ -270,16 +270,4 @@
         <Setter Property="Padding" Value="0,15,0,15" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
     </Style>
-    <Style x:Key="SettingTitleLabel" TargetType="{x:Type TextBlock}">
-        <Setter Property="Foreground" Value="{DynamicResource Color05B}" />
-        <Setter Property="Margin" Value="0,0,0,0" />
-        <Setter Property="TextWrapping" Value="Wrap" />
-    </Style>
-    <Style x:Key="SettingSubTitleLabel" TargetType="{x:Type TextBlock}">
-        <Setter Property="Foreground" Value="{DynamicResource Color04B}" />
-        <Setter Property="FontSize" Value="12" />
-        <Setter Property="Margin" Value="0,0,0,0" />
-        <Setter Property="Padding" Value="0,0,24,0" />
-        <Setter Property="TextWrapping" Value="WrapWithOverflow" />
-    </Style>
 </ResourceDictionary>

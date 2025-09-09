@@ -26,13 +26,13 @@
 
             <TextBlock
                 Margin="0,40,0,12"
-                Style="{DynamicResource SettingTitleLabel}"
+                Style="{StaticResource BodyStrong}"
                 Text="Vaults" />
             <views:VaultsList DataContext="{Binding VaultsListViewModel}" BorderBackground="{DynamicResource Color09B}" />
 
             <TextBlock
                 Margin="0,40,0,12"
-                Style="{DynamicResource SettingTitleLabel}"
+                Style="{StaticResource BodyStrong}"
                 Text="Queries" />
 
             <views:QueriesListView DataContext="{Binding QueriesListViewModel}"
@@ -41,7 +41,7 @@
 
             <TextBlock
                 Margin="0,40,0,12"
-                Style="{DynamicResource SettingTitleLabel}"
+                Style="{StaticResource BodyStrong}"
                 Text="Other" />
 
             <Border Background="{DynamicResource Color09B}" Style="{StaticResource SettingGroupBox}">
@@ -50,7 +50,7 @@
                         Margin="16,0"
                         VerticalAlignment="Center"
                         DockPanel.Dock="Left"
-                        Style="{DynamicResource SettingTitleLabel}"
+                        Style="{StaticResource Body}"
                         Text="Reload plugin data" />
                     <Button
                         Margin="16,0"

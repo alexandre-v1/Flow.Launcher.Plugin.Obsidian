@@ -74,7 +74,7 @@
                                 Grid.Column="1"
                                 Margin="16,0,14,0"
                                 VerticalAlignment="Center"
-                                Style="{StaticResource SettingTitleLabel}"
+                                Style="{StaticResource Body}"
                                 Text="{Binding Name}" />
 
                             <Button
@@ -109,7 +109,7 @@
                 <TextBlock
                     Margin="20,0,0,0"
                     VerticalAlignment="Center"
-                    Foreground="{DynamicResource Color05B}"
+                    Style="{StaticResource Body}"
                     Text="Create a new query" />
 
                 <Button

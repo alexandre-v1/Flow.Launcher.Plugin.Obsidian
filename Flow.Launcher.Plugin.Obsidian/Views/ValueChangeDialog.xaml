@@ -51,8 +51,7 @@
 
         <TextBlock
             Margin="26,12,26,12"
-            FontSize="20"
-            FontWeight="SemiBold"
+            Style="{StaticResource Subtitle}"
             Text="{Binding OperationTitle}"
             TextAlignment="Left" />
 
@@ -61,7 +60,7 @@
                 Margin="26,6,10,12"
                 VerticalAlignment="Center"
                 DockPanel.Dock="Left"
-                FontSize="14"
+                Style="{StaticResource Body}"
                 Text="{Binding ValueName, StringFormat=New {0}}" />
             <TextBox
                 Margin="10,6,26,10"
@@ -73,8 +72,8 @@
         <TextBlock
             Margin="26,6,10,12"
             VerticalAlignment="Center"
-            FontSize="14"
             Foreground="{StaticResource Color11B}"
+            Style="{StaticResource Body}"
             Text="{Binding ErrorMessage}"
             Visibility="{Binding ErrorMessageVisibility}" />
 
@@ -97,7 +96,7 @@
                     Margin="10,0,10,0"
                     Command="{Binding ValidateCommand}"
                     Style="{StaticResource AccentButtonStyle}">
-                    <TextBlock Text="{DynamicResource done}" />
+                    <TextBlock Style="{StaticResource Body}" Text="{DynamicResource done}" />
                 </Button>
             </StackPanel>
         </Border>

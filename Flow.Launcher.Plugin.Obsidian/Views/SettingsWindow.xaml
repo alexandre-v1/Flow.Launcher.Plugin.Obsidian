@@ -64,8 +64,8 @@
                     Grid.Column="1"
                     Margin="4,0,0,0"
                     VerticalAlignment="Center"
-                    FontSize="12"
                     Foreground="{DynamicResource Color05B}"
+                    Style="{StaticResource Caption}"
                     Text="{DynamicResource flowlauncher_settings}" />
 
                 <Button

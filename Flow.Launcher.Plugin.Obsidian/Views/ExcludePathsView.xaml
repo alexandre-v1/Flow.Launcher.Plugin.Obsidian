@@ -31,13 +31,13 @@
                             Margin="20,0,0,0"
                             VerticalAlignment="Center"
                             DockPanel.Dock="Left"
-                            Style="{StaticResource PageTitle}"
+                            Style="{StaticResource Body}"
                             Text="Exclude paths" />
                         <TextBlock
                             Margin="0,0,16,0"
                             VerticalAlignment="Center"
                             DockPanel.Dock="Right"
-                            Style="{StaticResource PageTitle}"
+                            Style="{StaticResource Body}"
                             Text="{Binding ExcludePaths.Count}"
                             TextAlignment="Right" />
                     </DockPanel>
@@ -60,7 +60,7 @@
                                         Margin="20,0,0,0"
                                         VerticalAlignment="Center"
                                         DockPanel.Dock="Left"
-                                        Style="{StaticResource PageTitle}"
+                                        Style="{StaticResource Body}"
                                         Text="{Binding}" />
                                     <Button
                                         Margin="0,0,20,0"

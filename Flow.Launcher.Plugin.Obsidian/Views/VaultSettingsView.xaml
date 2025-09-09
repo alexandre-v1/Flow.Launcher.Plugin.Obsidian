@@ -28,8 +28,7 @@
             Grid.Row="0"
             MaxWidth="1000"
             Margin="25,23,0,0"
-            FontSize="30"
-            Style="{StaticResource PageTitle}"
+            Style="{StaticResource Title}"
             Text="{Binding Name}"
             TextAlignment="Left" />
 
@@ -37,7 +36,6 @@
             Grid.Row="1"
             Margin="0"
             CanContentScroll="False"
-            FontSize="14"
             VirtualizingPanel.ScrollUnit="Pixel"
             VirtualizingStackPanel.IsVirtualizing="True">
 
@@ -72,8 +70,7 @@
                                     <TextBlock
                                         Margin="20,0,0,0"
                                         VerticalAlignment="Center"
-                                        FontSize="20"
-                                        Foreground="{DynamicResource Color05B}"
+                                        Style="{StaticResource Body}"
                                         Text="Information" />
                                 </StackPanel>
                             </Border>
@@ -88,26 +85,30 @@
                                 <StackPanel Orientation="{Binding AutoHorizontalOrientation, ElementName=VaultSettingsControl}">
                                     <TextBlock
                                         Width="80"
-                                        Margin="0,7"
+                                        Margin="0,8"
                                         HorizontalAlignment="Left"
-                                        Style="{StaticResource SettingTitleLabel}"
+                                        VerticalAlignment="Center"
+                                        Style="{StaticResource Body}"
                                         Text="Name" />
                                     <TextBlock
-                                        Margin="0,7"
-                                        Style="{StaticResource SettingSubTitleLabel}"
+                                        Margin="0,8"
+                                        VerticalAlignment="Center"
+                                        Style="{StaticResource Caption}"
                                         Text="{Binding Name}" />
                                 </StackPanel>
 
                                 <StackPanel Orientation="{Binding AutoHorizontalOrientation, ElementName=VaultSettingsControl}">
                                     <TextBlock
                                         Width="80"
-                                        Margin="0,7"
+                                        Margin="0,8"
                                         HorizontalAlignment="Left"
-                                        Style="{StaticResource SettingTitleLabel}"
+                                        VerticalAlignment="Center"
+                                        Style="{StaticResource Body}"
                                         Text="Path" />
                                     <TextBlock
-                                        Margin="0,7"
-                                        Style="{StaticResource SettingSubTitleLabel}"
+                                        Margin="0,8"
+                                        VerticalAlignment="Center"
+                                        Style="{StaticResource Caption}"
                                         Text="{Binding Path}" />
                                 </StackPanel>
 
@@ -116,11 +117,11 @@
                                         Width="80"
                                         Margin="0,7"
                                         HorizontalAlignment="Left"
-                                        Style="{StaticResource SettingTitleLabel}"
+                                        Style="{StaticResource Body}"
                                         Text="ID" />
                                     <TextBlock
                                         Margin="0,7"
-                                        Style="{StaticResource SettingSubTitleLabel}"
+                                        Style="{StaticResource Caption}"
                                         Text="{Binding Id}" />
                                 </StackPanel>
                             </StackPanel>
@@ -142,8 +143,7 @@
                             <TextBlock
                                 Margin="20,0,0,0"
                                 VerticalAlignment="Center"
-                                FontSize="20"
-                                Foreground="{DynamicResource Color05B}"
+                                Style="{StaticResource Body}"
                                 Text="{Binding FilesCount}" />
                         </StackPanel>
 
@@ -157,8 +157,7 @@
 
                 <TextBlock
                     Margin="0,40,0,0"
-                    FontWeight="Bold"
-                    Style="{StaticResource PageTitle}"
+                    Style="{StaticResource BodyStrong}"
                     Text="Files"
                     TextAlignment="Left" />
 
