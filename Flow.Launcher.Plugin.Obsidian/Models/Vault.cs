@@ -93,7 +93,7 @@ public class Vault
 
         IEnumerable<string> extensions = Setting.FileExtensions.GetActiveExtensionSuffix();
 
-        Files = Directory
+        List<File> files = Directory
             .EnumerateFiles(Path, "*", SearchOption.AllDirectories)
             .AsParallel()
             .WithDegreeOfParallelism(Environment.ProcessorCount)
@@ -110,15 +110,19 @@ public class Vault
                     return file;
                 }
 
-                file = file.LoadObsidianProperties();
-                if (file.Tags is not null)
-                {
-                    Tags.UnionWith(file.Tags);
-                }
-
-                return file;
+                return file.LoadObsidianProperties();
             })
             .ToList();
+
+        foreach (var file in files)
+        {
+            if (file.Tags is not null)
+            {
+                Tags.UnionWith(file.Tags);
+            }
+        }
+
+        Files = files;
     }
 
     private void UpdateObsidianPlugins()
