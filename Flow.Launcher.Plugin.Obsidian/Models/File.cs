@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Flow.Launcher.Plugin.Obsidian.Utilities;
 
 namespace Flow.Launcher.Plugin.Obsidian.Models;
@@ -37,11 +39,30 @@ public class File : Result
     public string Name => _info.Name;
     public string FileName => _info.FileName;
 
-    public HashSet<string>? Aliases { get; set; }
-    public HashSet<string>? Tags { get; set; }
+    public HashSet<string>? Aliases { get; private set; }
+    public HashSet<string>? Tags { get; private set; }
 
-    public File LoadObsidianProperties() =>
-        ObsidianProperties.LoadObsidianProperties(this);
+    public void LoadObsidianProperties()
+    {
+        (List<string>, List<string>)? properties = ObsidianProperties.LoadObsidianProperties(FilePath);
+        if (properties is null)
+        {
+            return;
+        }
+
+        (List<string> aliases, List<string> tags) = properties.Value;
+
+        if (aliases.Count > 0)
+        {
+            Aliases = aliases.ToHashSet(StringComparer.CurrentCultureIgnoreCase);
+        }
+
+        if (tags.Count > 0)
+        {
+            Tags = tags.ToHashSet(StringComparer.CurrentCultureIgnoreCase);
+        }
+    }
+
 
     public void Open(bool openInNewTab = false)
     {
