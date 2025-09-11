@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Flow.Launcher.Plugin.Obsidian.Extensions;
-using File = Flow.Launcher.Plugin.Obsidian.Models.File;
 
 namespace Flow.Launcher.Plugin.Obsidian.Utilities;
 
@@ -16,12 +15,12 @@ public static class ObsidianProperties
     private const int TagsKeyLength = 5;
 
 
-    public static File LoadObsidianProperties(File file)
+    public static (List<string> aliases, List<string> tags)? LoadObsidianProperties(string filePath)
     {
-        using StreamReader reader = new(file.FilePath);
+        using StreamReader reader = new(filePath);
         if (reader.ReadLine()?.Trim() is not YamlFrontMatterDelimiter)
         {
-            return file;
+            return null;
         }
 
         List<string> aliases = [];
@@ -81,17 +80,7 @@ public static class ObsidianProperties
             }
         }
 
-        if (aliases.Count > 0)
-        {
-            file.Aliases = aliases.ToHashSet(StringComparer.CurrentCultureIgnoreCase);
-        }
-
-        if (tags.Count > 0)
-        {
-            file.Tags = tags.ToHashSet(StringComparer.CurrentCultureIgnoreCase);
-        }
-
-        return file;
+        return (aliases, tags);
     }
 
     public static string BuildYamlFrontMatterWithTags(IReadOnlySet<string> tags)

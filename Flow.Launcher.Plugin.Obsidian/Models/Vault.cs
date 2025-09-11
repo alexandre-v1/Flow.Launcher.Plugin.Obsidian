@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
 using System.Windows.Media;
 using Flow.Launcher.Plugin.Obsidian.Extensions;
@@ -88,33 +87,15 @@ public class Vault
 
     private void UpdateFiles()
     {
-        IList<string> excludedPaths = Setting.RelativeExcludePaths
-            .Select(excludedPath => System.IO.Path.Combine(Path, excludedPath)).ToList();
+        HashSet<string> extensions = Setting.FileExtensions
+            .GetActiveExtensionSuffix()
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-        IEnumerable<string> extensions = Setting.FileExtensions.GetActiveExtensionSuffix();
+        FileDiscovery fileDiscovery = new(Path, extensions, Setting.RelativeExcludePaths);
 
-        List<File> files = Directory
-            .EnumerateFiles(Path, "*", SearchOption.AllDirectories)
-            .AsParallel()
-            .WithDegreeOfParallelism(Environment.ProcessorCount)
-            .Where(filePath =>
-            {
-                string extension = System.IO.Path.GetExtension(filePath);
-                return extensions.Contains(extension) && !excludedPaths.Any(filePath.StartsWith);
-            })
-            .Select(filePath =>
-            {
-                File file = new(this, filePath);
-                if (!Setting.UseNoteProperties || file.Extension is not ".md")
-                {
-                    return file;
-                }
+        List<File> files = fileDiscovery.GetFiles().Select(CreateFile).ToList();
 
-                return file.LoadObsidianProperties();
-            })
-            .ToList();
-
-        foreach (var file in files)
+        foreach (File file in files)
         {
             if (file.Tags is not null)
             {
@@ -123,6 +104,9 @@ public class Vault
         }
 
         Files = files;
+        return;
+
+        File CreateFile(FileInfo path) => new(this, path);
     }
 
     private void UpdateObsidianPlugins()
