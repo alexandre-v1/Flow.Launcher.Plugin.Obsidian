@@ -17,8 +17,6 @@ public class ContextMenuService(Obsidian obsidian, IVaultManager vaultManager, S
             return [];
         }
 
-        string path = file.RelativePath;
-
         List<Result> results = [];
         Vault? vault = vaultManager.GetVaultWithId(file.VaultId);
 
@@ -35,18 +33,14 @@ public class ContextMenuService(Obsidian obsidian, IVaultManager vaultManager, S
             }
         }
 
-        if (settings.DefaultQuery.AddCheckBoxesToContext)
+        if (settings.AddCheckBoxesToContext)
         {
             results.AddRange(file.GetCheckBoxes());
         }
 
-        if (
-            settings.DefaultQuery.AddGlobalFolderExcludeToContext
-            || settings.DefaultQuery.AddLocalFolderExcludeToContext
-        )
-        {
-            results.AddRange(ExcludeResults(path, file.VaultId));
-        }
+
+        results.AddRange(ExcludeResults(file.RelativePath, file.VaultId));
+
 
         return results;
     }
@@ -55,7 +49,7 @@ public class ContextMenuService(Obsidian obsidian, IVaultManager vaultManager, S
         new()
         {
             Title = "Open in new tab",
-            Glyph = new GlyphInfo(Font.Family, Font.OpenInNewTabGlyph),
+            Glyph = new GlyphInfo(Glyph.Family, Glyph.OpenInNewTab),
             Action = _ =>
             {
                 file.Open(true);
@@ -70,10 +64,7 @@ public class ContextMenuService(Obsidian obsidian, IVaultManager vaultManager, S
         for (int i = 0; i < parts.Length - 1; i++)
         {
             string directory = string.Join("\\", parts.Take(i + 1));
-            if (settings.DefaultQuery.AddLocalFolderExcludeToContext)
-            {
-                results.Add(ExcludeLocalFolderResult(directory, vaultId));
-            }
+            results.Add(ExcludeLocalFolderResult(directory, vaultId));
         }
 
         return results;
@@ -84,7 +75,7 @@ public class ContextMenuService(Obsidian obsidian, IVaultManager vaultManager, S
         {
             Title = $"Exclude {folder} folder locally",
             Action = _ => TryToExcludeLocalFolder(folder, vaultId),
-            Glyph = new GlyphInfo(Font.Family, Font.ExcludeGlyph)
+            Glyph = new GlyphInfo(Glyph.Family, Glyph.Exclude)
         };
 
     private bool TryToExcludeLocalFolder(string folder, string? vaultId)

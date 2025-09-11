@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Linq;
 using CommunityToolkit.Mvvm.Input;
 
 namespace Flow.Launcher.Plugin.Obsidian.ViewModels;
@@ -9,15 +7,15 @@ namespace Flow.Launcher.Plugin.Obsidian.ViewModels;
 public partial class ExcludePathsViewModel : BaseModel
 {
     private readonly List<string> _designExcludePaths = ["Path 1", "Path 2"];
+    private readonly IList<string>? _excludePaths;
     private string _excludePathInput = string.Empty;
 
-    public ExcludePathsViewModel() =>
-        ExcludePaths = new ObservableCollection<string>(_designExcludePaths);
+    public ExcludePathsViewModel() => ExcludePaths = new ObservableCollection<string>(_designExcludePaths);
 
     public ExcludePathsViewModel(IList<string> excludePaths)
     {
         ExcludePaths = new ObservableCollection<string>(excludePaths);
-        ExcludePaths.CollectionChanged += OnCollectionChanged;
+        _excludePaths = excludePaths;
     }
 
     public ObservableCollection<string> ExcludePaths { get; }
@@ -37,13 +35,12 @@ public partial class ExcludePathsViewModel : BaseModel
         }
     }
 
-    private void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) =>
-        OnPropertyChanged(nameof(ExcludePaths));
-
-    public List<string> GetCurrentPaths() => ExcludePaths.ToList();
-
     [RelayCommand]
-    private void RemoveExcludePath(string path) => ExcludePaths.Remove(path);
+    private void RemoveExcludePath(string path)
+    {
+        ExcludePaths.Remove(path);
+        _excludePaths?.Remove(path);
+    }
 
     [RelayCommand]
     private void AddExcludePath()
@@ -54,6 +51,7 @@ public partial class ExcludePathsViewModel : BaseModel
         }
 
         ExcludePaths.Add(ExcludePathInput);
+        _excludePaths?.Add(ExcludePathInput);
         ExcludePathInput = string.Empty;
     }
 }

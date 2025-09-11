@@ -11,19 +11,11 @@ namespace Flow.Launcher.Plugin.Obsidian.Services.Implementations;
 
 public class VaultManager(Settings settings) : IVaultManager
 {
-    public HashSet<Vault> Vaults { get; private set; } = [];
+    private readonly HashSet<Vault> _vaults = [];
 
-    public async Task<Vault?> GetUpdatedVaultAsync(string vaultId)
-    {
-        Vault? vault = GetVaultWithId(vaultId);
-        if (vault is null)
-        {
-            return null;
-        }
+    public IEnumerable<Vault> GetVaults() => _vaults;
 
-        await UpdateVaultAsync(vault);
-        return vault;
-    }
+    public IEnumerable<Vault> GetActiveVaults() => _vaults.Where(vault => vault.IsActive);
 
     public async Task UpdateVaultAsync(Vault vault)
     {
@@ -31,23 +23,42 @@ public class VaultManager(Settings settings) : IVaultManager
         vault.UpdateVault();
     }
 
-    public async Task UpdateVaultListAsync()
+    public async Task ReloadVaultsAsync()
     {
-        Vaults = [];
-        List<(string id, string path)> vaults = await GetVaultsFromJson(Paths.VaultListJsonPath);
+        Dictionary<string, string> vaultsToLoad = await GetVaultsFromJson(Paths.VaultListJsonPath);
 
-        foreach ((string id, string path) in vaults)
+        foreach (var vault in _vaults)
+        {
+            string id = vault.Id;
+            bool vaultStillExists = vaultsToLoad.ContainsKey(id);
+
+            if (vaultStillExists)
+            {
+                vault.Path = vaultsToLoad[id];
+                vault.UpdateVault();
+                vaultsToLoad.Remove(id);
+            }
+            else
+            {
+                _vaults.Remove(vault);
+            }
+        }
+
+        foreach ((string id, string path) in vaultsToLoad)
         {
             VaultSetting vaultSetting = settings.LoadVaultOrDefault(id);
             Vault newVault = new(id, path, vaultSetting);
-            Vaults.Add(newVault);
+            _vaults.Add(newVault);
         }
     }
 
     public Vault? GetVaultWithId(string vaultId) =>
-        Vaults.FirstOrDefault(vault => vault.Id == vaultId);
+        _vaults.FirstOrDefault(vault => vault.Id == vaultId);
 
-    private static async Task<List<(string id, string path)>> GetVaultsFromJson(string jsonPath)
+    public IEnumerable<Vault> GetVaultsWithIds(IEnumerable<string> vaultIds) =>
+        vaultIds.Select(GetVaultWithId).OfType<Vault>().ToList();
+
+    private static async Task<Dictionary<string, string>> GetVaultsFromJson(string jsonPath)
     {
         string jsonString = await File.ReadAllTextAsync(jsonPath);
         using JsonDocument document = JsonDocument.Parse(jsonString);
@@ -55,7 +66,7 @@ public class VaultManager(Settings settings) : IVaultManager
         const string vaultJsonElement = "vaults";
         JsonElement vaultsJson = document.RootElement.GetProperty(vaultJsonElement);
 
-        List<(string id, string path)> vaults = [];
+        Dictionary<string, string> vaults = [];
 
         foreach (JsonProperty vaultJson in vaultsJson.EnumerateObject())
         {
@@ -71,7 +82,8 @@ public class VaultManager(Settings settings) : IVaultManager
                 continue;
             }
 
-            vaults.Add((vaultJson.Name, path));
+            string id = vaultJson.Name;
+            vaults[id] = path;
         }
 
         return vaults;
@@ -79,16 +91,7 @@ public class VaultManager(Settings settings) : IVaultManager
 
     private static async Task<string?> GetVaultPathAsync(string vaultId)
     {
-        List<(string id, string path)> vaults = await GetVaultsFromJson(Paths.VaultListJsonPath);
-
-        foreach ((string id, string path) in vaults)
-        {
-            if (vaultId == id)
-            {
-                return path;
-            }
-        }
-
-        return null;
+        Dictionary<string, string> vaults = await GetVaultsFromJson(Paths.VaultListJsonPath);
+        return vaults[vaultId];
     }
 }

@@ -2,15 +2,13 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
-using Flow.Launcher.Plugin.Obsidian.ViewModels;
 
 namespace Flow.Launcher.Plugin.Obsidian.Views;
 
 public partial class VaultSettingsView : INotifyPropertyChanged
 {
-    public VaultSettingsView(VaultSettingsViewModel viewModel)
+    public VaultSettingsView()
     {
-        DataContext = viewModel;
         InitializeComponent();
         SizeChanged += OnSizeChanged;
     }

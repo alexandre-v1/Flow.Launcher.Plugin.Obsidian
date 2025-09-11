@@ -1,25 +1,24 @@
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using Flow.Launcher.Plugin.Obsidian.Models;
-using Flow.Launcher.Plugin.Obsidian.Services.Interfaces;
+using JetBrains.Annotations;
 
 namespace Flow.Launcher.Plugin.Obsidian.ViewModels;
 
 public partial class VaultSettingsViewModel : BaseModel
 {
     private readonly Vault? _vault;
-    private readonly IVaultManager? _vaultManager;
 
+    [UsedImplicitly] // For design-time data
     public VaultSettingsViewModel()
     {
         FileExtensionListViewModel = new FileExtensionsListViewModel();
         ExcludePathsViewModel = new ExcludePathsViewModel();
     }
 
-    public VaultSettingsViewModel(Vault vault, IVaultManager vaultManager)
+    public VaultSettingsViewModel(Vault vault)
     {
         _vault = vault;
-        _vaultManager = vaultManager;
 
         VaultSetting setting = vault.Setting;
         FileExtensionListViewModel = new FileExtensionsListViewModel(setting.FileExtensions);
@@ -28,8 +27,8 @@ public partial class VaultSettingsViewModel : BaseModel
         vault.VaultUpdated += OnVaultUpdated;
     }
 
-    public FileExtensionsListViewModel? FileExtensionListViewModel { get; }
-    public ExcludePathsViewModel? ExcludePathsViewModel { get; }
+    public FileExtensionsListViewModel FileExtensionListViewModel { get; }
+    public ExcludePathsViewModel ExcludePathsViewModel { get; }
 
     public string Id => _vault?.Id ?? "Vault Id";
     public string Name => _vault?.Name ?? "Vault Name";
@@ -44,13 +43,5 @@ public partial class VaultSettingsViewModel : BaseModel
     }
 
     [RelayCommand]
-    private async Task ReloadVaultAsync()
-    {
-        if (_vault is null || _vaultManager is null)
-        {
-            return;
-        }
-
-        await _vaultManager.UpdateVaultAsync(_vault);
-    }
+    private async Task ReloadVaultAsync() => _vault?.UpdateVault();
 }

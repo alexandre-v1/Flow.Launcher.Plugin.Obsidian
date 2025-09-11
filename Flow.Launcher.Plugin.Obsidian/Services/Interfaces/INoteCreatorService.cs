@@ -5,7 +5,7 @@ namespace Flow.Launcher.Plugin.Obsidian.Services.Interfaces;
 
 public interface INoteCreatorService
 {
-    Result BuildSingleVaultNoteCreationResult(QueryData queryData);
+    Result BuildSingleVaultNoteCreationResult(FilesQueryData queryData);
 
-    List<Result> BuildMultiVaultNoteCreationResults(QueryData queryData);
+    List<Result> BuildMultiVaultNoteCreationResults(FilesQueryData queryData);
 }

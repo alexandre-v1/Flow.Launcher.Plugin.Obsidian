@@ -10,7 +10,7 @@ namespace Flow.Launcher.Plugin.Obsidian.Services.Implementations;
 
 public class NoteCreatorService(IPublicAPI publicApi) : INoteCreatorService
 {
-    public Result BuildSingleVaultNoteCreationResult(QueryData queryData)
+    public Result BuildSingleVaultNoteCreationResult(FilesQueryData queryData)
     {
         string noteName = GetNoteName(queryData);
         string title = $"Create new note \"{noteName}\"";
@@ -28,12 +28,12 @@ public class NoteCreatorService(IPublicAPI publicApi) : INoteCreatorService
         return BuildNoteCreationResult(title, queryData, noteName);
     }
 
-    public List<Result> BuildMultiVaultNoteCreationResults(QueryData queryData)
+    public List<Result> BuildMultiVaultNoteCreationResults(FilesQueryData queryData)
     {
         string noteName = GetNoteName(queryData);
         List<Result> results = [];
 
-        foreach (Vault vault in queryData.Vaults)
+        foreach (Vault vault in queryData.GetVaults())
         {
             string title = $"Create new note \"{noteName}\" in {vault.Name} ";
 
@@ -48,15 +48,16 @@ public class NoteCreatorService(IPublicAPI publicApi) : INoteCreatorService
         return results;
     }
 
-    private Result BuildNoteCreationResult(string title, QueryData queryData, string noteName, Vault? vault = null) =>
+    private Result BuildNoteCreationResult(string title, FilesQueryData queryData, string noteName,
+        Vault? vault = null) =>
         new()
         {
             Title = title,
-            IcoPath = Paths.ObsidianLogo,
+            Icon = IconCache.GetCachedIconDelegate(Paths.ObsidianLogo),
             Action = _ => CreateNoteActionHandler(queryData, noteName, vault)
         };
 
-    private bool CreateNoteActionHandler(QueryData queryData, string noteName, Vault? vault = null)
+    private bool CreateNoteActionHandler(FilesQueryData queryData, string noteName, Vault? vault = null)
     {
         vault ??= queryData.GetTheOnlyVault();
         if (vault is null)
@@ -78,7 +79,7 @@ public class NoteCreatorService(IPublicAPI publicApi) : INoteCreatorService
         return true;
     }
 
-    private string GetNoteName(QueryData queryData)
+    private string GetNoteName(FilesQueryData queryData)
     {
         string noteName = queryData.CleanSearchTerms.Without(Keyword.NoteCreator).JoinToString();
         return string.IsNullOrEmpty(noteName) ? "Untitled" : noteName;

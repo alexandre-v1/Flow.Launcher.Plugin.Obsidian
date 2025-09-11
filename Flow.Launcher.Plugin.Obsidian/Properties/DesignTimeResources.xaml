@@ -1,0 +1,21 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:m="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    mc:Ignorable="d">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ui:ThemeResources />
+        <ui:XamlControlsResources />
+        <ResourceDictionary Source="../Properties/FlowTheme.xaml" />
+        <ResourceDictionary Source="../Style.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <!--
+        This random style allow xaml preview to fully work.
+        https://stackoverflow.com/questions/3419543/adding-a-merged-dictionary-to-a-merged-dictionary
+    -->
+    <Style TargetType="{m:Type Rectangle}" />
+</ResourceDictionary>

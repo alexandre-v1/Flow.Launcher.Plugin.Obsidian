@@ -6,13 +6,15 @@ namespace Flow.Launcher.Plugin.Obsidian.Services.Interfaces;
 
 public interface IVaultManager
 {
-    HashSet<Vault> Vaults { get; }
+    IEnumerable<Vault> GetVaults();
 
-    Task<Vault?> GetUpdatedVaultAsync(string vaultId);
+    IEnumerable<Vault> GetActiveVaults();
 
-    Task UpdateVaultListAsync();
+    Task ReloadVaultsAsync();
 
     Task UpdateVaultAsync(Vault vault);
 
     Vault? GetVaultWithId(string vaultId);
+
+    IEnumerable<Vault> GetVaultsWithIds(IEnumerable<string> vaultIds);
 }

@@ -1,22 +1,17 @@
-// ReSharper disable UnusedAutoPropertyAccessor.Global
-// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
-// Keep setters to allow JSON deserialization
+using System.Text.Json.Serialization;
 
 namespace Flow.Launcher.Plugin.Obsidian.Models;
 
-public class FileExtension(
-    string name,
-    string suffix,
-    bool isActive = true,
-    ObsidianPlugin? pluginNeeded = null
-)
+public class FileExtension(string name, string suffix, bool isActive = true, ObsidianPlugin? pluginNeeded = null)
 {
+    [JsonInclude]
     public string Name { get; set; } = name;
 
+    [JsonInclude]
     public string Suffix { get; set; } = suffix;
 
-    // This has no use when inside a group
     public bool IsActive { get; set; } = isActive;
 
+    [JsonInclude]
     public ObsidianPlugin? PluginNeeded { get; set; } = pluginNeeded;
 }

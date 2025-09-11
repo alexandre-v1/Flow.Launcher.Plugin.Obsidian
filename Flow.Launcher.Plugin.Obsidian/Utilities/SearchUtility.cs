@@ -11,7 +11,8 @@ public static class SearchUtility
 {
     private static readonly char[] _wordBreakingChars = ['_', '-', '.', ',', ';', ':', '|', '?', '!', ' '];
 
-    public static async Task<List<File>> SearchAndScoreFiles(List<File> files, QueryData queryData, bool searchContent,
+    public static async Task<List<File>> SearchAndScoreFiles(List<File> files, FilesQueryData filesQueryData,
+        bool searchContent,
         CancellationToken cancellationToken)
     {
         const int batchSize = 100;
@@ -22,7 +23,7 @@ public static class SearchUtility
             ParallelQuery<Task<File>> tasks = batch.AsParallel()
                 .WithCancellation(cancellationToken)
                 .WithDegreeOfParallelism(Environment.ProcessorCount)
-                .Select(file => CalculateFileScore(file, queryData.CleanSearchTerms, searchContent));
+                .Select(file => CalculateFileScore(file, filesQueryData.CleanSearchTerms, searchContent));
 
             results.AddRange(await Task.WhenAll(tasks));
         }
@@ -94,7 +95,7 @@ public static class SearchUtility
         }
 
         string matchedWord = bestMatch.ExtractMatchedWord();
-        file.Title = $"{file.Name} - {matchedWord}";
+        file.Title = $"{file.Name} {ContentSearch.Separator} {matchedWord}";
         file.Score = bestMatch.Score;
         return file;
     }

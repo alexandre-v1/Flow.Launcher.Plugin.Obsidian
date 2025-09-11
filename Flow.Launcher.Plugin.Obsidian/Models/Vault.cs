@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
 using System.Windows.Media;
 using Flow.Launcher.Plugin.Obsidian.Extensions;
@@ -79,48 +78,35 @@ public class Vault
         UpdateFiles();
         UpdateObsidianPlugins();
         VaultUpdated?.Invoke();
+        _isDirty = false;
     }
 
     public bool OpenInNewTabByDefault() => HasAdvancedUri && Setting.OpenInNewTabByDefault;
 
     public bool TagExists(string tag) => Tags.Any(t => t.EqualsIgnoreCase(tag));
 
-    public bool IsVaultName(string vaultName) => Name.EqualsIgnoreCase(vaultName);
-
     private void UpdateFiles()
     {
-        IList<string> excludedPaths = Setting.RelativeExcludePaths
-            .Select(excludedPath => System.IO.Path.Combine(Path, excludedPath)).ToList();
+        HashSet<string> extensions = Setting.FileExtensions
+            .GetActiveExtensionSuffix()
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-        ISet<string> extensions = Setting.FileExtensions.GetAllSuffix();
+        FileDiscovery fileDiscovery = new(Path, extensions, Setting.RelativeExcludePaths);
 
-        Files = Directory
-            .EnumerateFiles(Path, "*", SearchOption.AllDirectories)
-            .AsParallel()
-            .WithDegreeOfParallelism(Environment.ProcessorCount)
-            .Where(file =>
+        List<File> files = fileDiscovery.GetFiles().Select(CreateFile).ToList();
+
+        foreach (File file in files)
+        {
+            if (file.Tags is not null)
             {
-                string extension = System.IO.Path.GetExtension(file);
-                return extensions.Contains(extension)
-                       && !excludedPaths.Any(file.StartsWith);
-            })
-            .Select(filePath =>
-            {
-                File file = new(this, filePath);
-                if (!Setting.UseNoteProperties || file.Extension is not ".md")
-                {
-                    return file;
-                }
+                Tags.UnionWith(file.Tags);
+            }
+        }
 
-                file = file.LoadObsidianProperties();
-                if (file.Tags is not null)
-                {
-                    Tags.UnionWith(file.Tags);
-                }
+        Files = files;
+        return;
 
-                return file;
-            })
-            .ToList();
+        File CreateFile(FileInfo path) => new(this, path);
     }
 
     private void UpdateObsidianPlugins()

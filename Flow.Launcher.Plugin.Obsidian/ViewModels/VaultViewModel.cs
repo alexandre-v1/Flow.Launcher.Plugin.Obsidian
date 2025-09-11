@@ -5,32 +5,31 @@ using Flow.Launcher.Plugin.Obsidian.Models;
 using Flow.Launcher.Plugin.Obsidian.Services.Interfaces;
 using Flow.Launcher.Plugin.Obsidian.Utilities;
 using Flow.Launcher.Plugin.Obsidian.Views;
+using JetBrains.Annotations;
 
 namespace Flow.Launcher.Plugin.Obsidian.ViewModels;
 
 public partial class VaultViewModel : BaseModel
 {
-    private readonly ISettingWindowManager? _settingWindowManager;
+    private readonly ISettingsWindowManager _settingWindowManager;
     private readonly Vault? _vault;
-    private readonly IVaultManager? _vaultManager;
 
     private bool _isActive;
 
     public string DesignName = "Vault Name";
     public string DesignPath = "Vault Path";
 
-    public VaultViewModel(Vault vault, ISettingWindowManager? settingWindowManager, IVaultManager vaultManager)
+    public VaultViewModel(Vault vault, ISettingsWindowManager settingWindowManager)
     {
         _settingWindowManager = settingWindowManager;
         _vault = vault;
-        _vaultManager = vaultManager;
         _isActive = vault.IsActive;
 
         vault.VaultUpdated += OnVaultUpdated;
     }
 
-    // For design-time data
-    public VaultViewModel() { }
+    [UsedImplicitly] // For design-time data
+    public VaultViewModel() => _settingWindowManager = null!;
 
     public static ImageSource Icon => IconCache.GetCachedImage(Paths.ObsidianLogo);
     public string Name => _vault?.Name ?? DesignName;
@@ -65,15 +64,13 @@ public partial class VaultViewModel : BaseModel
     [RelayCommand]
     private void OpenVaultSettings()
     {
-        if (_vault is null || _settingWindowManager is null || _vaultManager is null)
+        if (_vault is null)
         {
-            Debug.WriteLine("Value is null, can't open vault window");
+            Debug.WriteLine("Vault is null, can't open vault window");
             return;
         }
 
-        VaultSettingsViewModel vaultSettingsViewModel = new(_vault, _vaultManager);
-        _settingWindowManager.ShowViewAsync<VaultSettingsView, VaultSettingsViewModel>(
-            vaultSettingsViewModel
-        );
+        VaultSettingsViewModel vaultSettingsViewModel = new(_vault);
+        _settingWindowManager.ShowView<VaultSettingsView>(vaultSettingsViewModel);
     }
 }

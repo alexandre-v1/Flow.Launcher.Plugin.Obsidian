@@ -10,6 +10,8 @@ namespace Flow.Launcher.Plugin.Obsidian.Utilities;
 
 public static class ContentSearch
 {
+    public const char Separator = '|';
+
     private const int TitleBaseScore = 10;
     private const int EndOfLineScore = 3;
     private const int StartOfLineScore = 3;
@@ -28,7 +30,13 @@ public static class ContentSearch
 
     public static async Task<ContentSearchMatch?> GetBestMatchInFile(File file, string[] searchTerms)
     {
-        using StreamReader reader = new(file.FilePath);
+        string filePath = file.FilePath;
+        if (!Path.Exists(filePath))
+        {
+            return null;
+        }
+
+        using StreamReader reader = new(filePath);
 
         ContentSearchMatch? bestMatch = null;
         bool inFrontMatter = false;

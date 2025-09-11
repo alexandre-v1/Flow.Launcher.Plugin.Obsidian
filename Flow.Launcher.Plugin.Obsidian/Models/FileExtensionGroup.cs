@@ -1,18 +1,15 @@
-// ReSharper disable UnusedAutoPropertyAccessor.Global
-// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
-// Keep setters to allow JSON deserialization
-
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Flow.Launcher.Plugin.Obsidian.Models;
 
-public class FileExtensionGroup(
-    string name,
-    HashSet<FileExtension> fileExtensions,
-    bool isActive = true
-)
+public class FileExtensionGroup(string name, HashSet<FileExtension> extensions, bool isActive = true)
 {
+    [JsonInclude]
     public string Name { get; set; } = name;
+
     public bool IsActive { get; set; } = isActive;
-    public HashSet<FileExtension> FileExtensions { get; set; } = fileExtensions;
+
+    [JsonInclude]
+    public HashSet<FileExtension> Extensions { get; set; } = extensions;
 }

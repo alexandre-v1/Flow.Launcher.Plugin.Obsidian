@@ -6,25 +6,22 @@ namespace Flow.Launcher.Plugin.Obsidian.ViewModels;
 
 public class FileExtensionsListViewModel : BaseModel
 {
+    private readonly ObservableCollection<FileExtensionGroup> _extensionGroups;
+    private readonly ObservableCollection<FileExtension> _extensions;
+
     public FileExtensionsListViewModel()
     {
-        FileExtensions = new ObservableCollection<FileExtension>(
-            FileExtensionsSetting.DefaultExtensions
-        );
-        FileExtensionGroups = new ObservableCollection<FileExtensionGroup>(
-            FileExtensionsSetting.DefaultExtensionGroups
-        );
+        FileExtensionsSetting extensionsSetting = new();
+        _extensions = new ObservableCollection<FileExtension>(extensionsSetting.Extensions);
+        _extensionGroups = new ObservableCollection<FileExtensionGroup>(extensionsSetting.ExtensionGroups);
     }
 
-    public FileExtensionsListViewModel(FileExtensionsSetting fileExtensionsSetting)
+    public FileExtensionsListViewModel(FileExtensionsSetting extensionsSetting)
     {
-        FileExtensions = new ObservableCollection<FileExtension>(fileExtensionsSetting.Extensions);
-        FileExtensionGroups = new ObservableCollection<FileExtensionGroup>(
-            fileExtensionsSetting.ExtensionGroups
-        );
+        _extensions = new ObservableCollection<FileExtension>(extensionsSetting.Extensions);
+        _extensionGroups = new ObservableCollection<FileExtensionGroup>(extensionsSetting.ExtensionGroups);
     }
 
-    public ICollection<FileExtension> FileExtensions { get; set; }
-
-    public ICollection<FileExtensionGroup> FileExtensionGroups { get; set; }
+    public IEnumerable<FileExtension> Extensions => _extensions;
+    public IEnumerable<FileExtensionGroup> ExtensionGroups => _extensionGroups;
 }

@@ -1,0 +1,126 @@
+<UserControl
+    x:Class="Flow.Launcher.Plugin.Obsidian.Views.QueriesListView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:ModernWpf.Controls;assembly=ModernWpf.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:utils="clr-namespace:Flow.Launcher.Plugin.Obsidian.Utilities"
+    xmlns:viewModels="clr-namespace:Flow.Launcher.Plugin.Obsidian.ViewModels"
+    xmlns:views="clr-namespace:Flow.Launcher.Plugin.Obsidian.Views"
+    d:DataContext="{d:DesignInstance viewModels:QueriesListViewModel}"
+    d:DesignWidth="550"
+    Background="{StaticResource Color00B}"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <utils:SharedResourceDictionary Source="pack://application:,,,/Flow.Launcher.Plugin.Obsidian;component/Style.xaml" />
+    </UserControl.Resources>
+
+    <StackPanel Orientation="Vertical">
+        <ItemsControl
+            Margin="0"
+            ItemsSource="{Binding Queries}"
+            SnapsToDevicePixels="True">
+
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button
+                        HorizontalAlignment="Stretch"
+                        Background="{Binding BorderBackground, RelativeSource={RelativeSource AncestorType={x:Type views:QueriesListView}}}"
+                        Command="{Binding OpenQuerySettingsCommand}">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border
+                                    x:Name="border"
+                                    Width="Auto"
+                                    Height="Auto"
+                                    Padding="18,12,0,12"
+                                    Background="{TemplateBinding Background}"
+                                    Style="{StaticResource SettingGroupBox}">
+                                    <ContentPresenter />
+                                </Border>
+
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="border" Property="Background" Value="{DynamicResource Color22B}" />
+                                    </Trigger>
+
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter TargetName="border" Property="Background" Value="{DynamicResource Color23B}" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+
+                        <DockPanel LastChildFill="True">
+                            <ui:FontIcon
+                                Margin="0,0,16,0"
+                                DockPanel.Dock="Right"
+                                Glyph="&#xE974;"
+                                Style="{StaticResource FluentFontIcon}" />
+
+                            <controls:ToggleSwitch
+                                x:Name="OnOffControl"
+                                Margin="0,0,16,0"
+                                DockPanel.Dock="Right"
+                                IsOn="{Binding IsActive}"
+                                OffContent="{DynamicResource disable}"
+                                OnContent="{DynamicResource enable}" />
+
+                            <Button
+                                Width="Auto"
+                                MinWidth="100"
+                                Margin="0,-4.5,14,-4.5"
+                                Command="{Binding SetActionKeywordCommand}"
+                                Content="{Binding Keyword}"
+                                Cursor="Hand"
+                                DockPanel.Dock="Right"
+                                FontWeight="Bold"
+                                ToolTip="{DynamicResource actionKeywordsTooltip}" />
+
+                            <Image
+                                MaxWidth="32"
+                                MaxHeight="32"
+                                DockPanel.Dock="Left"
+                                RenderOptions.BitmapScalingMode="HighQuality"
+                                Source="{Binding Icon, Mode=OneWay, IsAsync=True}" />
+
+                            <TextBlock
+                                Margin="16,0,14,0"
+                                VerticalAlignment="Center"
+                                DockPanel.Dock="Left"
+                                Style="{StaticResource Body}"
+                                Text="{Binding Name}" />
+                        </DockPanel>
+                    </Button>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <Border
+            Padding="0,20"
+            Background="{Binding BorderBackground, RelativeSource={RelativeSource AncestorType={x:Type views:QueriesListView}}}"
+            Style="{StaticResource SettingGroupBox}">
+            <Grid>
+                <TextBlock
+                    Margin="20,0,0,0"
+                    VerticalAlignment="Center"
+                    Style="{StaticResource Body}"
+                    Text="Create a new query" />
+
+                <Button
+                    Width="Auto"
+                    MinWidth="100"
+                    Margin="20,-4.5"
+                    HorizontalAlignment="Right"
+                    Command="{Binding OpenQueryCreatorCommand}"
+                    Content="Create query"
+                    Cursor="Hand"
+                    DockPanel.Dock="Right" />
+
+            </Grid>
+        </Border>
+    </StackPanel>
+</UserControl>
