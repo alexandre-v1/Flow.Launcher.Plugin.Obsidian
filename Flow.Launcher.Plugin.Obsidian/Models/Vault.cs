@@ -92,20 +92,10 @@ public class Vault
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
         FileDiscovery fileDiscovery = new(Path, extensions, Setting.RelativeExcludePaths);
-        List<File> files = fileDiscovery.GetFiles()
-            .Select(filePath =>
-            {
-                File file = new(this, filePath);
-                if (!Setting.UseNoteProperties || file.Extension is not ".md")
-                {
-                    return file;
-                }
 
-                return file.LoadObsidianProperties();
-            })
-            .ToList();
+        List<File> files = fileDiscovery.GetFiles().Select(CreateFile).ToList();
 
-        foreach (var file in files)
+        foreach (File file in files)
         {
             if (file.Tags is not null)
             {
@@ -114,6 +104,9 @@ public class Vault
         }
 
         Files = files;
+        return;
+
+        File CreateFile(FileInfo path) => new(this, path);
     }
 
     private void UpdateObsidianPlugins()

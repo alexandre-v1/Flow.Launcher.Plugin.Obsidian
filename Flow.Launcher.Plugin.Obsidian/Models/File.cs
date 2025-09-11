@@ -26,6 +26,10 @@ public class File : Result
         };
         Icon = IconCache.GetCachedIconDelegate(Paths.ObsidianLogo);
         Score = 100;
+        if (Extension is ".md")
+        {
+            LoadObsidianProperties();
+        }
     }
 
     public string Extension => _info.Extension;
