@@ -95,7 +95,7 @@ public static class SearchUtility
         }
 
         string matchedWord = bestMatch.ExtractMatchedWord();
-        file.Title = $"{file.Name} - {matchedWord}";
+        file.Title = $"{file.Name} {ContentSearch.Separator} {matchedWord}";
         file.Score = bestMatch.Score;
         return file;
     }

@@ -10,6 +10,8 @@ namespace Flow.Launcher.Plugin.Obsidian.Utilities;
 
 public static class ContentSearch
 {
+    public const char Separator = '|';
+
     private const int TitleBaseScore = 10;
     private const int EndOfLineScore = 3;
     private const int StartOfLineScore = 3;
