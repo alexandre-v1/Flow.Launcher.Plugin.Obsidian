@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
 using System.Windows.Media;
 using Flow.Launcher.Plugin.Obsidian.Extensions;
@@ -88,20 +87,12 @@ public class Vault
 
     private void UpdateFiles()
     {
-        IList<string> excludedPaths = Setting.RelativeExcludePaths
-            .Select(excludedPath => System.IO.Path.Combine(Path, excludedPath)).ToList();
+        HashSet<string> extensions = Setting.FileExtensions
+            .GetActiveExtensionSuffix()
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-        IEnumerable<string> extensions = Setting.FileExtensions.GetActiveExtensionSuffix();
-
-        List<File> files = Directory
-            .EnumerateFiles(Path, "*", SearchOption.AllDirectories)
-            .AsParallel()
-            .WithDegreeOfParallelism(Environment.ProcessorCount)
-            .Where(filePath =>
-            {
-                string extension = System.IO.Path.GetExtension(filePath);
-                return extensions.Contains(extension) && !excludedPaths.Any(filePath.StartsWith);
-            })
+        FileDiscovery fileDiscovery = new(Path, extensions, Setting.RelativeExcludePaths);
+        List<File> files = fileDiscovery.GetFiles()
             .Select(filePath =>
             {
                 File file = new(this, filePath);
