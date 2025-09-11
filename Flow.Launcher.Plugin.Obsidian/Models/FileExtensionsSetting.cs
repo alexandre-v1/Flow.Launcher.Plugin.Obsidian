@@ -18,19 +18,50 @@ public class FileExtensionsSetting
         new(
             "Image",
             [
-                new FileExtension("PNG", ".png"),
+                new FileExtension("AVIF", ".avif"),
+                new FileExtension("Windows bitmap", ".bmp"),
+                new FileExtension("GIF", ".gif"),
                 new FileExtension("JPEG", ".jpeg"),
                 new FileExtension("JPEG", ".jpg"),
-                new FileExtension("GIF", ".gif"),
-                new FileExtension("Windows bitmap", ".bmp")
+                new FileExtension("PNG", ".png"),
+                new FileExtension("Scalable Vector Graphics", ".svg"),
+                new FileExtension("WebP", ".webp")
             ]
         ),
-        new("Video", [new FileExtension("MP4", ".mp4")])
+        new(
+            "Audio",
+            [
+                new FileExtension("FLAC", ".flac"),
+                new FileExtension("MPEG-4 Audio", ".m4a"),
+                new FileExtension("MP3", ".mp3"),
+                new FileExtension("Ogg", ".ogg"),
+                new FileExtension("Waveform", ".wav"),
+                new FileExtension("3GP", ".3gp")
+            ],
+            false
+        ),
+
+        new("Video",
+            [
+                new FileExtension("Matroska", ".mkv"),
+                new FileExtension("QuickTime Movie", ".mov"),
+                new FileExtension("MP4", ".mp4"),
+                new FileExtension("Theora", ".ogv"),
+                new FileExtension("WebM", ".webm")
+            ],
+            false
+        )
     ];
 
     // Extensions who are not in a group
     private static HashSet<FileExtension> DefaultExtensions { get; } =
-        [new("Markdown", ".md"), new("Excalidraw", ".excalidraw"), new("Canvas", ".canvas")];
+    [
+        new("Markdown", ".md"),
+        new("Bases", ".base"),
+        new("Canvas", ".canvas"),
+        new("Excalidraw", ".excalidraw"),
+        new("PDF", ".pdf")
+    ];
 
     public IEnumerable<FileExtension> GetActiveExtensions() =>
         Extensions.Where(extension => extension.IsActive)
@@ -40,8 +71,5 @@ public class FileExtensionsSetting
     public IEnumerable<string> GetActiveExtensionSuffix() =>
         GetActiveExtensions().Select(extension => extension.Suffix);
 
-    public bool Contains(string extensionSuffix)
-    {
-        return GetActiveExtensionSuffix().Any(suffix => suffix == extensionSuffix);
-    }
+    public bool Contains(string extensionSuffix) => GetActiveExtensionSuffix().Any(suffix => suffix == extensionSuffix);
 }
